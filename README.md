@@ -1,6 +1,7 @@
 # LSR目录
 - [LSR 000 - Lamina 核心语法规范](store/LSR-000.md)
 - [LSR 001 - LSR的目的和准则](store/LSR-001.md)
+- [LSR 002 - 标准常量](store/LSR-002.md)
 
 _由于Lamina项目的发展，部分LSR已被废弃。以下是旧的LSR列表，供参考。_
 
@@ -17,3 +18,4 @@ _由于Lamina项目的发展，部分LSR已被废弃。以下是旧的LSR列表�
 - [LSR 011 - 关于函数式编程](store/old/LSR-011.md) 
 - [LSR 012 - 错误处理规范](store/old/LSR-012.md)
 - [LSR 013 - loop循环](store/old/LSR-013.md)
+
