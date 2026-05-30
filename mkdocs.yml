@@ -1,0 +1,10 @@
+site_name: LSR
+
+theme:
+  name: terminal
+
+plugins:
+  - md-to-html
+
+extra_css:
+  - stylesheets/extra.css

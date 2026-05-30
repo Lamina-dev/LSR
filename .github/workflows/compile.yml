@@ -1,0 +1,41 @@
+name: Compile MkDocs to Deploy Branch
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+
+      - name: Install MkDocs
+        run: |
+          pip install mkdocs mkdocs-terminal
+
+      - name: Copy README to index
+        run: |
+          cp docs/README.md index.md
+
+      - name: Build site
+        run: |
+          mkdocs build
+
+      - name: Push HTML to deploy branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: site
+          branch: deploy
+          token: ${{ secrets.GITHUB_TOKEN }}
