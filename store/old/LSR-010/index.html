@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 010 - Lamina 虚数扩展 - LSR</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Old</span>
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-010-lamina">LSR 010 - Lamina 虚数扩展</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#_3">技术规范</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-010-lamina">LSR 010 - Lamina 虚数扩展</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号: 010</li>
+<li>标题: Lamina 虚数扩展</li>
+<li>作者: Ziyang-Bai</li>
+<li>状态: 接受</li>
+<li>类型: 标准规范</li>
+<li>创建日期: 09-19-2025</li>
+<li>Lamina 版本: 悬而未决</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>本 LSR 定义 Lamina 编程语言对虚数的支持，包括数据类型、运算规则、函数接口以及与已有数字类型（<code>int</code>、<code>float</code>、<code>rational</code>、<code>irrational</code>）的兼容性。任何 Lamina 实现若支持虚数功能，必须遵守本规范以保证语言一致性。</p>
+<hr />
+<h2 id="_3">技术规范</h2>
+<h3 id="1">1. 数据类型</h3>
+<h4 id="11">1.1 虚数类型</h4>
+<ul>
+<li>类型名: <code>complex</code></li>
+<li>描述: 用于表示复数 $a + bi$，其中 <code>a</code> 和 <code>b</code> 可以是任意 Lamina 数值类型（<code>int</code>、<code>float</code>、<code>rational</code>、<code>irrational</code>）</li>
+<li>示例:</li>
+</ul>
+<pre><code class="language-lamina">var z1 = 3 + 4i;        // a=3, b=4
+var z2 = 1/2 + √2*i;    // a=rational(1/2), b=irrational(√2)
+var z3 = 0 + 1i;        // 纯虚数
+var z4 = 5;             // 自动视为 5 + 0i
+</code></pre>
+<h4 id="12">1.2 行为规范</h4>
+<ul>
+<li>
+<p>所有复数运算保持符号化和精确性：</p>
+</li>
+<li>
+<p>有理数部分保持约分</p>
+</li>
+<li>无理数部分保持符号化</li>
+<li><code>complex</code> 支持任意精度 <code>int</code> 及符号化 <code>rational</code> / <code>irrational</code></li>
+</ul>
+<hr />
+<h3 id="2">2. 运算符与优先级</h3>
+<h4 id="21">2.1 算术运算</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+</code></td>
+<td>复数加法</td>
+<td><code>(3+4i) + (1+2i) = 4+6i</code></td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>复数减法</td>
+<td><code>(3+4i) - (1+2i) = 2+2i</code></td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>复数乘法</td>
+<td><code>(3+4i) * (1+2i) = -5+10i</code></td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td>复数除法</td>
+<td><code>(3+4i) / (1+2i) = 11/5 - 2/5i</code></td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>幂运算</td>
+<td><code>(1+i)^2 = 2i</code></td>
+</tr>
+<tr>
+<td><code>!</code></td>
+<td>阶乘（仅允许非负整数实部，虚部必须为 0）</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="22">2.2 函数接口</h4>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>abs(z)</code></td>
+<td>复数模</td>
+<td><code>abs(3+4i) = 5</code></td>
+</tr>
+<tr>
+<td><code>arg(z)</code></td>
+<td>幅角（弧度）</td>
+<td><code>arg(1+i) = π/4</code></td>
+</tr>
+<tr>
+<td><code>conj(z)</code></td>
+<td>共轭复数</td>
+<td><code>conj(3+4i) = 3-4i</code></td>
+</tr>
+<tr>
+<td><code>re(z)</code></td>
+<td>实部</td>
+<td><code>re(3+4i) = 3</code></td>
+</tr>
+<tr>
+<td><code>im(z)</code></td>
+<td>虚部</td>
+<td><code>im(3+4i) = 4</code></td>
+</tr>
+<tr>
+<td><code>exp(z)</code></td>
+<td>指数函数</td>
+<td><code>exp(iπ) = -1</code></td>
+</tr>
+<tr>
+<td><code>log(z)</code></td>
+<td>对数</td>
+<td><code>log(1+i) = ln(√2) + iπ/4</code></td>
+</tr>
+<tr>
+<td><code>sqrt(z)</code></td>
+<td>平方根</td>
+<td><code>sqrt(-1) = i</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注意：符号化无理数运算应保持精确，例 <code>sqrt(-4)</code> 结果为 <code>2i</code> 而非近似浮点。</p>
+</blockquote>
+<hr />
+<h3 id="3">3. 类型转换与兼容性</h3>
+<ul>
+<li>数值类型可自动提升为 <code>complex</code>：</li>
+</ul>
+<pre><code class="language-lamina">var x = 3;       // int
+var y = x + 2i;  // 自动提升 x 为 3+0i
+</code></pre>
+<ul>
+<li><code>complex</code> 与 <code>rational</code>、<code>irrational</code> 运算保持符号化：</li>
+</ul>
+<pre><code class="language-lamina">var z = 1/2 + √2*i; // 精确表示
+</code></pre>
+<ul>
+<li>不允许虚数参与逻辑运算（<code>and</code>, <code>or</code>）或比较（<code>&lt;</code>, <code>&gt;</code>)</li>
+</ul>
+<hr />
+<h3 id="4">4. 错误处理</h3>
+<ul>
+<li>非法操作抛出 <code>TypeError</code> 或 <code>RuntimeError</code>：</li>
+</ul>
+<pre><code class="language-lamina">var z = 3+4i;
+var w = z and true; // TypeError
+var r = z &lt; 2;     // TypeError
+</code></pre>
+<ul>
+<li>
+<p>阶乘仅允许实部为非负整数，虚部为 0，否则报 <code>RuntimeError</code></p>
+</li>
+<li>
+<p>栈追踪保持 LSR-000 格式，包括文件名、行号、调用链</p>
+</li>
+</ul>
+<hr />
+<h3 id="5">5. 示例</h3>
+<pre><code class="language-lamina">var z1 = 3 + 4i;
+var z2 = 1/2 + √2*i;
+
+print(abs(z1));  // 5
+print(arg(z2));  // 弧度符号化表示
+print(conj(z1)); // 3-4i
+
+var z3 = z1 * z2; // 精确复数乘法
+var z4 = sqrt(-9); // 3i
+
+var x = 2;
+var z5 = x + 5i;  // 自动提升为 2+5i
+</code></pre>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

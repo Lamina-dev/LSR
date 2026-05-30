@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 012 关于函数式编程 (FP) - LSR</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Old</span>
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-012-fp">LSR 012 关于函数式编程 (FP)</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li>
+        <li><a href="#_3">规范要点</a></li><li><a href="#_4">语法示例</a></li><li><a href="#_5">兼容性与实现注意</a></li><li><a href="#_6">装饰器</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-012-fp">LSR 012 关于函数式编程 (FP)</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号: 012</li>
+<li>标题: 关于函数式编程</li>
+<li>作者: @azhz1107cat</li>
+<li>状态: 接受</li>
+<li>类型: 标准规范</li>
+<li>创建日期: 10-18-2025</li>
+</ul>
+<h1 id="_2">摘要</h1>
+<p>为增强 Lamina 在表达式抽象、组合性与不可变性方面的能力，提出对函数式编程特性的语言级支持：高阶函数、闭包、尾递归优化、map/filter/reduce、柯里化与部分应用、以及对纯函数与装饰器的规范说明。</p>
+<p>目标是提供简洁、安全且可组合的函数式原语，使库与用户代码更易推理与并行化实现。</p>
+<h2 id="_3">规范要点</h2>
+<ul>
+<li>高阶函数（Higher-order functions）：函数可以作为参数被传递，或作为返回值返回。</li>
+<li>闭包（Closures）：函数捕获创建时的环境变量并保持其生命周期。</li>
+<li>尾递归优化（TCO）：编译器应对尾递归进行优化以避免栈溢出。</li>
+<li>常见操作符：map、filter、reduce 等一等函数应作为标准库或内建语法存在。</li>
+<li>柯里化与部分应用：支持将多参函数部分应用以生成新的可复用函数。</li>
+<li>纯函数与装饰器：提供 @pure 等标记以增强静态分析与优化可能性。</li>
+</ul>
+<h2 id="_4">语法示例</h2>
+<p>高阶/匿名函数：</p>
+<pre><code>// 常规形式
+do |arguments| {
+    statements
+};
+
+// 无参数时简写
+do {
+    statements
+};
+
+// 表达式简写
+|a,b| =&gt; a + b
+</code></pre>
+<p>示例：</p>
+<pre><code>var float_add: callable[float, [float,float]] = |a,b| =&gt; a+b
+
+var int_add: callable[int,[int,int]] =
+do |a,b| {
+    return a+b
+}
+</code></pre>
+<p>闭包示例：</p>
+<pre><code>func make_adder(x){
+    return |y| =&gt; x + y
+}
+
+var add5 = make_adder(5)
+assert add5(3) == 8
+</code></pre>
+<p>尾递归示例（建议启用 TCO）：</p>
+<pre><code>func fact_tr(n, acc){
+    if n == 0 { return acc }
+    return fact_tr(n-1, acc * n)  // 尾调用
+}
+
+var f = fact_tr(5, 1)  // =120
+</code></pre>
+<p>map/filter/reduce 示例：</p>
+<pre><code>var nums = [1,2,3,4]
+var squares = nums.map(|x| =&gt; x * x)
+var evens = nums.filter(|x| =&gt; x % 2 == 0)
+var sum = nums.reduce(|acc, x| =&gt; acc + x, 0)
+</code></pre>
+<p>柯里化/部分应用：</p>
+<pre><code>func add(a,b){ return a + b }
+var add10 = add.curried()(10)  // 部分应用，得到一个接受 b 的函数
+</code></pre>
+<p>装饰器与纯函数：</p>
+<pre><code>@pure
+func add(a,b){ return a+b }
+</code></pre>
+<p>注：标准库中还应包含 Option/Result 类型以便与纯函数和不可变数据结构配合，详情见错误处理规范（LSR-013）。</p>
+<h2 id="_5">兼容性与实现注意</h2>
+<ul>
+<li>建议将高阶函数与直接函数调用的调用约定保持一致以减少性能开销。</li>
+<li>对闭包捕获的变量应区分按值捕获与按引用捕获，默认按值以保证不可变语义，但提供显式按引用捕获语法（例 &amp;x）。</li>
+<li>尾递归优化必须只在明确的尾调用位置生效，编译器/解释器实现应提供测试套件以验证优化正确性。</li>
+</ul>
+<h2 id="_6">装饰器</h2>
+<hr />
+<h3 id="_7">核心语法：</h3>
+<pre><code>@function_name  // 装饰器函数
+func name(arguments){
+    statements
+}
+</code></pre>
+<h3 id="_8">使用示例：</h3>
+<pre><code>@pure  // 标记函数为纯函数（无副作用）
+func add(a,b){
+    return a+b
+}
+</code></pre>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

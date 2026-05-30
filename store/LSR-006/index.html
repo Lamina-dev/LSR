@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 006 - Lambda 表达式与类型推导规范 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 006 - Lambda 表达式与类型推导规范</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-006-lambda">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#_3">技术规范</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-006-lambda">LSR 006 - Lambda 表达式与类型推导规范</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 006</li>
+<li>标题 Lambda 表达式与类型推导规范</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 草案</li>
+<li>类型 标准规范</li>
+<li>创建日期 04-05-2026</li>
+<li>归属项目 编译器、通用</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>定义 Lambda 的语法、类型推导、闭包捕获与管道交互。Lambda 独立推导，返回类型由表达式推导。</p>
+<h2 id="_3">技术规范</h2>
+<h3 id="1">1. 设计目标</h3>
+<ul>
+<li>提供轻量匿名函数语法</li>
+<li>与管道 <code>|&gt;</code> 平滑协作</li>
+<li>在保持静态强类型前提下支持局部推导</li>
+</ul>
+<h3 id="2">2. 语法</h3>
+<h4 id="21">2.1 基础语法</h4>
+<pre><code class="language-lamina">|x| -&gt; x + 1
+|x, y| -&gt; x * y
+|x num, y num| -&gt; x + y
+</code></pre>
+<p>规则：</p>
+<ul>
+<li><code>|...|</code> 为参数列表</li>
+<li><code>-&gt;</code> 右侧为单表达式函数体</li>
+<li>Lambda 自身是表达式，可赋值、可传参、可返回</li>
+</ul>
+<h4 id="22">2.2 与命名函数语法的关系</h4>
+<ul>
+<li>命名函数：<code>func name(params...) -&gt; ReturnType { ... }</code></li>
+<li>Lambda：<code>|params| -&gt; expr</code></li>
+</ul>
+<p>Lambda 返回类型由函数体表达式推导。</p>
+<h3 id="3">3. 类型推导规则</h3>
+<h4 id="31">3.1 参数类型</h4>
+<ul>
+<li>可显式标注：<code>|x num| -&gt; x + 1</code></li>
+<li>可省略标注：<code>|x| -&gt; x + 1</code></li>
+<li>省略时依赖上下文约束推导参数类型</li>
+</ul>
+<h4 id="32">3.2 返回类型</h4>
+<ul>
+<li>返回类型由 <code>-&gt;</code> 右侧表达式推导</li>
+<li>返回类型需可由上下文确定</li>
+<li>若无法确定，编译报 <code>LambdaTypeAmbiguous</code></li>
+</ul>
+<h4 id="33-contextual-typing">3.3 上下文定型（contextual typing）</h4>
+<ol>
+<li>赋值上下文</li>
+</ol>
+<pre><code class="language-lamina">let f = |x num| -&gt; x^2
+</code></pre>
+<ol>
+<li>参数上下文</li>
+</ol>
+<pre><code class="language-lamina">let out = map(vec[1,2,3], |x| -&gt; x^2)
+</code></pre>
+<ol>
+<li>返回上下文</li>
+</ol>
+<pre><code class="language-lamina">func make_inc() -&gt; (num -&gt; num) {
+    return |x| -&gt; x + 1
+}
+</code></pre>
+<h3 id="4">4. 与管道 <code>|&gt;</code> 的交互</h3>
+<h4 id="41">4.1 一元函数管道</h4>
+<pre><code class="language-lamina">let res = vec[1,2,3,4]
+  |&gt; filter(|x| -&gt; x % 2 == 0)
+  |&gt; map(|x| -&gt; x^2)
+</code></pre>
+<h4 id="42">4.2 歧义与优先级</h4>
+<ul>
+<li><code>|&gt;</code> 左结合</li>
+<li>当 Lambda 参数列表与外层调用产生歧义时，必须加括号</li>
+</ul>
+<pre><code class="language-lamina">let res = data |&gt; map((|x| -&gt; x + 1))
+</code></pre>
+<h3 id="5">5. 闭包捕获规则</h3>
+<ul>
+<li>Lambda 可捕获外层 <code>let</code> 绑定（只读）</li>
+<li>外层 <code>var</code> 更新通过显式返回值传递</li>
+<li>若需更新状态，必须显式通过返回值传递新状态</li>
+</ul>
+<pre><code class="language-lamina">let base = 10
+let add_base = |x| -&gt; x + base
+</code></pre>
+<h3 id="6-cow">6. 与值语义/COW 的关系</h3>
+<ul>
+<li>捕获复合类型（<code>vector</code>, <code>matrix</code>, <code>table</code>, <code>set</code>）见 LSR-000 第 4.6 节</li>
+<li>只读捕获不触发复制</li>
+<li>若 Lambda 内部对局部可变副本突变，触发 COW，不回写原对象</li>
+</ul>
+<h3 id="7">7. 错误与诊断</h3>
+<ul>
+<li><code>LambdaTypeAmbiguous</code>: Lambda 参数或返回类型无法由上下文确定</li>
+<li><code>LambdaCaptureMutation</code>: 非法写入外层 <code>var</code> 捕获</li>
+<li><code>LambdaArityMismatch</code>: 传入参数个数与 Lambda 形参不一致</li>
+</ul>
+<h3 id="8-lsr">8. 与其他 LSR 的关系</h3>
+<ul>
+<li>LSR-000：定义核心类型系统、局部推导总原则与管道运算符</li>
+<li>LSR-005：match 规范来源</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

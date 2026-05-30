@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 000 - Lamina 核心语言规范（草案） - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 000 - Lamina 核心语言规范（草案）</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-000-lamina">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+        <li><a href="#1">1. 语言定位</a></li><li><a href="#2">2. 核心关键字</a></li><li><a href="#3">3. 运算符总览</a></li><li><a href="#4">4. 变量、类型与推导</a></li><li><a href="#5">5. 量纲系统</a></li><li><a href="#6">6. 函数</a></li><li><a href="#7">7. 控制流与推导式</a></li><li><a href="#8">8. 向量与矩阵计算</a></li><li><a href="#9">9. 集合与逻辑</a></li><li><a href="#10">10. 数值塔与提升规则</a></li><li><a href="#11-expr">11. Expr 边界与求值</a></li><li><a href="#12">12. 相等性语义</a></li><li><a href="#13">13. 序列与模块系统</a></li><li><a href="#14">14. 关联文档</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-000-lamina">LSR 000 - Lamina 核心语言规范（草案）</h1>
+<h2 id="1">1. 语言定位</h2>
+<p>Lamina 是静态强类型、表达式导向的数学 DSL/脚本语言，支持单位系统、代数表达和局部类型推导。</p>
+<h2 id="2">2. 核心关键字</h2>
+<p><code>let</code>, <code>var</code>, <code>const</code>, <code>unit</code>, <code>func</code>, <code>return</code>, <code>in</code>, <code>not</code>, <code>loop</code>, <code>while</code>, <code>break</code>, <code>continue</code>, <code>if</code>, <code>else</code>, <code>match</code>, <code>sym</code>, <code>import</code>, <code>use</code>, <code>as</code>, <code>and</code>, <code>or</code></p>
+<h2 id="3">3. 运算符总览</h2>
+<h3 id="31">3.1 基础算术与优先级</h3>
+<ul>
+<li>算术运算符：<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>, <code>^</code></li>
+<li>优先级（高到低）：</li>
+<li><code>^</code></li>
+<li><code>*</code>, <code>/</code>, <code>%</code></li>
+<li><code>+</code>, <code>-</code></li>
+</ul>
+<h3 id="32">3.2 逻辑与比较</h3>
+<ul>
+<li>标量比较：<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></li>
+<li>广播比较：<code>.==</code>, <code>.!=</code>, <code>.&lt;</code>, <code>.&lt;=</code>, <code>.&gt;</code>, <code>.&gt;=</code></li>
+<li>逻辑：<code>and</code>, <code>or</code>, <code>not</code></li>
+<li>规则：逻辑运算优先级低于算术运算</li>
+<li>规则：未加点的比较仅用于标量；<code>vector</code>/<code>matrix</code> 比较必须使用加点算子</li>
+<li>优先级（高到低， 低于3.1运算符）：</li>
+<li><code>or</code>, <code>and</code></li>
+<li><code>==</code>, <code>!=</code></li>
+<li><code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code> </li>
+</ul>
+<h3 id="33">3.3 赋值与绑定</h3>
+<ul>
+<li>赋值：<code>=</code></li>
+<li>绑定：<code>let</code>（只读），<code>var</code>（可变）</li>
+<li>符号声明：<code>sym</code>（类型固定为 <code>Expr</code>）</li>
+<li>优先级：最低</li>
+</ul>
+<h3 id="34">3.4 矩阵与向量运算符</h3>
+<ul>
+<li>线性代数：<code>*</code>, <code>\\</code>, <code>/</code>, <code>^</code></li>
+<li>元素广播：<code>.*</code>, <code>./</code>, <code>.+</code>, <code>.-</code>, <code>.^</code></li>
+<li>关系广播：<code>.==</code>, <code>.!=</code>, <code>.&lt;</code>, <code>.&lt;=</code>, <code>.&gt;</code>, <code>.&gt;=</code></li>
+<li>转置：<code>'</code>（共轭转置），<code>.'</code>（非共轭转置）</li>
+<li>优先级： 线性代数暂定，元素广播同3.1,关系广播同3.2</li>
+</ul>
+<h3 id="35">3.5 集合相关运算符</h3>
+<ul>
+<li>从属：<code>in</code>, <code>not in</code></li>
+<li>子集：<code>subset</code></li>
+<li>并交差：<code>|</code>, <code>&amp;</code>, <code>-</code></li>
+<li>对称差：<code>xor</code></li>
+</ul>
+<h3 id="36">3.6 函数与流程运算符</h3>
+<ul>
+<li>Lambda 箭头：<code>-&gt;</code></li>
+<li>match 分支箭头：<code>=&gt;</code></li>
+<li>管道：<code>|&gt;</code></li>
+</ul>
+<h3 id="37">3.7 运算符分派与歧义约束</h3>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>仅适用类型</th>
+<th>语义</th>
+<th>歧义处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td><code>num</code></td>
+<td>数值除法</td>
+<td>若操作数不满足数值或矩阵规则，编译报错</td>
+</tr>
+<tr>
+<td><code>\\</code></td>
+<td><code>matrix</code></td>
+<td>矩阵左除（解 <code>A X = B</code>）</td>
+<td>左值必须可作为系数矩阵，维度不匹配或系统无解时报错</td>
+</tr>
+<tr>
+<td><code>/</code></td>
+<td><code>matrix</code></td>
+<td>矩阵右除（解线性系统）</td>
+<td>左值必须是矩阵，右值可用于右除，否则报错</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td><code>num</code> / <code>Expr</code></td>
+<td>幂运算</td>
+<td>集合对称差使用 <code>xor</code></td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td><code>matrix</code></td>
+<td>矩阵幂（整数指数）</td>
+<td>非方阵或非整数指数报错</td>
+</tr>
+<tr>
+<td><code>xor</code></td>
+<td><code>set</code></td>
+<td>集合对称差</td>
+<td>集合对称差统一使用 <code>xor</code></td>
+</tr>
+<tr>
+<td><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code> <code>==</code> <code>!=</code></td>
+<td>标量（<code>num</code>/<code>complex</code>/<code>text</code>/<code>bool</code>）</td>
+<td>标量关系比较</td>
+<td>操作数为 <code>vector</code>/<code>matrix</code> 时编译报错，要求使用加点比较</td>
+</tr>
+<tr>
+<td><code>.*</code> <code>./</code> <code>.+</code> <code>.-</code> <code>.^</code></td>
+<td><code>vector</code>/<code>matrix</code> 与标量或同形状容器</td>
+<td>元素级广播 / 哈达玛运算</td>
+<td>维度不兼容报错</td>
+</tr>
+<tr>
+<td><code>.==</code> <code>.!=</code> <code>.&lt;</code> <code>.&lt;=</code> <code>.&gt;</code> <code>.&gt;=</code></td>
+<td><code>vector</code>/<code>matrix</code> 与标量或同形状容器</td>
+<td>元素级关系广播</td>
+<td>返回同形状 <code>vector&lt;bool&gt;</code>/<code>matrix&lt;bool&gt;</code>，维度不兼容报错</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4">4. 变量、类型与推导</h2>
+<h3 id="41">4.1 类型系统</h3>
+<p>具备自底向上类型推导，多数情况推荐手动标注类型</p>
+<h3 id="42">4.2 局部类型推导规则</h3>
+<ul>
+<li>允许推导：局部 <code>let/var</code> 绑定、for 推导式局部变量</li>
+<li>必须显式：函数参数类型、函数返回类型、模块导出符号类型</li>
+<li>Lambda 与 match 的推导规则由 LSR-006 与 LSR-005 定义</li>
+<li>推导结果必须为确定类型；约束不足时编译报错</li>
+</ul>
+<h3 id="43">4.3 声明语法</h3>
+<p>变量声明统一 <code>let|var|const name type = expr</code> 或者 <code>let|var|const name = expr</code>。</p>
+<ul>
+<li><code>let</code>：只读绑定, 当绑定为对象类型时，仅代表不可再次绑定另一个对象|值，而不是对象本身不可变</li>
+<li><code>var</code>：可变绑定</li>
+<li><code>const</code>：编译期常量声明（只读，要求初始化表达式可在编译期求值）</li>
+</ul>
+<pre><code class="language-lamina">let a = 10
+let pi_val real = 3.1415
+let fraction = 3/2
+const TAU = 2 * pi
+
+let c = 5/4
+let name = &quot;LSR&quot;
+
+var counter = 0
+counter = counter + 1
+
+a = 20   # 编译报错
+</code></pre>
+<h3 id="44">4.4 核心数据类型</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>字面量 / 示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>num</code></td>
+<td>数值超集（<code>int</code>, <code>real</code>, <code>frac</code>）</td>
+<td><code>42</code>, <code>114.514</code>, <code>1/2</code></td>
+</tr>
+<tr>
+<td><code>null</code></td>
+<td>空类型，既是类型也是值</td>
+<td></td>
+</tr>
+<tr>
+<td><code>complex</code></td>
+<td>复数</td>
+<td><code>3 + 4i</code></td>
+</tr>
+<tr>
+<td><code>text</code></td>
+<td>文本</td>
+<td><code>"i love lamina"</code></td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td>布尔逻辑</td>
+<td><code>true</code>, <code>false</code></td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>无序去重集合</td>
+<td><code>{1,2,3}</code></td>
+</tr>
+<tr>
+<td><code>vector</code></td>
+<td>一维同构数值数组（1 索引）</td>
+<td><code>vec[1,2,3]</code></td>
+</tr>
+<tr>
+<td><code>table</code></td>
+<td>哈希表（任意可哈希键）</td>
+<td>见 4.5</td>
+</tr>
+<tr>
+<td><code>matrix</code></td>
+<td>二维同构数值网络（1 索引）</td>
+<td><code>mat[1,2;3,4]</code></td>
+</tr>
+<tr>
+<td><code>Expr</code></td>
+<td>CAS 符号表达式</td>
+<td><code>x^2 + 1</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>在当前定义中，<code>int</code>, <code>bool</code>, <code>null</code>为值类型，其他为对象引用类型</li>
+</ul>
+<h3 id="45-table">4.5 table 万能表规范</h3>
+<p><code>table</code> 是键值容器，逻辑类型记作 <code>table&lt;K, V&gt;</code>。</p>
+<ul>
+<li><code>K</code> 必须是可哈希类型， 单个表支持多种不同可哈希键类型</li>
+<li><code>V</code> 可为任意类型（可包含 <code>num</code>、<code>text</code>、<code>vector</code>、<code>matrix</code>、<code>Expr</code> 等）</li>
+<li>这会是你在LSR中看到的最动态类型的容器</li>
+</ul>
+<h4 id="451">4.5.1 字面量与创建</h4>
+<p>字面量语法使用 <code>table{key =&gt; value, ...}</code>：</p>
+<pre><code class="language-lamina">let empty_tbl = table{}
+let scores = table{&quot;alice&quot; =&gt; 98, &quot;bob&quot; =&gt; 87}
+let mixed_val = table{&quot;v&quot; =&gt; vec[1,2], &quot;m&quot; =&gt; mat[1,2;3,4]}
+</code></pre>
+<p>类型推导规则（暂不做数，待定）：</p>
+<ul>
+<li>空表需在后续写入中确定 <code>K</code>、<code>V</code>，若约束不足则编译报错</li>
+<li>非空字面量中，所有 key 必须可统一到同一 <code>K</code></li>
+<li>value 统一到同一 <code>V</code>；数值类型允许按数值塔提升</li>
+</ul>
+<h4 id="452">4.5.2 键类型约束</h4>
+<p>默认可哈希键类型：<code>complex</code>、<code>text</code>。</p>
+<p>默认键类型范围仅包含：<code>complex</code>、<code>text</code>、<code>bool</code>。其他类型作为键需包含<code>.hash()</code>子方法。</p>
+<p>不支持num键类型的原因： 支持朴素标识符键类型，编译时哈希</p>
+<pre><code class="language-lamina">let comping_hash_table = table{
+  animal =&gt; &quot;dog&quot;, num =&gt; &quot;1&quot;
+} //这部分通常不可遍历
+</code></pre>
+<h4 id="453">4.5.3 读取与缺失键行为</h4>
+<p>读取语法：<code>tbl[key]</code>。</p>
+<pre><code class="language-lamina">let scores = table{&quot;alice&quot; =&gt; 98, &quot;bob&quot; =&gt; 87}
+let a = scores[&quot;alice&quot;]
+</code></pre>
+<p>键规则：</p>
+<ul>
+<li>直接读取 <code>tbl[key]</code> 且键不存在时，返回null</li>
+<li>写入键必须可哈希，否则runtime报错</li>
+</ul>
+<h4 id="454">4.5.4 更新与写入</h4>
+<p>写入语法：<code>tbl[key] = value</code>，包括覆盖与新增。</p>
+<pre><code class="language-lamina">var scores = table{&quot;alice&quot; =&gt; 98}
+scores[&quot;alice&quot;] = 100   # 覆盖
+scores[&quot;bob&quot;] = 91      # 新增
+</code></pre>
+<h4 id="455">4.5.5 常用查询操作</h4>
+<pre><code class="language-lamina">scores.has(&quot;alice&quot;)        # bool
+scores.keys()              # vector&lt;K&gt;
+scores.values()            # vector&lt;V&gt;
+scores.items()             # vector&lt;(K, V)&gt;
+</code></pre>
+<h3 id="46">4.6 复合类型的值语义与引用语义</h3>
+<h4 id="461">4.6.1 总规则</h4>
+<ul>
+<li>复合类型实现采用共享引用，降低拷贝成本</li>
+<li>可观察语义采用写时复制（COW）</li>
+<li>只读操作（读取、遍历、计算）不触发复制</li>
+<li>一旦发生可变写入（<code>var</code> 绑定上的突变），若对象被共享，必须先分离副本再写入</li>
+</ul>
+<h4 id="462">4.6.2 赋值语义</h4>
+<ul>
+<li>赋值后两个变量指向同一底层对象（<code>is</code> 可能为 <code>true</code>）</li>
+<li>对其中一个变量做可变写入时，触发 COW，另一个变量保持原值</li>
+</ul>
+<pre><code class="language-lamina">var t1 = table{&quot;x&quot; =&gt; 1}
+var t2 = t1
+
+t2[&quot;x&quot;] = 9
+
+# COW 后可观察结果
+# t1[&quot;x&quot;] == 1
+# t2[&quot;x&quot;] == 9
+</code></pre>
+<h4 id="463">4.6.3 函数传参语义</h4>
+<ul>
+<li>非值类型参数采用引用传递</li>
+<li>函数内对局部可变绑定突变时，按 COW 分离</li>
+<li>修改结果通过 <code>return</code> 新对象交付调用方</li>
+</ul>
+<pre><code class="language-lamina">func bump(src table) -&gt; table {
+    var t = src
+    let v = t[&quot;n&quot;]  # 若为值类型则产生复制，否则为引用
+    if v != null {
+        t[&quot;n&quot;] = v + 1
+    }
+    t
+}
+
+var a = table{&quot;n&quot; =&gt; 0}
+var b = a |&gt; bump()
+
+# a[&quot;n&quot;] == 0
+# b[&quot;n&quot;] == 1
+</code></pre>
+<h4 id="464-letvar">4.6.4 与 let/var 的关系</h4>
+<ul>
+<li><code>let</code>：只读绑定，COW 写路径仅由 <code>var</code> 触发</li>
+<li><code>var</code>：可变绑定，触发 COW 规则</li>
+<li>本规则统一适用于 <code>vector</code>、<code>matrix</code>、<code>table</code>、<code>set</code></li>
+</ul>
+<h3 id="47">4.7 容器齐次性约束</h3>
+<p><code>vector</code> 与 <code>matrix</code> 强齐次，保证类型稳定与 BLAS 友好。</p>
+<ul>
+<li><code>vector&lt;T&gt;</code> 要求所有元素类型一致</li>
+<li><code>matrix&lt;T&gt;</code> 要求所有元素类型一致</li>
+<li>对数值容器，元素量纲签名也必须一致</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-lamina">let ok_v = vec[1&lt;m&gt;, 2&lt;m&gt;, 3&lt;m&gt;]          # 合法：同类型同量纲
+# let bad_v = vec[1&lt;m&gt;, 2&lt;s&gt;]             # 非法：量纲不一致
+</code></pre>
+<p>异构数据建议：</p>
+<ul>
+<li>需要混合不同量纲（如 <code>[pos, vel]</code>）时，使用 <code>table</code></li>
+<li>或使用后续结构体规范（若引入）</li>
+</ul>
+<h2 id="5">5. 量纲系统</h2>
+<h3 id="51">5.1 声明与运算</h3>
+<p>单位通过尖括号 <code>&lt;&gt;</code> 附加于数值后形成复合类型。编译器执行量纲代数（约分、乘除）与加减一致性检查。</p>
+<pre><code class="language-lamina">let dist = 10&lt;m&gt;
+let time = 2&lt;s&gt;
+let spd = dist / time
+
+# let error = 5&lt;m&gt; + 2&lt;s&gt;   # Dimensional Mismatch
+</code></pre>
+<h3 id="52">5.2 显式单位转换</h3>
+<p>单位转换必须使用 <code>as</code>：</p>
+<pre><code class="language-lamina">let v = 20&lt;m/s&gt;
+let v_kmh = v as &lt;km/h&gt;
+</code></pre>
+<h3 id="521">5.2.1 用户自定义单位</h3>
+<p>用户可使用 <code>unit</code> 声明新单位，支持两种形式：</p>
+<ul>
+<li>抽象基单位：<code>unit U</code></li>
+<li>派生单位：<code>unit V = expr&lt;...&gt;</code></li>
+</ul>
+<pre><code class="language-lamina">unit score
+unit token
+
+unit km = 1000&lt;m&gt;
+unit min = 60&lt;s&gt;
+unit N = 1&lt;kg*m/s^2&gt;
+unit level = 100&lt;score&gt;
+</code></pre>
+<p>约束：</p>
+<ul>
+<li>单位名在当前命名空间内唯一</li>
+<li>单位定义要求无环（如 <code>unit a = 2&lt;b&gt;</code> 且 <code>unit b = 3&lt;a&gt;</code> 形成环）</li>
+<li>抽象基单位可直接创建；派生单位需可归约到已知单位组合（SI 或抽象基单位）</li>
+<li>派生单位必须可归约到已知单位组合（SI 或已声明抽象单位）</li>
+<li>定义成功后可参与 <code>as &lt;...&gt;</code> 转换（仅限同量纲）</li>
+</ul>
+<h3 id="53">5.3 底层表示</h3>
+<ul>
+<li>量纲签名在<strong>编译期类型检查阶段</strong>表示为“SI 七维 + 用户基单位”的稀疏指数映射</li>
+<li>无量纲纯数字对应零向量</li>
+<li>乘除运算对应向量加减</li>
+<li>相同量纲不同缩放单位仅允许通过 <code>as</code> 显式转换</li>
+</ul>
+<p>实现约束：</p>
+<ul>
+<li>运行期普通数值不携带量纲元数据</li>
+<li>Codegen 阶段应抹除量纲标签，退化为原生数值（如 <code>float64</code>/<code>int</code>）</li>
+<li>以便复用 BLAS/LAPACK 等高性能线代后端</li>
+<li>仅 <code>Expr</code>（CAS）允许保留量纲符号，用于符号推导中的一致性验证</li>
+</ul>
+<h3 id="54-to-scalar">5.4 量纲剥离（to scalar）</h3>
+<p>带量纲值剥离为纯数值的语法与边界由 LSR-008 定义。</p>
+<pre><code class="language-lamina">let dist = 10&lt;m&gt;
+let raw = dist as num              # SI 基准转换后剥离
+let raw_keep = dist as scalar      # 仅剥离标签，保持当前刻度
+
+let speed = 20&lt;m/s&gt;
+let raw_kmh = (speed as &lt;km/h&gt;) as num
+</code></pre>
+<p>规则：</p>
+<ul>
+<li>默认剥离到 <code>num</code> 使用 SI 基准量值</li>
+<li><code>as scalar</code> 仅移除量纲标签，不进行数值缩放</li>
+<li>若需要特定单位下的纯数值，先做单位转换再剥离</li>
+<li><code>as num&lt;_&gt;</code> 在新规范中非法，必须使用 <code>as num</code></li>
+</ul>
+<h2 id="6">6. 函数</h2>
+<h3 id="61">6.1 函数签名</h3>
+<p>函数签名语法：<code>func name(param Type, ...) -&gt; ReturnType</code></p>
+<pre><code class="language-lamina">func kinetic_energy(m num&lt;kg&gt;, v num&lt;m/s&gt;) -&gt; num&lt;J&gt; {
+    return 1/2 * m * v^2
+}
+
+func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
+    return ((s as num) / 3600) as num&lt;h&gt;
+}
+</code></pre>
+<h3 id="62-lambda-match">6.2 Lambda 与 match 的规范边界</h3>
+<ul>
+<li>本文件不定义 Lambda 语法与类型推导细则</li>
+<li>Lambda 的语法、类型推导、与管道交互由 LSR-006 单独定义</li>
+<li>match 的语法、穷尽检查、模式系统由 LSR-005 单独定义</li>
+</ul>
+<h2 id="7">7. 控制流与推导式</h2>
+<h3 id="71-if">7.1 表达式化 if</h3>
+<p><code>if</code> 是表达式，必须有 <code>else</code>（或提前 <code>return</code> 完全覆盖）。</p>
+<pre><code class="language-lamina">let abs_val = if x &lt; 0 {
+    -x
+} else {
+    x
+}
+</code></pre>
+<h3 id="72-loop">7.2 loop 定次循环</h3>
+<p><code>loop x { ... }</code> 表示循环体执行 <code>x</code> 次。<code>x</code> 必须是可确定为非负整数的表达式。</p>
+<pre><code class="language-lamina">loop 5 {
+    print(&quot;tick&quot;)
+}
+
+let n = 3
+loop n {
+    counter = counter + 1
+}
+</code></pre>
+<p>规则：</p>
+<ul>
+<li>循环次数在进入循环前求值一次</li>
+<li>若 <code>x == 0</code>，循环体不执行</li>
+<li>若 <code>x &lt; 0</code> 或不是整数，编译报错</li>
+</ul>
+<h3 id="73-while">7.3 while 条件循环</h3>
+<p><code>while cond { ... }</code> 在 <code>cond</code> 为 <code>true</code> 时重复执行循环体。</p>
+<pre><code class="language-lamina">var i = 0
+while i &lt; 5 {
+    i = i + 1
+}
+</code></pre>
+<p>规则：</p>
+<ul>
+<li>每轮迭代前重新计算 <code>cond</code></li>
+<li><code>cond</code> 必须是 <code>bool</code> 类型，否则编译报错</li>
+<li>支持 <code>break</code> 与 <code>continue</code></li>
+</ul>
+<h3 id="74-for">7.4 for 迭代与推导式</h3>
+<p>迭代：<code>for 名字 in 可迭代对象 {...}</code></p>
+<p>不论迭代还是推导式，其可迭代对象必须包含 <code>begin()</code> <code>next(last iterator)</code> 和 <code>end()</code>子方法</p>
+<pre><code class="language-lamina">let person = vec[2,4,32,5,6]
+for num in person { 
+  print(num)
+}
+
+# 等价写法：
+
+let person = vec[2,4,32,5,6]
+{
+  let end = person.end()
+  var iter = person.begin()
+  var num = iter.get()
+  while iter != end {
+
+      print(num)
+
+      iter = person.next(iter)
+      num = iter.get()
+  } 
+}
+
+</code></pre>
+<p>推导式语法：<code>表达式 for 变量 in 可迭代对象 if 守卫条件</code></p>
+<pre><code class="language-lamina"># 向量推导
+let squares = vec[x^2 for x in range(1, 10) if x % 2 == 0]
+
+# 集合推导
+let abs_set = {abs(x) for x in vec[-1, 1, 2, -2]}
+
+# 矩阵推导
+let M = mat[i * j for i in range(1,3); for j in range(1,3)]
+</code></pre>
+<p>规则：</p>
+<ul>
+<li>推导式内部为独立词法作用域</li>
+<li>外部变量访问范围：读取外部 <code>let</code>；外部 <code>var</code> 通过显式返回更新</li>
+<li>迭代器单次求值</li>
+</ul>
+<h2 id="8">8. 向量与矩阵计算</h2>
+<h3 id="81">8.1 定义、拼接与索引</h3>
+<pre><code class="language-lamina">let A = mat[1,2,3;4,5,6;7,8,9]
+let v = vec[1,2,3]
+
+let A_double = [A, A]
+let A_stack = [A; A]
+let element = A[2,3]
+</code></pre>
+<h3 id="82">8.2 切片</h3>
+<pre><code class="language-lamina">let row2 = A[2,*]
+let col3 = A[*,3]
+let submat = A[1..2,2..3]
+</code></pre>
+<h3 id="83">8.3 算术与关系广播定义</h3>
+<ul>
+<li>标准线性代数算子：<code>*</code>, <code>\\</code>, <code>/</code>, <code>^</code></li>
+<li>元素广播算子：<code>.*</code>, <code>./</code>, <code>.+</code>, <code>.-</code>, <code>.^</code></li>
+<li>关系广播算子：<code>.==</code>, <code>.!=</code>, <code>.&lt;</code>, <code>.&lt;=</code>, <code>.&gt;</code>, <code>.&gt;=</code></li>
+<li><code>\\</code> 与 <code>/</code> 分别定义为左除与右除：<code>A \\ B</code> 解 <code>A X = B</code>，<code>B / A</code> 解 <code>X A = B</code></li>
+<li><code>\\</code>、<code>/</code> 与 <code>^</code> 采用按类型分派；无法唯一分派时编译报错</li>
+<li>未加点的关系比较仅用于标量；容器比较必须使用加点算子</li>
+</ul>
+<pre><code class="language-lamina">let X = A \\ B      # 线性系统 A X = B
+let Y = B / A       # 线性系统 Y A = B
+</code></pre>
+<pre><code class="language-lamina">let B = A .+ 10
+let C = A .* A
+let D = A * A   # A 必须为方阵
+
+let flags = vec[1,2,3] .&gt; 1      # vec[false, true, true]
+# vec[1,2,3] &gt; 1                 # 编译报错（容器比较需使用 .&gt;）
+</code></pre>
+<h3 id="84">8.4 常用操作</h3>
+<pre><code class="language-lamina">dot(v1, v2)      # 点积
+cross(v1, v2)    # 叉积（3维）
+norm(v)          # 范数
+v1 .+ v2         # 逐元素加法
+v .* 2           # 标量广播
+matmul(A, v)     # 矩阵-向量乘
+matmul(A, B)     # 矩阵-矩阵乘
+inv(A)           # 逆矩阵
+det(A)           # 行列式
+</code></pre>
+<h2 id="9">9. 集合与逻辑</h2>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>含义</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>in</code> / <code>not in</code></td>
+<td>元素从属</td>
+<td><code>2 in {1,2,3}</code></td>
+</tr>
+<tr>
+<td><code>subset</code></td>
+<td>子集关系</td>
+<td><code>{1,2} subset {1,2,3}</code></td>
+</tr>
+<tr>
+<td><code>|</code>, <code>&amp;</code>, <code>-</code>, <code>xor</code></td>
+<td>并、交、差、对称差</td>
+<td><code>{1,2} xor {2,3}</code></td>
+</tr>
+</tbody>
+</table>
+<p>预定义数学常量：<code>pi</code>, <code>e</code>, <code>phi</code></p>
+<p>预定义集合：<code>{R}</code>, <code>{Z}</code>, <code>{Q}</code>, <code>{C}</code></p>
+<h2 id="10">10. 数值塔与提升规则</h2>
+<p>层级：<code>Z ⊂ Q ⊂ R ⊂ C ⊂ Expr</code></p>
+<ul>
+<li><code>Int (Z)</code>：大整数，与 <code>int</code> 区别在于其为无限精度</li>
+<li><code>Fraction (Q)</code>：分数（分子分母均为 <code>Int</code>）, 与 <code>frac</code> 区别在于 <code>frac</code> 分子分母均为 <code>int</code></li>
+<li><code>Real (R)</code>：实数</li>
+<li><code>Complex (C)</code>：复数</li>
+<li><code>Expr</code>：符号表达式</li>
+</ul>
+<p>提升规则：</p>
+<ol>
+<li>二元运算中，低层级自动提升到高层级</li>
+<li><code>Expr</code> 降级需显式转换</li>
+<li>除法只有在显式涉及 <code>Real</code> 时返回 <code>Real</code></li>
+<li>数值提升与单位推导互不干涉</li>
+</ol>
+<pre><code class="language-lamina">let a = 2 + 1/2
+let b = 1/2 + 0.5
+let c = 2.0 + 3i
+
+sym x
+let d = 5/2 + x
+</code></pre>
+<h2 id="11-expr">11. Expr 边界与求值</h2>
+<p><code>Expr</code> 为延迟求值 AST；参与数值运算时整体提升为 <code>Expr</code>。</p>
+<pre><code class="language-lamina">let c = 5
+sym x
+let res = c * x
+</code></pre>
+<p><code>Expr</code> 降级必须显式：</p>
+<ol>
+<li>代入求值：<code>expr(symbol =&gt; value)</code></li>
+<li>强制浮点：<code>evalf(expr)</code></li>
+</ol>
+<pre><code class="language-lamina">sym x, y
+let equation = x^2 + 1 + y*2
+let val1 = equation =&gt; (x =&gt; 3, y =&gt; 4)
+
+let exact = sin(pi / 4)
+let approx = evalf(exact)
+</code></pre>
+<h2 id="12">12. 相等性语义</h2>
+<ul>
+<li>结构相等：<code>==</code></li>
+<li>数学等价（仅 <code>Expr</code>）：<code>===</code>（由 LSR-007 单独定义）</li>
+</ul>
+<pre><code class="language-lamina">let a = vec[1,2,3]
+let b = a
+b is a   # true
+
+let c = vec[1,2,3]
+c is a   # false
+
+vec[1,2,3] == vec[1,2,3]   # true
+[1,2;3,4] == [1,2;3,4]     # true
+</code></pre>
+<h2 id="13">13. 序列与模块系统</h2>
+<h3 id="131">13.1 序列生成</h3>
+<pre><code class="language-lamina">func square(x num) -&gt; num {
+    return x^2
+}
+
+let nums = range(1,10)
+let squares = nums |&gt; map(square)
+range(start int, end int) -&gt; vector
+</code></pre>
+<h3 id="132">13.2 命名空间与模块</h3>
+<p><code>import</code>：加载模块并绑定模块对象。<br />
+<code>use</code>：从模块导入符号到当前作用域（冲突时报错）。</p>
+<pre><code class="language-lamina">import std.math
+import physics.quantum
+
+let val = math.sin(math.pi / 2)
+
+use std.math.{sin, cos, pi, e}
+use std.linalg.{det}
+
+let wave = sin(pi * x) + cos(e * x)
+let D = det(matrix_A)
+
+use std.constants.{G as GRAVITY}
+</code></pre>
+<h2 id="14">14. 关联文档</h2>
+<ul>
+<li><code>LSR-003</code>：Lamina C 扩展与插件规范</li>
+<li><code>LSR-004</code>：标准库规范（模块结构、数学系统、库调用约定）</li>
+<li><code>LSR-005</code>：match 规范（语法、穷尽检查、模式系统）</li>
+<li><code>LSR-006</code>：Lambda 规范（语法、类型推导、管道交互）</li>
+<li><code>LSR-007</code>：<code>===</code> 数学等价规范（判定边界与化简策略）</li>
+<li><code>LSR-008</code>：量纲剥离规范（<code>as num</code> 语义、边界与错误模型）</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

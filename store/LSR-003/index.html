@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 003 - Lamina C 扩展与插件规范 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 003 - Lamina C 扩展与插件规范</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-003-lamina-c">LSR 003 - Lamina C 扩展与插件规范</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#_3">技术规范</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-003-lamina-c">LSR 003 - Lamina C 扩展与插件规范</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 003</li>
+<li>标题 Lamina C 扩展与插件规范</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 草案</li>
+<li>类型 标准规范</li>
+<li>创建日期 02-04-2026</li>
+<li>归属项目 编译器、虚拟机、包管理器</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>定义 C/C++ 扩展的最小交付、接口映射与内存/所有权约束。</p>
+<h2 id="_3">技术规范</h2>
+<h3 id="1">1. 最小交付物</h3>
+<p>最小交付：</p>
+<ul>
+<li>动态库项目（可编译生成 <code>.dll/.so/.dylib</code>）</li>
+<li>Lamina 模块声明文件（默认文件名 <code>lib.lm</code>）</li>
+</ul>
+<p>推荐目录（非强制）：</p>
+<ul>
+<li><code>[root]/lib.lm</code></li>
+<li><code>[root]/src/</code></li>
+<li><code>[root]/include/</code>（可选）</li>
+</ul>
+<h3 id="2">2. 元数据文件（可选）</h3>
+<p><code>lampm.json</code> 可选，用于补充包管理与自动构建信息；接口绑定前置条件仅为动态库与 <code>lib.lm</code>。</p>
+<p>若提供 <code>lampm.json</code>，建议字段如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>String</td>
+<td>包名</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>String</td>
+<td>建议为 <code>"extension"</code></td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td>String</td>
+<td>C/C++ 标准版本</td>
+</tr>
+<tr>
+<td><code>build.cflags</code></td>
+<td>Array</td>
+<td>编译参数</td>
+</tr>
+<tr>
+<td><code>build.libs</code></td>
+<td>Array</td>
+<td>链接库列表</td>
+</tr>
+<tr>
+<td><code>interface</code></td>
+<td>String</td>
+<td>接口文件路径，默认 <code>"lib.lm"</code></td>
+</tr>
+<tr>
+<td><code>entry</code></td>
+<td>String</td>
+<td>动态库入口函数名，默认 <code>"lsr_init"</code></td>
+</tr>
+</tbody>
+</table>
+<p>未提供 <code>lampm.json</code> 时，工具链按默认约定加载：</p>
+<ul>
+<li>接口文件：<code>lib.lm</code></li>
+<li>入口符号：<code>lsr_init</code></li>
+<li>动态库名称：由构建系统决定</li>
+</ul>
+<h3 id="3">3. 接口映射语法（必需）</h3>
+<p>在 <code>lib.lm</code> 中使用 <code>module</code> 声明扩展命名空间，函数签名遵循 LSR-000：</p>
+<ul>
+<li>静态强类型</li>
+<li>参数与返回类型必须显式</li>
+<li>类型标注语法采用 <code>name Type</code></li>
+</ul>
+<pre><code class="language-lamina">module example {
+  # 语法：func name(param Type, ...) -&gt; ReturnType = &quot;c_symbol&quot;
+  func det(m matrix) -&gt; num = &quot;c_ext_det&quot;
+  func eig(m matrix) -&gt; matrix = &quot;c_ext_eig&quot;
+}
+</code></pre>
+<h3 id="31-table">3.1 <code>table</code> 类型接口约束</h3>
+<p>当接口参数或返回值使用 <code>table&lt;K, V&gt;</code> 时，必须满足：</p>
+<ul>
+<li><code>K</code> 必须可哈希</li>
+<li>默认允许键类型：<code>num</code>、<code>complex</code>、<code>text</code>、<code>bool</code></li>
+<li>默认键类型范围仅包含：<code>num</code>、<code>complex</code>、<code>text</code>、<code>bool</code></li>
+<li>其他类型作为键需显式声明哈希语义（如 <code>vector</code>、<code>matrix</code>、<code>set</code>、<code>table</code>）</li>
+</ul>
+<p>违反约束时接口绑定报错并停止生成桥接代码。</p>
+<pre><code class="language-lamina">module ext_table {
+  func score_of(t table&lt;text, num&gt;, name text) -&gt; num = &quot;c_ext_score_of&quot;
+  # 示例：vector 作为键需显式哈希语义
+  # func bad(t table&lt;vector, num&gt;) -&gt; num = &quot;c_ext_bad&quot;
+}
+</code></pre>
+<h3 id="32">3.2 复合对象内存安全与所有权协议</h3>
+<p>复合对象参数必须声明访问模式：</p>
+<ul>
+<li><code>@readonly</code>：只读视图；原地写入需先 <code>clone_if_shared</code></li>
+<li><code>@move</code>：所有权转移，扩展接管生命周期</li>
+</ul>
+<p>默认 <code>@readonly</code>。</p>
+<h4 id="321">3.2.1 引用计数约束</h4>
+<ul>
+<li><code>@readonly</code> 绑定必须增加持有计数，释放时归还</li>
+<li><code>@move</code> 绑定后 Lamina 侧引用失效，生命周期转移到扩展</li>
+<li>扩展持有指针需显式声明所有权</li>
+</ul>
+<h4 id="322">3.2.2 写入前克隆要求</h4>
+<p>在 <code>@readonly</code> 模式下，如需写入，必须调用运行时接口：</p>
+<p><code>clone_if_shared(obj)</code></p>
+<ul>
+<li>独占对象：直接返回可写对象</li>
+<li>共享对象：先复制再返回可写对象</li>
+</ul>
+<p>共享对象写入前必须调用该接口；运行时对未调用写入触发 <code>ExtensionMutationViolation</code>。</p>
+<h4 id="323">3.2.3 接口示例</h4>
+<pre><code class="language-lamina">module ext_safe {
+  func frobenius(a matrix @readonly) -&gt; num = &quot;c_ext_frob&quot;
+  func consume(t table&lt;text, num&gt; @move) -&gt; bool = &quot;c_ext_consume&quot;
+}
+</code></pre>
+<p>规则：<code>@readonly</code> / <code>@move</code> 为接口注解。未声明时默认 <code>@readonly</code>。</p>
+<h3 id="4">4. 错误与诊断</h3>
+<p>至少支持：</p>
+<ul>
+<li><code>InterfaceBindError</code>：接口映射失败</li>
+<li><code>TableKeyTypeError</code>：<code>table</code> 键类型不合法</li>
+<li><code>OwnershipViolation</code>：所有权协议违规</li>
+<li><code>ExtensionMutationViolation</code>：未按规则写共享对象</li>
+</ul>
+<h3 id="5-lsr">5. 与其他 LSR 的关系</h3>
+<ul>
+<li>LSR-000：核心类型系统、值语义、COW 语义</li>
+<li>LSR-004：标准库定义，扩展可作为补充实现</li>
+<li>LSR-008：量纲剥离规则（扩展无量纲入参场景）</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

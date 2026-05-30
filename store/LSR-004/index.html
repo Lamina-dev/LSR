@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 004 - 标准库 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 004 - 标准库</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-004-">LSR 004 - 标准库</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#_3">技术规范</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-004-">LSR 004 - 标准库</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 004</li>
+<li>标题 标准库</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 草案</li>
+<li>类型 标准规范</li>
+<li>创建日期 02-04-2026</li>
+<li>归属项目 通用</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>定义 Lamina 标准库（<code>std</code>）的模块结构、导入与调用规则、数学核心 API 和错误模型。</p>
+<h2 id="_3">技术规范</h2>
+<h3 id="1">1. 设计目标</h3>
+<ul>
+<li>统一、稳定、可组合的标准 API</li>
+<li>对齐 LSR-000 的静态强类型与单位系统</li>
+<li>覆盖数学核心能力（数值、线代、统计、随机、单位）</li>
+<li>同名函数跨平台语义一致</li>
+</ul>
+<h3 id="2">2. 命名空间与模块结构</h3>
+<p>标准库顶级命名空间固定为 <code>std</code>。</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>作用域</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>std.math</code></td>
+<td>通用数学</td>
+<td>初等函数、三角函数、指数对数、舍入、数值辅助</td>
+</tr>
+<tr>
+<td><code>std.linalg</code></td>
+<td>线性代数</td>
+<td>矩阵分解、求解、逆、行列式、特征值</td>
+</tr>
+<tr>
+<td><code>std.stats</code></td>
+<td>统计</td>
+<td>描述统计、分位数、协方差、相关系数</td>
+</tr>
+<tr>
+<td><code>std.random</code></td>
+<td>随机数</td>
+<td>伪随机引擎、分布采样、种子控制</td>
+</tr>
+<tr>
+<td><code>std.units</code></td>
+<td>单位工具</td>
+<td>单位转换辅助与量纲工具函数</td>
+</tr>
+<tr>
+<td><code>std.constants</code></td>
+<td>常量集</td>
+<td>统一暴露 LSR-002 常量</td>
+</tr>
+<tr>
+<td><code>std.io</code></td>
+<td>基础 I/O</td>
+<td>文本输入输出与格式化</td>
+</tr>
+</tbody>
+</table>
+<p>规则：</p>
+<ul>
+<li>模块名称与路径大小写敏感</li>
+<li><code>std</code> 根命名空间保留；用户模块定义在非 <code>std</code> 命名空间</li>
+</ul>
+<h3 id="3">3. 导入与库调用约定</h3>
+<h4 id="31">3.1 导入语法</h4>
+<pre><code class="language-lamina">import std.math
+import std.linalg as la
+
+use std.math.{sin, cos, pi}
+use std.constants.{G as GRAVITY}
+</code></pre>
+<p>规则：</p>
+<ul>
+<li><code>import a.b</code> 绑定模块对象到当前作用域（默认名为末段标识符）</li>
+<li><code>import a.b as x</code> 使用别名绑定模块对象</li>
+<li><code>use a.b.{x, y as z}</code> 导入符号；若与当前作用域重名则编译报错</li>
+</ul>
+<h4 id="32">3.2 调用约定</h4>
+<pre><code class="language-lamina">let y = math.sin(math.pi / 2)
+let detA = la.det(A)
+</code></pre>
+<p>规则：</p>
+<ul>
+<li>模块函数调用统一使用 <code>module.func(args...)</code></li>
+<li>对 <code>use</code> 导入的符号可直接调用</li>
+<li>标准库函数以纯函数语义为默认，参数只读</li>
+</ul>
+<h4 id="33">3.3 <code>.</code> 规则</h4>
+<p><code>.</code> 用于命名空间路径与成员访问；<code>import</code>/<code>use</code> 中路径与符号选择均使用 <code>.</code>。</p>
+<pre><code class="language-lamina">import std.math
+use std.math.{sin, cos}
+
+let a = math.sin(pi / 2)   # '.' 成员访问
+let b = sin(pi / 2)        # 通过 use 导入后可直接访问
+</code></pre>
+<p>规则：</p>
+<ul>
+<li><code>import a.b</code> / <code>use a.b.{...}</code> 中的 <code>.</code> 表示命名空间路径</li>
+<li>运行期表达式的 <code>a.b</code> 表示成员访问（模块对象、表、对象）</li>
+</ul>
+<h3 id="4">4. 数学系统</h3>
+<h4 id="41-stdmath">4.1 <code>std.math</code></h4>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>abs</code></td>
+<td><code>func abs(x num) -&gt; num</code></td>
+<td>绝对值</td>
+</tr>
+<tr>
+<td><code>sqrt</code></td>
+<td><code>func sqrt(x num) -&gt; num</code></td>
+<td>平方根</td>
+</tr>
+<tr>
+<td><code>pow</code></td>
+<td><code>func pow(x num, y num) -&gt; num</code></td>
+<td>幂</td>
+</tr>
+<tr>
+<td><code>exp</code></td>
+<td><code>func exp(x num) -&gt; num</code></td>
+<td>指数函数</td>
+</tr>
+<tr>
+<td><code>log</code></td>
+<td><code>func log(x num) -&gt; num</code></td>
+<td>自然对数</td>
+</tr>
+<tr>
+<td><code>log10</code></td>
+<td><code>func log10(x num) -&gt; num</code></td>
+<td>常用对数</td>
+</tr>
+<tr>
+<td><code>sin</code></td>
+<td><code>func sin(x num) -&gt; num</code></td>
+<td>正弦</td>
+</tr>
+<tr>
+<td><code>cos</code></td>
+<td><code>func cos(x num) -&gt; num</code></td>
+<td>余弦</td>
+</tr>
+<tr>
+<td><code>tan</code></td>
+<td><code>func tan(x num) -&gt; num</code></td>
+<td>正切</td>
+</tr>
+<tr>
+<td><code>asin</code></td>
+<td><code>func asin(x num) -&gt; num</code></td>
+<td>反正弦</td>
+</tr>
+<tr>
+<td><code>acos</code></td>
+<td><code>func acos(x num) -&gt; num</code></td>
+<td>反余弦</td>
+</tr>
+<tr>
+<td><code>atan</code></td>
+<td><code>func atan(x num) -&gt; num</code></td>
+<td>反正切</td>
+</tr>
+<tr>
+<td><code>floor</code></td>
+<td><code>func floor(x num) -&gt; num</code></td>
+<td>向下取整</td>
+</tr>
+<tr>
+<td><code>ceil</code></td>
+<td><code>func ceil(x num) -&gt; num</code></td>
+<td>向上取整</td>
+</tr>
+<tr>
+<td><code>round</code></td>
+<td><code>func round(x num) -&gt; num</code></td>
+<td>四舍五入</td>
+</tr>
+<tr>
+<td><code>clamp</code></td>
+<td><code>func clamp(x num, lo num, hi num) -&gt; num</code></td>
+<td>截断到区间</td>
+</tr>
+</tbody>
+</table>
+<p>常量：<code>pi</code>, <code>e</code>, <code>phi</code>。</p>
+<h4 id="42-stdlinalg">4.2 <code>std.linalg</code></h4>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shape</code></td>
+<td><code>func shape(A matrix) -&gt; vector&lt;int&gt;</code></td>
+<td>返回维度 <code>[rows, cols]</code></td>
+</tr>
+<tr>
+<td><code>transpose</code></td>
+<td><code>func transpose(A matrix) -&gt; matrix</code></td>
+<td>非共轭转置</td>
+</tr>
+<tr>
+<td><code>adjoint</code></td>
+<td><code>func adjoint(A matrix) -&gt; matrix</code></td>
+<td>共轭转置</td>
+</tr>
+<tr>
+<td><code>det</code></td>
+<td><code>func det(A matrix) -&gt; num</code></td>
+<td>行列式（方阵）</td>
+</tr>
+<tr>
+<td><code>inv</code></td>
+<td><code>func inv(A matrix) -&gt; matrix</code></td>
+<td>矩阵逆（方阵）</td>
+</tr>
+<tr>
+<td><code>rank</code></td>
+<td><code>func rank(A matrix) -&gt; int</code></td>
+<td>矩阵秩</td>
+</tr>
+<tr>
+<td><code>trace</code></td>
+<td><code>func trace(A matrix) -&gt; num</code></td>
+<td>迹</td>
+</tr>
+<tr>
+<td><code>solve_left</code></td>
+<td><code>func solve_left(A matrix, B matrix) -&gt; matrix</code></td>
+<td>解 <code>A X = B</code></td>
+</tr>
+<tr>
+<td><code>solve_right</code></td>
+<td><code>func solve_right(B matrix, A matrix) -&gt; matrix</code></td>
+<td>解 <code>X A = B</code></td>
+</tr>
+<tr>
+<td><code>eig</code></td>
+<td><code>func eig(A matrix) -&gt; table&lt;text, matrix&gt;</code></td>
+<td>特征值/特征向量</td>
+</tr>
+<tr>
+<td><code>svd</code></td>
+<td><code>func svd(A matrix) -&gt; table&lt;text, matrix&gt;</code></td>
+<td>奇异值分解</td>
+</tr>
+</tbody>
+</table>
+<p>语义对齐：</p>
+<ul>
+<li><code>solve_left(A, B)</code> 与运算符 <code>A \\ B</code> 等价</li>
+<li><code>solve_right(B, A)</code> 与运算符 <code>B / A</code>（矩阵语义）等价</li>
+</ul>
+<h4 id="43-stdstats">4.3 <code>std.stats</code></h4>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mean</code></td>
+<td><code>func mean(x vector&lt;num&gt;) -&gt; num</code></td>
+<td>均值</td>
+</tr>
+<tr>
+<td><code>median</code></td>
+<td><code>func median(x vector&lt;num&gt;) -&gt; num</code></td>
+<td>中位数</td>
+</tr>
+<tr>
+<td><code>var</code></td>
+<td><code>func var(x vector&lt;num&gt;) -&gt; num</code></td>
+<td>方差</td>
+</tr>
+<tr>
+<td><code>std</code></td>
+<td><code>func std(x vector&lt;num&gt;) -&gt; num</code></td>
+<td>标准差</td>
+</tr>
+<tr>
+<td><code>quantile</code></td>
+<td><code>func quantile(x vector&lt;num&gt;, q num) -&gt; num</code></td>
+<td>分位数</td>
+</tr>
+<tr>
+<td><code>cov</code></td>
+<td><code>func cov(x vector&lt;num&gt;, y vector&lt;num&gt;) -&gt; num</code></td>
+<td>协方差</td>
+</tr>
+<tr>
+<td><code>corr</code></td>
+<td><code>func corr(x vector&lt;num&gt;, y vector&lt;num&gt;) -&gt; num</code></td>
+<td>相关系数</td>
+</tr>
+</tbody>
+</table>
+<h4 id="44-stdrandom">4.4 <code>std.random</code></h4>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>seed</code></td>
+<td><code>func seed(s int) -&gt; bool</code></td>
+<td>设置随机种子</td>
+</tr>
+<tr>
+<td><code>rand</code></td>
+<td><code>func rand() -&gt; num</code></td>
+<td><code>U(0,1)</code> 采样</td>
+</tr>
+<tr>
+<td><code>randint</code></td>
+<td><code>func randint(lo int, hi int) -&gt; int</code></td>
+<td>区间整数采样</td>
+</tr>
+<tr>
+<td><code>normal</code></td>
+<td><code>func normal(mu num, sigma num) -&gt; num</code></td>
+<td>正态采样</td>
+</tr>
+<tr>
+<td><code>choice</code></td>
+<td><code>func choice(x vector&lt;num&gt;) -&gt; num</code></td>
+<td>离散采样</td>
+</tr>
+</tbody>
+</table>
+<h4 id="45-stdunits">4.5 <code>std.units</code></h4>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>convert</code></td>
+<td><code>func convert(x num, u text) -&gt; num</code></td>
+<td>将数值转换到单位字符串 <code>u</code></td>
+</tr>
+<tr>
+<td><code>strip</code></td>
+<td><code>func strip(x num) -&gt; num</code></td>
+<td>等价于 <code>x as num</code>（见 LSR-008）</td>
+</tr>
+<tr>
+<td><code>is_dimensionless</code></td>
+<td><code>func is_dimensionless(x num) -&gt; bool</code></td>
+<td>是否无量纲</td>
+</tr>
+</tbody>
+</table>
+<p>规则：<code>strip</code> 只是函数入口，语义以 LSR-008 为准。</p>
+<h3 id="5">5. 常量系统</h3>
+<ul>
+<li><code>std.constants</code> 暴露 LSR-002 定义的常量集合</li>
+<li>常量以只读绑定导出</li>
+<li>常量单位必须与 LSR-000 量纲系统一致</li>
+</ul>
+<h4 id="51">5.1 用户自定义常量</h4>
+<p>用户可在模块内定义常量：</p>
+<pre><code class="language-lamina">module user.constants {
+    const G_MARS = 3.72076&lt;m/s^2&gt;
+    const TAU = 2 * pi
+}
+</code></pre>
+<p>规则：</p>
+<ul>
+<li><code>const</code> 必须在声明时初始化</li>
+<li>初始化表达式必须可在编译期求值</li>
+<li>常量为只读绑定；编译期校验覆盖重定义与写入</li>
+</ul>
+<h4 id="52">5.2 用户自定义单位</h4>
+<p>用户可在模块内定义单位：</p>
+<pre><code class="language-lamina">module user.units {
+    unit score
+    unit token
+
+    unit km = 1000&lt;m&gt;
+    unit min = 60&lt;s&gt;
+    unit knot = 0.514444&lt;m/s&gt;
+    unit level = 100&lt;score&gt;
+}
+</code></pre>
+<p>规则：</p>
+<ul>
+<li><code>unit</code> 声明进入当前命名空间</li>
+<li>允许定义抽象基单位（不归约到 SI）</li>
+<li>派生单位必须可归约到已知单位（SI 或抽象基单位）</li>
+<li>可通过 <code>import</code>/<code>use</code> 跨模块复用</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-lamina">use std.constants.{G, C, EARTH_GRAVITY}
+let v = EARTH_GRAVITY * 2&lt;s&gt;
+</code></pre>
+<h3 id="6">6. 错误模型</h3>
+<p>标准库错误采用可诊断错误码，至少覆盖：</p>
+<ul>
+<li><code>DomainError</code>：输入超出定义域（如 <code>log(-1)</code>）</li>
+<li><code>DimensionMismatch</code>：线代/广播维度不匹配</li>
+<li><code>SingularMatrix</code>：矩阵奇异或线性系统奇异</li>
+<li><code>EmptyInput</code>：统计函数输入为空</li>
+<li><code>InvalidArgument</code>：参数类型或取值非法</li>
+</ul>
+<h3 id="7">7. 性能与确定性约束</h3>
+<ul>
+<li>同版本标准库在同一输入下必须给出可重现结果（随机模块除外）</li>
+<li><code>std.random</code> 在固定种子下必须可重放</li>
+<li>线性代数实现允许后端差异，但数值误差须在文档化容差内</li>
+</ul>
+<h3 id="8">8. 版本与稳定性</h3>
+<ul>
+<li><code>std</code> 下 API 采用语义化版本管理</li>
+<li>对外函数签名变更属于破坏性变更，需提升主版本</li>
+<li>新增函数保持向后兼容调用行为；既有函数语义保持稳定</li>
+</ul>
+<h3 id="9">9. 示例</h3>
+<pre><code class="language-lamina">import std.math
+import std.linalg as la
+use std.stats.{mean, std}
+use std.units.{strip}
+
+let A = mat[2,1;1,3]
+let B = mat[1;2]
+let X = A \\ B
+
+let angle = math.pi / 4
+let s = math.sin(angle)
+
+let speed = 36&lt;km/h&gt;
+let raw_si = strip(speed as &lt;m/s&gt;)
+
+let xs = vec[1,2,3,4,5]
+let m = mean(xs)
+let sd = std(xs)
+</code></pre>
+<h3 id="10-lsr">10. 与其他 LSR 的关系</h3>
+<ul>
+<li>LSR-000：语言核心语法与运算符语义</li>
+<li>LSR-002：标准常量定义来源</li>
+<li>LSR-003：标准库可由扩展模块补充实现</li>
+<li>LSR-008：<code>as num</code> 量纲剥离语义来源</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

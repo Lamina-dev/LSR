@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 008 - 量纲剥离（Unit Stripping）规范 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 008 - 量纲剥离（Unit Stripping）规范</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-008-unit-stripping">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#_3">技术规范</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-008-unit-stripping">LSR 008 - 量纲剥离（Unit Stripping）规范</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 008</li>
+<li>标题 量纲剥离（Unit Stripping）规范</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 草案</li>
+<li>类型 标准规范</li>
+<li>创建日期 04-05-2026</li>
+<li>归属项目 编译器、通用</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>定义带量纲数值到无量纲数值的剥离路径，覆盖 <code>as num</code> 与 <code>as scalar</code>。</p>
+<h2 id="_3">技术规范</h2>
+<h3 id="1">1. 设计目标</h3>
+<ul>
+<li>为带量纲值提供单一、明确、可预测的剥离语法</li>
+<li>与现有 <code>as &lt;unit&gt;</code> 单位转换保持组合性</li>
+<li>剥离仅显式触发，精度与安全边界清晰</li>
+</ul>
+<h3 id="2">2. 语法</h3>
+<h4 id="21">2.1 基础语法</h4>
+<pre><code class="language-lamina">expr as num
+expr as scalar
+</code></pre>
+<p>规则：</p>
+<ul>
+<li><code>as num</code>：先转换到 SI 基准量值，再移除单位签名</li>
+<li><code>as scalar</code>：仅移除单位签名，不进行数值缩放</li>
+</ul>
+<h4 id="22">2.2 与单位转换组合</h4>
+<pre><code class="language-lamina">(expr as &lt;target_unit&gt;) as num
+</code></pre>
+<p>规则：先转换到目标单位，再剥离为纯数值。</p>
+<h3 id="3">3. 语义定义</h3>
+<h4 id="31">3.1 默认基准</h4>
+<ul>
+<li><code>expr as num</code> 采用 SI 基准量值</li>
+<li>例：<code>10&lt;km&gt; as num</code> 的结果是 <code>10000</code></li>
+<li>对抽象基单位（如 <code>score</code>、<code>token</code>），<code>as num</code> 采用该基单位自身刻度</li>
+<li>例：<code>10&lt;score&gt; as num</code> 结果为 <code>10</code></li>
+</ul>
+<h4 id="32">3.2 目标单位下剥离</h4>
+<ul>
+<li>若用户希望在某单位刻度下得到纯数值，必须先显式转换单位</li>
+<li>例：<code>(10&lt;km&gt; as &lt;km&gt;) as num</code> 结果为 <code>10</code></li>
+<li>抽象单位之间仅在存在显式比例定义时允许转换</li>
+</ul>
+<h4 id="33-as-scalar">3.3 <code>as scalar</code> 语义</h4>
+<ul>
+<li><code>expr as scalar</code> 保留当前显示刻度，仅移除单位标签</li>
+<li>例：<code>10&lt;km&gt; as scalar</code> 结果为 <code>10</code></li>
+<li>适用于符号推导或公式整理，保持当前刻度，降低系数膨胀</li>
+</ul>
+<h4 id="34-lsr-000">3.4 编译期降级（与 LSR-000 对齐）</h4>
+<ul>
+<li>量纲在编译期追踪，运行期普通数值不携带单位标签</li>
+<li><code>as num</code> 与 <code>as scalar</code> 在 Codegen 前应降级为纯数值表达式</li>
+</ul>
+<h3 id="4">4. 类型规则</h3>
+<ul>
+<li>输入必须是带量纲或无量纲的数值类型（<code>num</code> 及其子层级）</li>
+<li>输出类型为无量纲 <code>num</code></li>
+<li>对非数值类型（如 <code>vector</code>, <code>matrix</code>, <code>table</code>, <code>set</code>, <code>text</code>, <code>bool</code>）使用 <code>as num</code> 或 <code>as scalar</code>，编译报错 <code>UnitStripTypeMismatch</code></li>
+</ul>
+<h3 id="5">5. 与外部函数/底层操作的交互</h3>
+<h4 id="51">5.1 外部函数调用</h4>
+<p>当外部函数仅接受无量纲参数时，调用端必须显式剥离：</p>
+<pre><code class="language-lamina">let dist = 1200&lt;m&gt;
+let raw = dist as num
+let r = c_ext_fft(raw)
+</code></pre>
+<h4 id="52-api">5.2 位运算/底层数值 API</h4>
+<p>位运算和底层原语仅接受无量纲数值；带量纲值必须先 <code>as num</code>：</p>
+<pre><code class="language-lamina">let t = 8&lt;s&gt;
+let bits = bit_and((t as num), 3)
+</code></pre>
+<p>规则：外部函数若要求保留当前单位刻度数值，使用 <code>as scalar</code>。</p>
+<h3 id="6">6. 安全约束与错误模型</h3>
+<ul>
+<li><code>UnitStripTypeMismatch</code>: 作用于非数值类型</li>
+<li><code>UnitStripOverflow</code>: 剥离过程发生表示范围溢出（实现相关）</li>
+<li><code>UnitStripInvalid</code>: 单位转换阶段失败（例无效目标单位）</li>
+<li><code>UnitStripLegacySyntax</code>: 使用了废弃语法 <code>as num&lt;_&gt;</code></li>
+</ul>
+<p>规则：</p>
+<ul>
+<li>单位维度检查由上游运算与 <code>as &lt;unit&gt;</code> 阶段完成</li>
+<li><code>as num</code> 会按 SI 基准缩放后再剥离，<code>as scalar</code> 仅剥离标签</li>
+</ul>
+<h3 id="7">7. 语法约束</h3>
+<ul>
+<li>仅允许 <code>expr as num</code> 与 <code>expr as scalar</code></li>
+</ul>
+<h3 id="8">8. 示例</h3>
+<pre><code class="language-lamina">let speed = 20&lt;m/s&gt;
+let raw_si = speed as num                 # SI 基准量值
+let raw_kmh = (speed as &lt;km/h&gt;) as num    # km/h 刻度数值
+let raw_keep = speed as scalar             # 保留当前刻度值
+
+func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
+    return ((s as num) / 3600) as num&lt;h&gt;
+}
+</code></pre>
+<h3 id="9-lsr">9. 与其他 LSR 的关系</h3>
+<ul>
+<li>LSR-000：在量纲系统章节引用本规范，定义主入口</li>
+<li>LSR-003：扩展接口中若需无量纲实参，可按本规范显式剥离</li>
+<li>LSR-007：<code>===</code> 不依赖单位剥离语义，二者正交</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

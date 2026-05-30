@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 007 - === 数学等价判定规范 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 007 - === 数学等价判定规范</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-007-">LSR 007 - === 数学等价判定规范</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#_3">技术规范</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-007-">LSR 007 - <code>===</code> 数学等价判定规范</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 007</li>
+<li>标题 <code>===</code> 数学等价判定规范</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 草案</li>
+<li>类型 标准规范</li>
+<li>创建日期 04-05-2026</li>
+<li>归属项目 编译器、CAS</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>定义 <code>===</code> 在 <code>Expr</code> 上的判定语义、化简边界与终止策略。采用有限规则与预算：可证明返回 <code>true</code>，否则 <code>false</code>。</p>
+<h2 id="_3">技术规范</h2>
+<h3 id="1">1. 适用范围</h3>
+<ul>
+<li><code>===</code> 仅适用于 <code>Expr</code></li>
+<li>非 <code>Expr</code> 操作数使用 <code>===</code> 必须在类型检查阶段报错 <code>EqvTypeMismatch</code></li>
+</ul>
+<h3 id="2">2. 语义定义</h3>
+<p>对 <code>a === b</code> 执行有限证明流程：</p>
+<ol>
+<li>对 <code>a</code>、<code>b</code> 执行量纲标准化预处理（见第 4.3 节）</li>
+<li>对预处理后的纯数学核心分别执行受限规范化（见第 4 节）</li>
+<li>若量纲签名一致且核心结构相同，则返回 <code>true</code></li>
+<li>否则返回 <code>false</code></li>
+</ol>
+<p>规则：</p>
+<ul>
+<li><code>false</code> 含义为“在当前规则与预算下未能证明等价”，不等价于“数学上必不等价”</li>
+<li>该定义保证判定过程总能终止</li>
+</ul>
+<h3 id="3">3. 判定边界</h3>
+<ul>
+<li>根据 Richardson 定理，包含初等函数的恒等式判定采用有限规则集</li>
+<li>承诺范围限定为可终止性与规则内可靠性（soundness over supported rules）</li>
+</ul>
+<h3 id="4">4. 规范化规则与化简深度</h3>
+<h4 id="41-core">4.1 必选规则集（Core）</h4>
+<ol>
+<li>常量折叠</li>
+<li>有理数与整数的精确化简</li>
+<li>
+<p>代数恒等式：<code>x + 0 -&gt; x</code>，<code>x * 1 -&gt; x</code>，<code>x * 0 -&gt; 0</code>，<code>x - x -&gt; 0</code></p>
+</li>
+<li>
+<p>多项式标准形（交换/结合规范化）</p>
+</li>
+<li>对 <code>+</code>、<code>*</code> 进行交换与结合归一化</li>
+<li>同类项合并</li>
+<li>
+<p>有理系数多项式标准化</p>
+</li>
+<li>
+<p>分式与幂的基础化简</p>
+</li>
+<li>分式约分（可约分项）</li>
+<li>整数幂规则（在安全条件下）</li>
+</ol>
+<h4 id="42-extendedprofile">4.2 可选规则集（Extended，profile）</h4>
+<ol>
+<li>Trig-Basic（可选）</li>
+<li>基础恒等式：<code>sin(x)^2 + cos(x)^2 -&gt; 1</code></li>
+<li>
+<p>奇偶性：<code>sin(-x) -&gt; -sin(x)</code>，<code>cos(-x) -&gt; cos(x)</code></p>
+</li>
+<li>
+<p>ExpLog-Basic（可选）</p>
+</li>
+<li>在定义域安全前提下：<code>exp(log(x)) -&gt; x</code></li>
+<li>常量级规则：<code>log(1) -&gt; 0</code>，<code>exp(0) -&gt; 1</code></li>
+</ol>
+<p>默认 profile：<code>Core</code>。</p>
+<h4 id="43-canonicalization">4.3 量纲标准化预处理（Canonicalization）</h4>
+<p>在进入 <code>===</code> 核心化简前，必须执行“量纲提取”步骤：</p>
+<ul>
+<li>将表达式中的量纲标签提取并合并到最外层</li>
+<li>纯数学核心与量纲签名分离后再进入重写系统</li>
+</ul>
+<p>示意：</p>
+<ul>
+<li>输入：<code>x&lt;m&gt; * y&lt;s&gt;</code></li>
+<li>预处理：<code>(x * y)&lt;m*s&gt;</code></li>
+</ul>
+<p>判定规则：</p>
+<ul>
+<li>量纲签名一致时进入核心比较；其他情况结果为 <code>false</code></li>
+</ul>
+<p>作用：</p>
+<ul>
+<li>降低符号重写图规模</li>
+<li>减少 <code>EqvBudgetExceeded</code> 发生概率</li>
+</ul>
+<h3 id="5">5. 预算与终止策略</h3>
+<p>为保证终止，<code>===</code> 必须设置预算上限：</p>
+<ul>
+<li>最大重写步数：<code>maxRewriteSteps = 256</code></li>
+<li>最大递归深度：<code>maxRewriteDepth = 64</code></li>
+<li>最大节点增长倍数：<code>maxNodeGrowthFactor = 4</code></li>
+</ul>
+<p>任一预算耗尽即停止化简并返回 <code>false</code>（可附带诊断标记 <code>EqvBudgetExceeded</code>）。</p>
+<h3 id="6">6. 决策流程</h3>
+<pre><code class="language-text">eqv(a, b):
+  if type(a) != Expr or type(b) != Expr: type error
+  (ua, ca) = canonicalize_units(a)
+  (ub, cb) = canonicalize_units(b)
+  if ua != ub: return false
+  na = normalize(ca, profile, budget)
+  nb = normalize(cb, profile, budget)
+  if structurally_equal(na, nb): return true
+  else: return false
+</code></pre>
+<h3 id="7">7. 示例</h3>
+<h4 id="71-core">7.1 Core 下必然成立</h4>
+<pre><code class="language-lamina">sym x
+x + 0 === x                       # true
+x^2 + 2*x + 1 === (x + 1)^2       # true
+</code></pre>
+<h4 id="72-core">7.2 Core 下不保证成立</h4>
+<pre><code class="language-lamina">sin(pi/4)^2 + cos(pi/4)^2 === 1   # 在 Core profile 下通常为 false
+</code></pre>
+<h4 id="73-trig-basic">7.3 开启 Trig-Basic 后可成立</h4>
+<pre><code class="language-lamina"># 假设 profile = Trig-Basic
+sin(pi/4)^2 + cos(pi/4)^2 === 1   # true
+</code></pre>
+<h3 id="8">8. 配置接口</h3>
+<ul>
+<li><code>set_eqv_profile("Core" | "Trig-Basic" | "ExpLog-Basic")</code></li>
+<li><code>set_eqv_budget(steps, depth, growth)</code></li>
+</ul>
+<p>未设置时采用默认值：<code>Core</code> + 第 5 节预算。</p>
+<h3 id="9">9. 错误与诊断</h3>
+<ul>
+<li><code>EqvTypeMismatch</code>: <code>===</code> 作用于非 <code>Expr</code></li>
+<li><code>EqvBudgetExceeded</code>: 达到预算上限，停止证明</li>
+<li><code>EqvRuleDisabled</code>: 依赖的规则集未启用（可选诊断）</li>
+</ul>
+<h3 id="10-lsr">10. 与其他 LSR 的关系</h3>
+<ul>
+<li>LSR-000：声明 <code>===</code> 存在并引用本规范作为唯一语义来源</li>
+<li>LSR-005：match 守卫中的 <code>===</code> 语义依赖本规范</li>
+<li>LSR-006：Lambda 中若出现 <code>===</code>，同样遵循本规范</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 005 - 模式匹配 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 005 - 模式匹配</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-005-">LSR 005 - 模式匹配</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#_3">技术规范</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-005-">LSR 005 - 模式匹配</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 005</li>
+<li>标题 模式匹配</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 草案</li>
+<li>类型 标准规范</li>
+<li>创建日期 04-05-2026</li>
+<li>归属项目 编译器、通用</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>定义 <code>match</code> 的语法、模式系统、穷尽检查、类型规则与求值顺序。<code>match</code> 为表达式，支持常量、解构、守卫与 <code>Expr</code> 匹配。</p>
+<h2 id="_3">技术规范</h2>
+<h3 id="1">1. 设计目标</h3>
+<ul>
+<li>提供可组合、可推导、可穷尽检查的分支表达式</li>
+<li>控制 <code>if-else</code> 嵌套深度，提升分支组合性</li>
+<li>支持符号计算场景的 AST 结构匹配</li>
+</ul>
+<h3 id="2">2. 语法</h3>
+<h4 id="21">2.1 基础语法</h4>
+<pre><code class="language-lamina">match target {
+    pattern1 [if guard1] =&gt; expr1,
+    pattern2 [if guard2] =&gt; expr2,
+    _ =&gt; default_expr
+}
+</code></pre>
+<p>规则：</p>
+<ul>
+<li><code>target</code> 求值一次</li>
+<li>分支按书写顺序匹配，首个命中分支立即返回</li>
+<li><code>_</code> 是通配符，必须放在最后一个分支</li>
+</ul>
+<h4 id="22">2.2 模式种类</h4>
+<ol>
+<li>常量模式</li>
+</ol>
+<pre><code class="language-lamina">match x {
+    0 =&gt; &quot;zero&quot;,
+    1 =&gt; &quot;one&quot;,
+    _ =&gt; &quot;other&quot;
+}
+</code></pre>
+<ol>
+<li>变量绑定模式</li>
+</ol>
+<pre><code class="language-lamina">match x {
+    v =&gt; v + 1
+}
+</code></pre>
+<ol>
+<li>结构解构模式（以向量为例）</li>
+</ol>
+<pre><code class="language-lamina">match data {
+    vec[a, b] =&gt; a + b,
+    _ =&gt; 0
+}
+</code></pre>
+<ol>
+<li>守卫模式</li>
+</ol>
+<pre><code class="language-lamina">match x {
+    v if v &gt; 0 =&gt; &quot;pos&quot;,
+    v if v &lt; 0 =&gt; &quot;neg&quot;,
+    _ =&gt; &quot;zero&quot;
+}
+</code></pre>
+<ol>
+<li>Expr 结构匹配（CAS）</li>
+</ol>
+<pre><code class="language-lamina">func derivative(expr Expr, var Expr) -&gt; Expr {
+    return match expr {
+        v if v === var =&gt; 1,
+        u^n if type(n) == num =&gt; n * u^(n-1) * derivative(u, var),
+        sin(u) =&gt; cos(u) * derivative(u, var),
+        f + g =&gt; derivative(f, var) + derivative(g, var),
+        c if type(c) == num =&gt; 0,
+        _ =&gt; 0
+    }
+}
+</code></pre>
+<h3 id="3">3. 穷尽检查与可达性</h3>
+<h4 id="31">3.1 穷尽检查</h4>
+<ul>
+<li><code>target</code> 为有限可枚举类型时，必须覆盖全部分支或给出 <code>_</code></li>
+<li>当 <code>target</code> 类型是开放类型（如 <code>num</code>, <code>text</code>, <code>Expr</code>, <code>vector</code>, <code>table</code>）时，必须存在 <code>_</code> 分支</li>
+</ul>
+<h4 id="32">3.2 可达性检查</h4>
+<ul>
+<li>若某分支被前序分支完全覆盖，编译器报 <code>UnreachablePattern</code></li>
+<li>分支顺序规则：<code>_</code> 作为最后一个分支</li>
+</ul>
+<h3 id="4">4. 类型规则</h3>
+<h4 id="41">4.1 目标与模式类型一致性</h4>
+<ul>
+<li>模式必须与 <code>target</code> 类型可统一</li>
+<li>统一性为必需条件，失败时报 <code>PatternTypeMismatch</code></li>
+</ul>
+<h4 id="42">4.2 分支返回类型</h4>
+<ul>
+<li>所有分支表达式返回类型必须一致，或满足 LSR-000 数值塔提升规则</li>
+<li>无法统一时报 <code>MatchBranchTypeMismatch</code></li>
+</ul>
+<h4 id="43">4.3 绑定变量作用域</h4>
+<ul>
+<li>模式内新绑定变量仅在对应分支可见</li>
+<li>守卫表达式可访问该分支绑定变量</li>
+</ul>
+<h3 id="5">5. 求值与副作用规则</h3>
+<ul>
+<li><code>target</code> 仅求值一次</li>
+<li>仅执行首个命中分支的右侧表达式</li>
+<li>执行范围：仅命中分支的右侧表达式参与求值</li>
+</ul>
+<h3 id="6-expr">6. Expr 匹配特化规则</h3>
+<ul>
+<li><code>===</code> 用于数学等价判断，仅限 <code>Expr</code>，其判定语义与化简边界由 LSR-007 定义</li>
+<li>对交换律节点（如加法）可启用交换律感知匹配：<code>f + g</code> 可匹配 <code>x + 1</code> 与 <code>1 + x</code></li>
+<li>交换律感知不改写源 AST 的标准顺序</li>
+</ul>
+<h3 id="7">7. 错误与诊断</h3>
+<ul>
+<li><code>MissingWildcard</code>: 开放类型 match 缺失 <code>_</code></li>
+<li><code>UnreachablePattern</code>: 分支被前序覆盖</li>
+<li><code>PatternTypeMismatch</code>: 模式与目标类型不兼容</li>
+<li><code>MatchBranchTypeMismatch</code>: 分支返回类型无法统一</li>
+</ul>
+<h3 id="8-lsr">8. 与其他 LSR 的关系</h3>
+<ul>
+<li>LSR-000：提供核心类型系统、表达式语义与返回类型统一规则</li>
+<li>LSR-006：Lambda 规范来源</li>
+<li>LSR-007：定义 <code>===</code> 的数学等价判定边界与化简策略</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 005 - Lamina的变量 - LSR</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Old</span>
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-005-lamina">LSR 005 - Lamina的变量</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-005-lamina">LSR 005 - Lamina的变量</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 005</li>
+<li>标题 Lamina的变量</li>
+<li>作者 CGrakeski</li>
+<li>状态 草案</li>
+<li>类型 标准规范类</li>
+<li>创建日期 08-16-2025</li>
+<li>Lamina 版本 不适用</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>本LSR描述了关于Lamina变量的赋值，使用与类型转换。</p>
+<p>## 技术规范</p>
+<h3 id="_3">简介</h3>
+<p>Lamina的变量的定义有如下两种方式：</p>
+<pre><code class="language-Lamina">var [变量名] = [值]; // 可选的var关键字，用来自动推导类型
+</code></pre>
+<pre><code class="language-Lamina">[类型] [变量名] = [值];
+</code></pre>
+<p>若不同类型相运算，则如下类型之间可以互相运算：</p>
+<pre><code>int float rational irrational bool bigint
+</code></pre>
+<p>而其余的类型仅能与相同的类型进行计算。</p>
+<p>隐式类型转换过程如下图：</p>
+<pre><code class="language-mermaid">graph TD
+    bool --&gt; |转为1或0|int --&gt; bigint --&gt; rational --&gt; irrational
+    float --&gt; rational
+</code></pre>
+<p>若定义变量时声明的类型与定义变量时设置的数据的实际类型不同，则进行隐式类型转换。隐式转换会损坏一部分数据但不报错的（如bigint转int），将变量设为输入原数据的类型。若没有隐式类型转换方法，则报错。若数学计算时存在不同类型，最终结果类型为运算数类型中在上文流程图中最靠近irrational类型的类型。若运算数类型中有不可隐式转换的类型，此时若运算数中存在任意一个不同类型，报出TypeError错误。</p>
+<p>除隐式转换外，还可以显式转换，形如：</p>
+<pre><code class="language-Lamina">[转换到的类型]([变量名/值])
+int(&quot;32&quot;)
+</code></pre>
+<p>以下是显式转换图：</p>
+<pre><code class="language-mermaid">graph TD
+    %% 基础类型分组
+    bool
+    int
+    float
+    bigint
+    rational
+    irrational
+    string
+
+    %% 布尔值转换
+    bool --&gt; int
+    bool --&gt; bigint
+    bool --&gt; string
+    bool --&gt; float
+    bool --&gt; rational
+    bool --&gt; irrational
+
+    %% 整型转换
+    int --&gt; bigint
+    int --&gt; |部分|bool
+    int --&gt; float
+    int --&gt; rational
+    int --&gt; irrational
+    int --&gt; string
+
+    %% 大整数转换
+    bigint --&gt; |部分|bool
+    bigint --&gt; |部分|int
+    bigint --&gt; |部分|float
+    bigint --&gt; |部分|rational
+    bigint --&gt; |部分|irrational
+    bigint --&gt; string
+
+    %% 浮点数转换
+    float --&gt; |部分|bool
+    float --&gt; |可能丢失精度|int
+    float --&gt; |可能丢失精度|bigint
+    float &lt;--&gt; rational
+    float --&gt; irrational
+    float --&gt; string
+
+    %% 有理数转换
+    rational --&gt; |部分|bool
+    rational --&gt; |可能丢失精度|int
+    rational --&gt; |可能丢失精度|bigint
+    rational --&gt; irrational
+    rational --&gt; string
+
+    %% 无理数转换
+    irrational --&gt; |部分|bool
+    irrational --&gt; |部分|int
+    irrational --&gt; |可能丢失精度/部分|float
+    irrational --&gt; |可能丢失精度/部分|bigint
+    irrational --&gt; |可能丢失精度/部分|rational
+    irrational --&gt; string
+
+    %% 字符串转换
+    string --&gt; |部分|bool
+    string --&gt; |部分|int
+    string --&gt; |部分|float
+    string --&gt; |部分|bigint
+    string --&gt; |部分|rational
+    string --&gt; |部分|irrational
+</code></pre>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

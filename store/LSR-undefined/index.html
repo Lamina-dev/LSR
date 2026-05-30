@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR-undefined - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR-undefined</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-undefined">LSR-undefined</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#1-scope">1. 范围（Scope）</a></li><li><a href="#2-design-goals">2. 设计目标（Design Goals）</a></li><li><a href="#3-terminology">3. 术语定义（Terminology）</a></li><li><a href="#4-lexical-conventions">4. 基本语法约定（Lexical Conventions）</a></li><li><a href="#5-abstract-circuit-model">5. 核心抽象模型（Abstract Circuit Model）</a></li><li><a href="#6-core-syntax">6. 基本语法（Core Syntax）</a></li><li><a href="#7-hierarchy">7. 层次结构（Hierarchy）</a></li><li><a href="#8-spice-netlist-informative">8. SPICE Netlist 互操作（Informative）</a></li><li><a href="#9-conformance">9. 合规性（Conformance）</a></li><li><a href="#10-extensibility">10. 扩展性（Extensibility）</a></li><li><a href="#11-non-goals">11. 非目标（Non-Goals）</a></li><li><a href="#12-references">12. 参考（References）</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-undefined">LSR-undefined</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 ???</li>
+<li>标题 ???</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 ??</li>
+<li>类型 ???</li>
+<li>创建日期 ??-??-2024</li>
+<li>归属项目 ??</li>
+</ul>
+<h2 id="1-scope">1. 范围（Scope）</h2>
+<p>本推荐规范定义了一种基于文本的电路描述语言，用于描述电子电路系统的结构信息，包括但不限于：</p>
+<ul>
+<li>电路元件（Components）</li>
+<li>元件引脚（Pins）</li>
+<li>电气网络（Nets）</li>
+<li>参数与数值（Parameters）</li>
+<li>层次化结构（Hierarchy）</li>
+</ul>
+<p>该语言旨在为以下场景提供统一、清晰的文本表示：</p>
+<ul>
+<li>电子电路的文本描述与审阅</li>
+<li>原理图的文本化等价表示</li>
+<li>电路结构的版本控制与比较</li>
+<li>与 SPICE Netlist 之间的结构等价互操作</li>
+</ul>
+<hr />
+<h2 id="2-design-goals">2. 设计目标（Design Goals）</h2>
+<h3 id="21-readability">2.1 可读性（Readability）</h3>
+<p>语法应优先保证人类可读性，避免 SPICE Netlist 中常见的隐式约定和语义重载。</p>
+<h3 id="22-structured-representation">2.2 结构化（Structured Representation）</h3>
+<p>语言应显式表达电路的结构关系，而非依赖线性文本顺序。</p>
+<h3 id="23-interoperability">2.3 可互操作性（Interoperability）</h3>
+<p>语言应支持与主流 SPICE Netlist 之间的双向转换，保证电路在结构层面的等价性。</p>
+<h3 id="24-implementability">2.4 可实现性（Implementability）</h3>
+<p>规范应允许使用常规编程语言（如 C/C++、Rust、Python）实现解析器与生成器，不要求图形界面或专有运行环境。</p>
+<hr />
+<h2 id="3-terminology">3. 术语定义（Terminology）</h2>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Component</td>
+<td>具有类型、引脚和参数的电路元件</td>
+</tr>
+<tr>
+<td>Pin</td>
+<td>元件上的一个连接端点</td>
+</tr>
+<tr>
+<td>Net</td>
+<td>一个或多个 Pin 之间的电气连接</td>
+</tr>
+<tr>
+<td>Circuit</td>
+<td>元件与网络的集合</td>
+</tr>
+<tr>
+<td>Subcircuit</td>
+<td>可复用的电路定义单元</td>
+</tr>
+<tr>
+<td>Parameter</td>
+<td>元件或电路的可配置数值</td>
+</tr>
+</tbody>
+</table>
+<p>除非另有说明，本规范中使用的术语均不区分大小写。</p>
+<hr />
+<h2 id="4-lexical-conventions">4. 基本语法约定（Lexical Conventions）</h2>
+<h3 id="41">4.1 字符集</h3>
+<p>源文件应采用 UTF-8 编码。</p>
+<h3 id="42">4.2 注释</h3>
+<pre><code># 单行注释
+// 单行注释
+</code></pre>
+<h3 id="43">4.3 标识符</h3>
+<ul>
+<li>由字母、数字、下划线组成</li>
+<li>不得以数字开头</li>
+<li>区分大小写（推荐实现支持大小写敏感）</li>
+</ul>
+<hr />
+<h2 id="5-abstract-circuit-model">5. 核心抽象模型（Abstract Circuit Model）</h2>
+<p>实现应在解析阶段构建以下抽象模型：</p>
+<h3 id="51-component">5.1 Component</h3>
+<ul>
+<li>唯一名称</li>
+<li>类型（Resistor, Capacitor, Subcircuit Instance 等）</li>
+<li>引脚列表</li>
+<li>参数集合</li>
+</ul>
+<h3 id="52-net">5.2 Net</h3>
+<ul>
+<li>唯一名称</li>
+<li>连接的 Pin 集合</li>
+</ul>
+<h3 id="53-pin-reference">5.3 Pin Reference</h3>
+<p>表示为：</p>
+<pre><code>&lt;ComponentName&gt;.&lt;PinName&gt;
+</code></pre>
+<hr />
+<h2 id="6-core-syntax">6. 基本语法（Core Syntax）</h2>
+<h3 id="61">6.1 元件声明</h3>
+<pre><code>component R1 : Resistor {
+    pins: a, b
+    value: 10k
+}
+</code></pre>
+<h3 id="62">6.2 网络声明</h3>
+<pre><code>net N1 {
+    R1.a
+    C1.a
+    V1.positive
+}
+</code></pre>
+<h3 id="63-optional">6.3 简写连接语法（Optional）</h3>
+<pre><code>R1.a -&gt; N1
+C1.a -&gt; N1
+</code></pre>
+<hr />
+<h2 id="7-hierarchy">7. 层次结构（Hierarchy）</h2>
+<h3 id="71">7.1 子电路定义</h3>
+<pre><code>subcircuit Amplifier(in+, in-, out) {
+    component R1 : Resistor { value: 10k }
+    component R2 : Resistor { value: 10k }
+
+    net N1 { R1.a, R2.a }
+}
+</code></pre>
+<h3 id="72">7.2 子电路实例化</h3>
+<pre><code>component A1 : Amplifier {
+    in+  -&gt; Vin
+    in-  -&gt; GND
+    out  -&gt; Vout
+}
+</code></pre>
+<hr />
+<h2 id="8-spice-netlist-informative">8. SPICE Netlist 互操作（Informative）</h2>
+<h3 id="81">8.1 结构等价性</h3>
+<p>本语言与 SPICE Netlist 的互操作以结构等价为目标，而非文本等价。</p>
+<h3 id="82">8.2 映射原则（示例）</h3>
+<table>
+<thead>
+<tr>
+<th>本语言</th>
+<th>SPICE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>component R1 : Resistor</td>
+<td>R1</td>
+</tr>
+<tr>
+<td>net N1</td>
+<td>node</td>
+</tr>
+<tr>
+<td>subcircuit</td>
+<td>.subckt</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-conformance">9. 合规性（Conformance）</h2>
+<p>一个实现若满足以下条件，可被视为符合本规范：</p>
+<ul>
+<li>能解析并构建抽象电路模型</li>
+<li>能检测并报告语法与结构错误</li>
+<li>能导出等价的 SPICE Netlist（核心子集）</li>
+</ul>
+<hr />
+<h2 id="10-extensibility">10. 扩展性（Extensibility）</h2>
+<p>实现可以在不破坏核心语义的前提下引入扩展，例：</p>
+<ul>
+<li>仿真指令</li>
+<li>参数表达式</li>
+<li>工艺库绑定</li>
+</ul>
+<p>扩展应避免与核心语法产生歧义。</p>
+<hr />
+<h2 id="11-non-goals">11. 非目标（Non-Goals）</h2>
+<p>本规范不定义：</p>
+<ul>
+<li>图形化原理图表示</li>
+<li>PCB 布线规则</li>
+<li>仿真算法或数值模型</li>
+</ul>
+<hr />
+<h2 id="12-references">12. 参考（References）</h2>
+<ul>
+<li>SPICE User's Guide</li>
+<li>IEEE Std 315（电路符号）</li>
+</ul>
+<hr />
+<p>Copyright © 2024-2026 Ziyang-Bai. All rights reserved.</p>
+<p>This document, and the language specification contained herein, is the
+exclusive intellectual property of Ziyang-Bai. All rights are reserved.</p>
+<p>Ziyang-Bai hereby retains the right to grant, modify, or revoke
+permissions to use, copy, reproduce, distribute, or implement this
+document or any part of the language specification at their sole discretion.</p>
+<p>No part of this document may be reproduced, transmitted, or used for
+implementation purposes without the prior written consent of Ziyang-Bai.</p>
+<p>For inquiries regarding licensing or permission to use this specification,
+please contact Ziyang-Bai at baiziyang2022@yeah.net.</p>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

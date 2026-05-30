@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 002 - Lamina代码风格建议 - LSR</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Old</span>
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-002-lamina">LSR 002 - Lamina代码风格建议</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#lamina">Lamina基本信息</a></li><li><a href="#_2">代码布局</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-002-lamina"><strong>LSR 002 - Lamina代码风格建议</strong></h1>
+<h2 id="_1"><strong>基本信息</strong></h2>
+<ul>
+<li>LSR 编号 002</li>
+<li>标题 Lamina代码风格建议</li>
+<li>作者 Ziyang-Bai, Ange1PLSGreet, CGrakeski</li>
+<li>状态 草案</li>
+<li>类型 信息类</li>
+<li>创建日期 8-6-2025</li>
+<li>Lamina 版本 &gt; v1.x.x</li>
+</ul>
+<h2 id="lamina"><strong>Lamina基本信息</strong></h2>
+<p>Lamina 有这些保留字：</p>
+<p>```var func if else while for return break continue
+print true false null include define bigint input</p>
+<pre><code>
+这些保留字不可被用作变量/函数名。
+
+## **代码块缩进**
+
+在Lamina的代码风格建议当中，虽然不对缩进进行强制规范，但是仍然更推荐使用4个西文空格（而非制表符）来进行代码块的缩进。拥有缩进的代码可以使得你的语句结构更加清晰。
+
+示例代码：
+
+</code></pre>
+<p>include "json";</p>
+<p>func parse_front_end_data() {
+    return json_decode("{'name':10,'age':20,'a':[1,2,3]}");
+}
+```</p>
+<p>这些缩进规则的应用到包括if块，else块，for块以及while块。</p>
+<h2 id="_2"><strong>代码布局</strong></h2>
+<ol>
+<li>若函数内有多个参数，可将参数分行写出，对齐括号。</li>
+</ol>
+<p>示例代码：</p>
+<p><code>Lamina
+   func a(
+           arg1, arg2,
+           arg3, arg4
+         ){
+       print(arg1);
+   } // 推荐</code></p>
+<p><code>Lamina
+   func a(arg1, arg2, arg3, arg4){
+       print(arg1);
+   } // 不推荐</code></p>
+<ol>
+<li><code>include</code>语句后与下文代码推荐空一行。</li>
+</ol>
+<p>示例代码：</p>
+<p>```Lamina
+   include "splash";</p>
+<p>print("Hi!"); // 推荐
+   ```</p>
+<p><code>Lamina
+   include "splash";
+   print("Hi!"); // 不推荐</code></p>
+<ol>
+<li>需特别说明的是，Lamina对大括号相对于语句的位置并无特殊规定，也就是下面两种与其他的写法都是可被接受的：</li>
+</ol>
+<p><code>Lamina
+   func a(){
+       // 代码……
+   }</code></p>
+<p><code>Lamina
+   func a()
+   {
+       // 代码……
+   }</code>
+   ```</p>
+<ol>
+<li>在Lamina中定义变量时，我们推荐等号两旁无论何时都空一个西文空格，如：</li>
+</ol>
+<p><code>var a = 1; // 推荐</code></p>
+<p><code>var a=1; // 不推荐</code></p>
+<ol>
+<li>若需要使用反斜杠（<code>\</code>）换行，我们推荐在反斜杠前加入一个空格，续行应对齐。并且如果有运算符，运算符应在反斜杠之前，如：</li>
+</ol>
+<p><code>var a = 1 + \
+           1; // 推荐</code></p>
+<p><code>var a = 1 +\
+           1; // 不推荐</code>
+   <code>var a = 1 \
+           + 1; // 不推荐</code></p>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

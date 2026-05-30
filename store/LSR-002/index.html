@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 002 - 标准常量规范 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 002 - 标准常量规范</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-002-">LSR 002 - 标准常量规范</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#1">1. 导出规则</a></li><li><a href="#2">2. 物理常量</a></li><li><a href="#3">3. 化学常量</a></li><li><a href="#4-lsr">4. 与其他 LSR 的关系</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-002-">LSR 002 - 标准常量规范</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 002</li>
+<li>标题 标准常量规范</li>
+<li>作者 Ziyang-Bai</li>
+<li>状态 草案</li>
+<li>类型 信息类</li>
+<li>创建日期 01-09-2026</li>
+<li>归属项目 通用</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>定义 Lamina 标准常量集合（科学/工程计算）。常量由 <code>std.constants</code> 导出，命名使用 <code>UPPER_SNAKE_CASE</code>。</p>
+<h2 id="1">1. 导出规则</h2>
+<ul>
+<li>常量不可变导出</li>
+<li>常量名称使用 <code>UPPER_SNAKE_CASE</code></li>
+<li>单位表达必须与 LSR-000 量纲系统一致</li>
+</ul>
+<h2 id="2">2. 物理常量</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+<th>值</th>
+<th>单位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EARTH_GRAVITY</td>
+<td>地球标准重力加速度</td>
+<td>9.80665</td>
+<td>m*s^-2</td>
+</tr>
+<tr>
+<td>MOON_GRAVITY</td>
+<td>月球重力加速度</td>
+<td>1.625</td>
+<td>m*s^-2</td>
+</tr>
+<tr>
+<td>MARS_GRAVITY</td>
+<td>火星重力加速度</td>
+<td>3.72076</td>
+<td>m*s^-2</td>
+</tr>
+<tr>
+<td>WATER_DENSITY</td>
+<td>水密度</td>
+<td>1000</td>
+<td>kg*m^-3</td>
+</tr>
+<tr>
+<td>STANDARD_PRESSURE</td>
+<td>标准大气压</td>
+<td>101325</td>
+<td>Pa</td>
+</tr>
+<tr>
+<td>STANDARD_TEMPERATURE</td>
+<td>标准温度</td>
+<td>273.15</td>
+<td>K</td>
+</tr>
+<tr>
+<td>AIR_DENSITY</td>
+<td>干燥空气密度</td>
+<td>1.225</td>
+<td>kg*m^-3</td>
+</tr>
+<tr>
+<td>C</td>
+<td>真空光速</td>
+<td>2.99792458*10^8</td>
+<td>m*s^-1</td>
+</tr>
+<tr>
+<td>G</td>
+<td>万有引力常数</td>
+<td>6.67430*10^-11</td>
+<td>m^3<em>kg^-1</em>s^-2</td>
+</tr>
+<tr>
+<td>H</td>
+<td>普朗克常数</td>
+<td>6.62607015*10^-34</td>
+<td>J*s</td>
+</tr>
+<tr>
+<td>KB</td>
+<td>玻尔兹曼常数</td>
+<td>1.380649*10^-23</td>
+<td>J*K^-1</td>
+</tr>
+<tr>
+<td>EPSILON_0</td>
+<td>真空介电常数</td>
+<td>8.8541878128*10^-12</td>
+<td>F*m^-1</td>
+</tr>
+<tr>
+<td>MU_0</td>
+<td>真空磁导率</td>
+<td>1.25663706212*10^-6</td>
+<td>H*m^-1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">3. 化学常量</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+<th>值</th>
+<th>单位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AVOGADRO</td>
+<td>阿伏伽德罗常数</td>
+<td>6.02214076*10^23</td>
+<td>mol^-1</td>
+</tr>
+<tr>
+<td>R</td>
+<td>理想气体常数</td>
+<td>8.314462618</td>
+<td>J<em>mol^-1</em>K^-1</td>
+</tr>
+<tr>
+<td>FARADAY</td>
+<td>法拉第常数</td>
+<td>9.648533212*10^4</td>
+<td>C*mol^-1</td>
+</tr>
+<tr>
+<td>AMU</td>
+<td>原子质量单位</td>
+<td>1.66053906660*10^-27</td>
+<td>kg</td>
+</tr>
+<tr>
+<td>MOLAR_VOLUME_IDEAL</td>
+<td>一摩尔理想气体体积</td>
+<td>0.024465</td>
+<td>m^3*mol^-1</td>
+</tr>
+<tr>
+<td>ROOM_PRESSURE</td>
+<td>室压</td>
+<td>1.0*10^5</td>
+<td>Pa</td>
+</tr>
+<tr>
+<td>ROOM_TEMPERATURE</td>
+<td>室温</td>
+<td>297.15</td>
+<td>K</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-lsr">4. 与其他 LSR 的关系</h2>
+<ul>
+<li>LSR-000：量纲与类型系统</li>
+<li>LSR-004：通过 <code>std.constants</code> 对外导出</li>
+</ul>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>

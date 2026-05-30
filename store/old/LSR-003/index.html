@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 003 - Lamina的LaTeXShow标准库 - LSR</title>
+
+
+<link href="../../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../../css/normalize.css" rel="stylesheet">
+<link href="../../../css/terminal.css" rel="stylesheet">
+<link href="../../../css/theme.css" rel="stylesheet">
+<link href="../../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Old</span>
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-003-laminalatexshow">LSR 003 - Lamina的LaTeXShow标准库</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-003-laminalatexshow">LSR 003 - Lamina的LaTeXShow标准库</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号 003</li>
+<li>标题 Lamina的LaTeXShow模块</li>
+<li>作者 CGrakeski</li>
+<li>状态 草案</li>
+<li>类型 标准规范类</li>
+<li>创建日期 08-07-2025</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>本LSR描述了Lamina为支持LaTeX显示而添加的标准库，包含了对库中函数的描述。</p>
+<p>## 技术规范</p>
+<h3 id="_3">简介</h3>
+<p>在LaTeXShow标准库中，有如下函数：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">名称</th>
+<th style="text-align: center;">参数</th>
+<th style="text-align: center;">效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">latex_dbinit</td>
+<td style="text-align: center;">/</td>
+<td style="text-align: center;">打开LaTeX展示板窗口</td>
+</tr>
+<tr>
+<td style="text-align: center;">latex_dbbye</td>
+<td style="text-align: center;">save_content,save_path</td>
+<td style="text-align: center;">关闭LaTeX展示板窗口</td>
+</tr>
+<tr>
+<td style="text-align: center;">main_on</td>
+<td style="text-align: center;">/</td>
+<td style="text-align: center;">打开原生窗口</td>
+</tr>
+<tr>
+<td style="text-align: center;">main_off</td>
+<td style="text-align: center;">save_content(true/false)=true,save_path</td>
+<td style="text-align: center;">关闭原生窗口</td>
+</tr>
+<tr>
+<td style="text-align: center;">showlatex</td>
+<td style="text-align: center;">latex</td>
+<td style="text-align: center;">将LaTeX公式渲染到LaTeX展示板窗口</td>
+</tr>
+<tr>
+<td style="text-align: center;">showtxt</td>
+<td style="text-align: center;">txt</td>
+<td style="text-align: center;">将文本渲染到LaTeX展示板窗口</td>
+</tr>
+<tr>
+<td style="text-align: center;">db_ifinteract</td>
+<td style="text-align: center;">ifcan(true/false)=false</td>
+<td style="text-align: center;">用户是否可以写代码交互（仅在REPL模式下有效）</td>
+</tr>
+<tr>
+<td style="text-align: center;">db_ifcopy</td>
+<td style="text-align: center;">ifcan(true/false)=true</td>
+<td style="text-align: center;">用户是否可复制公式或文本</td>
+</tr>
+</tbody>
+</table>
+<p>若需要渲染LaTeX公式，需要先导入LaTeXShow标准库再进行操作</p>
+<pre><code class="language-Lamina">include &quot;LaTeXShow&quot;;
+latex_dbinit() //使LaTeX展示板窗口初始化
+showlatex(&quot;\text{公式1:}\frac{-b\pm\sqrt{b^2-4ac}}{2a}&quot;) //输出如下画面
+</code></pre>
+<p>$$
+\text{公式1:}
+\frac{-b\pm\sqrt{b^2-4ac}}{2a}
+$$</p>
+<pre><code class="language-Lamina">showtxt(&quot;\frac{1}{2}&quot;) //输出如下画面
+</code></pre>
+<p>$$
+\textbackslash \text{frac} { 1 } { 2 }
+$$</p>
+<p>使用</p>
+<pre><code class="language-Lamina">latex_dbbye()
+</code></pre>
+<p>退出窗口。</p>
+<h3 id="_4">详细介绍</h3>
+<p>LaTeX展示板窗口是渲染LaTeX公式的载体。</p>
+<h5 id="latex_dbinit">latex_dbinit函数</h5>
+<p>执行<code>latex_dbinit()</code>函数相当于初始化了一个独立的渲染环境，该环境具有以下特性：</p>
+<ol>
+<li>
+<p><strong>窗口属性</strong>：</p>
+</li>
+<li>
+<p>默认尺寸为800x600像素</p>
+</li>
+<li>采用无边框设计</li>
+<li>
+<p>支持动态调整窗口大小</p>
+</li>
+<li>
+<p><strong>渲染引擎</strong>：</p>
+</li>
+<li>
+<p>基于MathJax 3.2.2核心</p>
+</li>
+<li>支持LaTeX 2024标准</li>
+<li>实时渲染延迟&lt;50ms</li>
+<li>
+<p>支持CMYK和sRGB色彩空间</p>
+</li>
+<li>
+<p><strong>交互模式</strong>：</p>
+</li>
+</ol>
+<p>Lamina</p>
+<p><code>Lamina
+   db_ifinteract(true)  // 启用交互模式后：</code></p>
+<p>允许写入代码，并通过快捷键操作：</p>
+<ul>
+<li>Ctrl+C 复制源码</li>
+<li>
+<p>Ctrl+滚轮，+- 调整字体大小</p>
+</li>
+<li>
+<p><strong>错误处理</strong>：</p>
+</li>
+</ul>
+<p>无效LaTeX语法会报错InvalidLaTeXEror，给出LaTeX展示板窗口的错误定位（行号标记）</p>
+<ol>
+<li><strong>高级配置</strong>：</li>
+</ol>
+<p>Lamina</p>
+<p><code>Lamina
+   // 初始化时可指定参数
+   latex_dbinit(
+     size=(1200,800),
+     theme="dark",
+   )</code></p>
+<h5 id="latex_dbbye">latex_dbbye函数</h5>
+<h6 id="_5">功能描述</h6>
+<p>终止 LaTeX 展示板窗口，支持保存内容到指定路径。</p>
+<h6 id="_6">完整语法</h6>
+<pre><code class="language-Lamina">latex_dbbye(
+    save_content=true,     // 是否自动保存内容（默认true）
+    // 保存路径默认为~/Lamina/log/LaTeXLog/）
+)
+</code></pre>
+<hr />
+<h6 id="_7">核心行为</h6>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">操作类型</th>
+<th style="text-align: left;">详细说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>窗口关闭</strong></td>
+<td style="text-align: left;">立即终止窗口，若save_content=true，记录当前显示内容到日志</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>内容保存</strong></td>
+<td style="text-align: left;">当 <code>save_content=true</code> 时： - 自动生成 <code>latexdb_[timestamp].ldl</code>（LaTeXDisplayBoardLog文件），保存当前显示内容</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>异常处理</strong></td>
+<td style="text-align: left;">尝试在LaTeX展示板窗口打开前关闭会抛出 <code>SessionNotFoundError</code> 。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h6 id="_8"><strong>保存格式</strong></h6>
+<p>生成的XML文件格式为：</p>
+<pre><code class="language-xml">&lt;dialog&gt;
+    &lt;ComputerLaTeX&gt;
+        &lt;!--电脑输出的LaTeX公式--&gt;
+    &lt;/ComputerLaTeX&gt;
+    &lt;ComputerText&gt;
+        &lt;!--电脑输出的文本--&gt;
+    &lt;/ComputerText&gt;
+    &lt;UserInput&gt;
+        &lt;!--用户的输入--&gt;
+    &lt;/UserInput&gt;
+    &lt;!--等等……--&gt;
+&lt;/dialog&gt;
+</code></pre>
+<h5 id="main_off">main_off函数</h5>
+<h6 id="_9">功能描述</h6>
+<p>终止原生窗口，支持保存内容到指定路径。</p>
+<h6 id="_10">完整语法</h6>
+<pre><code class="language-Lamina">main_off(
+    save_content=true,     // 是否自动保存内容（默认true）
+    // 保存路径默认为~/Lamina/log/MainWinLog/）
+)
+</code></pre>
+<hr />
+<h6 id="_11">核心行为</h6>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">操作类型</th>
+<th style="text-align: left;">详细说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>窗口关闭</strong></td>
+<td style="text-align: left;">立即终止窗口，若save_content=true，记录当前显示内容到日志</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>内容保存</strong></td>
+<td style="text-align: left;">当 <code>save_content=true</code> 时： - 自动生成 <code>latexdb_[timestamp].ldl</code>（LaTeXDisplayBoardLog文件），保存当前显示内容</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>异常处理</strong></td>
+<td style="text-align: left;">尝试在原生窗口打开前关闭会抛出 <code>SessionNotFoundError</code> 。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h6 id="_12"><strong>保存格式</strong></h6>
+<p>生成的XML文件格式为：</p>
+<pre><code class="language-xml">&lt;dialog&gt;
+    &lt;Computer&gt;
+        &lt;!--电脑输出的文本--&gt;
+    &lt;/Computer&gt;
+    &lt;UserInput&gt;
+        &lt;!--用户的输入--&gt;
+    &lt;/UserInput&gt;
+    &lt;!--等等……--&gt;
+&lt;/dialog&gt;
+</code></pre>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>
