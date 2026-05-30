@@ -25,9 +25,10 @@ jobs:
         run: |
           pip install mkdocs mkdocs-terminal
 
-      - name: Copy README to index
+      - name: Prepare docs directory
         run: |
-          cp docs/README.md index.md
+          mkdir -p docs
+          cp README.md docs/index.md
 
       - name: Build site
         run: |
