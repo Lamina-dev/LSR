@@ -27,8 +27,11 @@ jobs:
 
       - name: Prepare docs directory
         run: |
-          mkdir -p docs
+          mkdir -p docs/store/old
           cp README.md docs/index.md
+          cp store/*.md docs/store/
+          cp store/old/*.md docs/store/old/
+          cp -r docs/stylesheets docs/stylesheets 2>/dev/null || true
 
       - name: Build site
         run: |

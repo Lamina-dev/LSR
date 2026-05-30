@@ -1,0 +1,28 @@
+name: Update README TOC
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'store/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-toc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Generate README TOC
+        run: |
+          python .github/scripts/generate_toc.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet README.md || (git add README.md && git commit -m "auto-update README TOC" && git push)
