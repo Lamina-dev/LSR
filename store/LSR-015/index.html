@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="generator" content="mkdocs-1.6.1, mkdocs-terminal-4.8.0">
+     
+     
+    <link rel="icon" type="image/png" sizes="192x192" href="../../img/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="../../img/android-chrome-512x512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/apple-touch-icon.png" />
+<link rel="shortcut icon" type="image/png" sizes="48x48" href="../../img/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="../../img/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="../../img/favicon-32x32.png" />
+
+
+    
+ 
+<title>LSR 0015 - LAMMP 接口规范 - LSR</title>
+
+
+<link href="../../css/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+<link href="../../css/fontawesome/css/solid.min.css" rel="stylesheet">
+<link href="../../css/normalize.css" rel="stylesheet">
+<link href="../../css/terminal.css" rel="stylesheet">
+<link href="../../css/theme.css" rel="stylesheet">
+<link href="../../css/theme.tile_grid.css" rel="stylesheet">
+<link href="../../css/theme.footer.css" rel="stylesheet">
+<!-- default color palette -->
+<link href="../../css/palettes/default.css" rel="stylesheet">
+
+<!-- page layout -->
+<style>
+/* initially set page layout to a one column grid */
+.terminal-mkdocs-main-grid {
+    display: grid;
+    grid-column-gap: 1.4em;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+}
+
+/*  
+*   when side navigation is not hidden, use a two column grid.  
+*   if the screen is too narrow, fall back to the initial one column grid layout.
+*   in this case the main content will be placed under the navigation panel. 
+*/
+@media only screen and (min-width: 70em) {
+    .terminal-mkdocs-main-grid {
+        grid-template-columns: 4fr 9fr;
+    }
+}</style>
+
+
+
+    
+    <link href="../../stylesheets/extra.css" rel="stylesheet">  
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+</head>
+
+<body class="terminal"><div class="container">
+    <div class="terminal-nav">
+        <header class="terminal-logo">
+            <div id="mkdocs-terminal-site-name" class="logo terminal-prompt"><a href="/" class="no-style">LSR</a></div>
+        </header>
+        
+        <nav class="terminal-menu">
+            
+            <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+                
+                
+                <li property="itemListElement" typeof="ListItem">
+                    <a href="../.." class="menu-item " property="item" typeof="WebPage">
+                        <span property="name">LSR目录</span>
+                    </a>
+                    <meta property="position" content="0">
+                </li>
+                
+                
+                
+                    
+                    
+                    
+            </ul>
+            
+        </nav>
+    </div>
+</div>
+        
+    <div class="container">
+        <div class="terminal-mkdocs-main-grid"><aside id="terminal-mkdocs-side-panel"><nav>
+    <ul class="terminal-mkdocs-side-nav-items">
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+    
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../..">LSR目录</a>
+        
+    
+    
+    
+       </li>
+        
+          <li class="terminal-mkdocs-side-nav-li">
+    
+        
+        
+        
+            
+    
+        
+        <span class="
+        
+    terminal-mkdocs-side-nav-item--active terminal-mkdocs-side-nav-section-no-index">Store</span>
+    
+    
+        
+        
+            <ul class="terminal-mkdocs-side-nav-li-ul">
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-000/">LSR 000 - Lamina 核心语言规范（草案）</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-001/">LSR 001 - LSR 流程规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-002/">LSR 002 - 标准常量规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-003/">LSR 003 - Lamina C 扩展与插件规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-004/">LSR 004 - 标准库</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-005/">LSR 005 - 模式匹配</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-006/">LSR 006 - Lambda 表达式与类型推导规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-007/">LSR 007 - === 数学等价判定规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-008/">LSR 008 - 量纲剥离（Unit Stripping）规范</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        <span class="terminal-mkdocs-side-nav-item--active">LSR 0015 - LAMMP 接口规范</span>
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            <a class="terminal-mkdocs-side-nav-item" href="../LSR-undefined/">LSR-undefined</a>
+        
+    
+    </li>
+            
+        
+            
+            
+             
+                <li class="terminal-mkdocs-side-nav-li-ul-li">
+    
+        
+        
+            
+            
+            <span class="
+        
+    terminal-mkdocs-side-nav-item terminal-mkdocs-side-nav-section-no-index">Old</span>
+        
+    
+    </li>
+            
+            
+    </ul>
+        
+    
+       </li>
+        
+    </ul>
+</nav><hr>
+<nav>
+    <ul>
+        <li><a href="#lsr-0015-lammp">LSR 0015 - LAMMP 接口规范</a></li>
+        <li><a href="#_1">基本信息</a></li><li><a href="#_2">摘要</a></li><li><a href="#1">1. 上下文系统</a></li><li><a href="#2">2. 数据类型规范</a></li><li><a href="#3">3. 标准函数接口规范</a></li><li><a href="#4">4. 内存管理规范</a></li><li><a href="#5">5. 错误与异常处理规范</a></li><li><a href="#6">6. 编码示例</a></li><li><a href="#7">7. 接口兼容性约束</a></li>
+    </ul>
+</nav>
+</aside>
+            <main id="terminal-mkdocs-main-content">
+<section id="mkdocs-terminal-content">
+    <h1 id="lsr-0015-lammp">LSR 0015 - LAMMP 接口规范</h1>
+<h2 id="_1">基本信息</h2>
+<ul>
+<li>LSR 编号：0015</li>
+<li>标题：LAMMP 接口规范</li>
+<li>作者：Jericho Knox</li>
+<li>状态：草案</li>
+<li>类型：标准规范类</li>
+<li>创建日期：06-02-2026</li>
+<li>归属项目：LAMMP</li>
+<li>适用范围：LAMMP 库所有标准与非标准 API、数据类型、内存模型、兼容约束等</li>
+<li>替代文档：无</li>
+<li>相关文档：无</li>
+</ul>
+<h2 id="_2">摘要</h2>
+<p>本规范定义 <strong>LAMMP</strong> 的所有公共接口，包含<strong>数据类型、上下文系统、函数命名、内存管理、运算规则、错误处理、兼容性约束</strong>。
+接口设计目标：
+1. <strong>高效性</strong>：最小化调用开销；
+2. <strong>简洁性</strong>：接口语义清晰，无冗余设计；
+3. <strong>灵活性</strong>：支持无限精度/有限精度双类型体系；
+4. <strong>可扩展性</strong>：预留新类型、新运算、新上下文参数扩展空间；
+5. <strong>安全性</strong>：上下文隔离、内存安全、类型安全。</p>
+<p>本规范<strong>不限制底层实现机制</strong>，仅约束对外暴露的 API 行为与契约。</p>
+<h2 id="1">1. 上下文系统</h2>
+<h3 id="11">1.1 核心设计目标</h3>
+<p>实现<strong>类型安全的泛型设计</strong>，隔离不同精度/位宽/舍入模式的计算环境，避免未定义行为。</p>
+<h3 id="12">1.2 上下文约束规则</h3>
+<ol>
+<li><strong>不透明结构体指针</strong>
+   所有上下文类型对外均为不透明指针，禁止直接访问或修改内部成员。</li>
+<li><strong>参数不可变约束</strong>
+   精度、位宽、舍入模式等核心参数<strong>仅在初始化时设置</strong>，初始化后不可修改。</li>
+<li><strong>传递规则</strong>
+   所有运算、初始化、销毁函数必须<strong>显式传递上下文</strong>作为参数。</li>
+<li><strong>多实例隔离</strong>
+   同一作用域可创建多个上下文实例，<strong>类型隔离，不可混用</strong>。</li>
+<li><strong>生命周期约束</strong></li>
+<li>上下文必须在所有关联对象销毁后才能销毁</li>
+<li>上下文销毁后，关联对象禁止任何操作</li>
+<li>未销毁关联对象直接销毁上下文 → 内存泄漏/未定义行为</li>
+</ol>
+<h3 id="13-api">1.3 上下文标准 API 模板</h3>
+<pre><code class="language-c">// 上下文初始化：指定精度/位宽，返回上下文句柄
+XXX_ctx_t XXX_ctx_init(xxxxxx);
+
+// 上下文销毁：必须在所有关联对象销毁后调用
+void XXX_ctx_clear(XXX_ctx_t ctx);
+
+// 上下文获取配置（可选扩展）
+size_t XXX_ctx_get_precision(XXX_ctx_t ctx);
+round_mode_t XXX_ctx_get_rounding(XXX_ctx_t ctx);
+</code></pre>
+<h3 id="14">1.4 合法/非法示例</h3>
+<pre><code class="language-c">// 合法流程
+nint_ctx_t ctx1 = nint_ctx_init(20);
+nint_ctx_t ctx2 = nint_ctx_init(10);
+
+nint_t val1, val2;
+nint_init(val1, ctx1);
+nint_init(val2, ctx2);
+
+// 运算必须使用同一上下文
+nint_t res;
+nint_init(res, ctx1);
+nint_add(res, val1, val1, ctx1);  // 合法
+
+// 销毁顺序：对象 → 上下文
+nint_clear(val1, ctx1);
+nint_clear(val2, ctx2);
+nint_clear(res, ctx1);
+nint_ctx_clear(ctx1);
+nint_ctx_clear(ctx2);
+</code></pre>
+<pre><code class="language-c">// 非法示例（禁止行为）
+nint_add(res, val1, val2, ctx2); // 上下文混用
+nint_ctx_clear(ctx1);            // 先销毁上下文，后销毁对象 → UB
+</code></pre>
+<p>不建议在同一个作用域内创建多个同一类型的上下文，以避免可能的未定义行为。</p>
+<h2 id="2">2. 数据类型规范</h2>
+<p>LAMMP 类型分为两大体系：
+- <strong>无限精度类型</strong>：使用指针存储，自动扩容；
+- <strong>有限精度类型</strong>：具体精度/位宽取决于设置或依赖上下文。</p>
+<h3 id="21">2.1 有符号整数类型</h3>
+<table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>精度属性</th>
+<th>上下文</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lmpz_t</code></td>
+<td>无限精度</td>
+<td>无</td>
+<td>通用任意精度有符号整数</td>
+</tr>
+<tr>
+<td><code>nint_t</code></td>
+<td>有限精度</td>
+<td>有</td>
+<td>固定位宽有符号整数（高性能批量计算场景）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22">2.2 有理数类型</h3>
+<table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>精度属性</th>
+<th>上下文</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lmpq_t</code></td>
+<td>无限精度</td>
+<td>无</td>
+<td>精确分数/有理数运算</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23">2.3 浮点数类型</h3>
+<table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>精度属性</th>
+<th>上下文</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lmpf_t</code></td>
+<td>无限精度</td>
+<td>无</td>
+<td>通用任意精度浮点数</td>
+</tr>
+<tr>
+<td><code>nfloat_t</code></td>
+<td>有限精度</td>
+<td>有</td>
+<td>固定精度高性能浮点数（高性能批量计算场景）</td>
+</tr>
+<tr>
+<td><code>lmag_t</code></td>
+<td>无限精度</td>
+<td>无</td>
+<td>无符号浮点数（幅值/误差运算）</td>
+</tr>
+<tr>
+<td><code>liar_t</code></td>
+<td>无限精度</td>
+<td>（待定）</td>
+<td>区间算术浮点数（绝对误差限计算）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24">2.4 多项式类型</h3>
+<table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>系数</th>
+<th>上下文</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lmpz_poly_t</code></td>
+<td>整系数</td>
+<td>无</td>
+<td>无限精度整系数</td>
+</tr>
+<tr>
+<td><code>lmpq_poly_t</code></td>
+<td>有理数</td>
+<td>无</td>
+<td>无限精度有理数多项式</td>
+</tr>
+<tr>
+<td><code>lmpf_poly_t</code></td>
+<td>浮点系数</td>
+<td>无</td>
+<td>无限精度浮点系数多项式</td>
+</tr>
+<tr>
+<td><code>modn_poly_t</code></td>
+<td>n的剩余类</td>
+<td>有</td>
+<td>有限精度浮点系数多项式</td>
+</tr>
+</tbody>
+</table>
+<p>其他数据类型待定。</p>
+<h2 id="3">3. 标准函数接口规范</h2>
+<h3 id="31">3.1 命名规范</h3>
+<p>标准接口函数命名基本范式：</p>
+<pre><code>[前缀]_[动作]_[对象]
+</code></pre>
+<ul>
+<li>前缀：<code>lmpz</code>/<code>lmpq</code>/<code>lmpf</code>/<code>nint</code>/<code>nfloat</code>/<code>liar</code>...</li>
+<li>动作：<code>init</code>/<code>clear</code>/<code>add</code>/<code>sub</code>/<code>mul</code>/<code>div</code>/<code>set</code>/<code>to</code>/<code>cmp</code>...</li>
+<li>对象：<code>lmpz</code>/<code>lmpq</code>/<code>lmpf</code>/<code>nint</code>/<code>nfloat</code>/<code>liar</code>/<code>ui</code>/<code>si</code>/<code>str</code>...</li>
+<li><code>ui</code>：无符号整数</li>
+<li><code>str</code>：字符串（用于赋值）</li>
+<li>...（其他类型）</li>
+</ul>
+<p>示例：
+  - <code>lmpz_add</code>：无限整数加法
+  - <code>nfloat_mul</code>：有限浮点数乘法
+  - <code>nint_set_ui</code>：有限整数赋值
+  - <code>nint_to_lmpz</code>：有限整数转换为无限整数
+  - <code>nint_to_lmpf</code>：有限整数转换为无限浮点数</p>
+<p>对于复杂的函数，可以自行考虑合理的命名方式，但应基本遵循上述命名规范。</p>
+<h3 id="32">3.2 生命周期函数</h3>
+<p>四类基本生命周期函数：
+- 初始化：<code>init</code>
+- 销毁：<code>clear</code>
+- 移动：<code>move</code>（源对象相当于被clear）
+- 拷贝：<code>copy</code></p>
+<p>生命周期函数的实现不强制要求可重入，即实现时，无需保证可重复初始化或重复销毁。<strong>调用方应自行保证不重复调用生命周期函数</strong>。</p>
+<pre><code class="language-c">// 初始化对象（绑定上下文）
+void lmpz_init(lmpz_t op);
+void nint_init(nint_t op, nint_ctx_t ctx);
+
+// 重置/清空对象
+void lmpz_clear(lmpz_t op);
+void nint_clear(nint_t op, nint_ctx_t ctx);
+
+// 拷贝对象
+void lmpz_copy(lmpz_t rop, const lmpz_t op);
+void nint_copy(nint_t rop, const nint_t op, nint_ctx_t ctx);
+
+// 移动对象（源对象相当于被clear）
+void lmpz_move(lmpz_t rop, lmpz_t op);
+void nint_move(nint_t rop, nint_t op, nint_ctx_t ctx);
+</code></pre>
+<h3 id="33">3.3 运算函数规范</h3>
+<ol>
+<li><strong>输出参数在前</strong>
+   <code>函数(输出, 输入1, 输入2, 上下文（如需要）)</code></li>
+<li><strong>const 修饰输入参数</strong></li>
+<li><strong>无返回值</strong>，禁止直接返回指针。</li>
+<li><strong>上下文为最后一个参数</strong></li>
+</ol>
+<p>标准格式：</p>
+<pre><code class="language-c">// 无限精度
+void lmpz_add(lmpz_t rop, const lmpz_t op1, const lmpz_t op2);
+
+// 有限精度
+void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);
+</code></pre>
+<h2 id="4">4. 内存管理规范</h2>
+<h3 id="41">4.1 基本原则</h3>
+<ol>
+<li><strong>谁初始化，谁销毁</strong></li>
+<li><strong>无限精度类型</strong>：自动管理内存，无需手动扩容</li>
+<li><strong>有限精度类型</strong>：上下文统一管理内存池/缓存</li>
+</ol>
+<h3 id="42">4.2 生命周期顺序</h3>
+<ol>
+<li><strong>有上下文对象</strong>：</li>
+<li>创建上下文</li>
+<li>初始化对象（绑定上下文）</li>
+<li>执行运算</li>
+<li>清空对象</li>
+<li>
+<p>销毁上下文</p>
+</li>
+<li>
+<p><strong>无上下文对象</strong>：</p>
+</li>
+<li>初始化对象</li>
+<li>执行运算</li>
+<li>清空对象</li>
+</ol>
+<p>违反顺序将导致未定义行为（UB）。</p>
+<h2 id="5">5. 错误与异常处理规范</h2>
+<p><code>LAMMP</code>仅保留最低限度的错误检查，绝大多数错误处理机制都应在<code>Release</code>模式下不发生，这是为了追求绝对的效率。同时，错误或异常只抛出，不处理。错误处理机制应由调用方自行实现。</p>
+<h2 id="6">6. 编码示例</h2>
+<p>仅作为参考，实际代码应根据具体实现进行调整。</p>
+<pre><code class="language-c">#include &quot;lammp/lmpz.h&quot;
+
+int main() {
+    // 初始化全局环境建议在进程或线程创建时调用
+    lmmp_global_init();  // 初始化全局环境
+
+    lmpz_t a, b, c;
+    // 初始化
+    lmpz_init(a);
+    lmpz_init(b);
+    lmpz_init(c);
+
+    // 赋值
+    lmpz_set_ui(a, 1000);
+    lmpz_set_ui(b, 2000);
+
+    // 运算
+    lmpz_add(c, a, b);  // c = a + b
+
+    // 输出/使用
+    // ...
+
+    // 销毁
+    lmpz_clear(a);
+    lmpz_clear(b);
+    lmpz_clear(c);
+
+    lmmp_global_clear();  // 清理全局环境
+    return 0;
+}
+</code></pre>
+<pre><code class="language-c">#include &quot;lammp/nint.h&quot;
+
+int main() {
+    // 初始化全局环境建议在进程或线程创建时调用
+    lmmp_global_init();  // 初始化全局环境
+
+    // 创建上下文
+    nint_ctx_t ctx = nint_ctx_init(32); // 32 limb 精度
+    nint_t a, b, c;
+
+    // 初始化对象
+    nint_init(a, ctx);
+    nint_init(b, ctx);
+    nint_init(c, ctx);
+
+    // 赋值与运算
+    nint_set_ui(a, 12345, ctx);
+    nint_set_ui(b, 67890, ctx);
+    nint_add(c, a, b, ctx);
+
+    // 销毁
+    nint_clear(a, ctx);
+    nint_clear(b, ctx);
+    nint_clear(c, ctx);
+    nint_ctx_clear(ctx);
+
+    lmmp_global_clear();  // 清理全局环境
+    return 0;
+}
+</code></pre>
+<h2 id="7">7. 接口兼容性约束</h2>
+<p>LAMMP 暴露的接口有<strong>标准接口</strong>和<strong>非标准接口</strong>，标准接口应尽可能保持兼容性，但不作为强制约束。非标准接口通常以 <code>XXX_</code> 命名（<strong>结尾以下划线收尾</strong>），标准接口则需满足标准接口函数的命名规范。</p>
+<p>其他要求如下：
+1. 应尽可能避免删除标准接口；
+2. 为提高可拓展性和开发自由度，应尽可能暴露非标准接口；
+3. 非标准接口可以更加灵活，以运行效率作为第一优先级，而非兼容性；
+4. 所有接口应至少兼容C11标准，同时可以兼容C++11标准。</p>
+</section>
+
+            </main>
+        </div>
+        <hr><footer>
+    <div class="terminal-mkdocs-footer-grid">
+        <div id="terminal-mkdocs-footer-copyright-info">
+             Site built with <a href="http://www.mkdocs.org">MkDocs</a> and <a href="https://github.com/ntno/mkdocs-terminal">Terminal for MkDocs</a>.
+        </div>
+    </div>
+</footer>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>
