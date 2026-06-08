@@ -8,6 +8,7 @@
 - [LSR 006 - Lambda 表达式与类型推导规范](store/LSR-006.md)
 - [LSR 007 - `===` 数学等价判定规范](store/LSR-007.md)
 - [LSR 008 - 量纲剥离（Unit Stripping）规范](store/LSR-008.md)
+- [LSR 015 - LAMMP 接口规范](store/LSR-015.md)
 
 _由于Lamina项目的发展，部分LSR已被废弃。以下是旧的LSR列表，供参考。_
 
