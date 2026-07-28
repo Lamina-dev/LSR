@@ -1,18 +1,23 @@
-name: Compile MkDocs to Deploy Branch
+name: Build Sphinx site
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    concurrency:
+      group: sphinx-deploy
+      cancel-in-progress: true
+
     steps:
-      - name: Checkout source code
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -20,26 +25,22 @@ jobs:
         with:
           python-version: '3.x'
 
-
-      - name: Install MkDocs
+      - name: Install dependencies
         run: |
-          pip install mkdocs mkdocs-terminal
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
 
-      - name: Prepare docs directory
+      - name: Build HTML
         run: |
-          mkdir -p docs/store/old
-          cp README.md docs/index.md
-          cp store/*.md docs/store/
-          cp store/old/*.md docs/store/old/
-          cp -r docs/stylesheets docs/stylesheets 2>/dev/null || true
+          python -m sphinx -W -b html . _build/html
 
-      - name: Build site
+      - name: Disable Jekyll
         run: |
-          mkdocs build
+          touch _build/html/.nojekyll
 
-      - name: Push HTML to deploy branch
+      - name: Publish HTML to deploy branch
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: site
+          folder: _build/html
           branch: deploy
           token: ${{ secrets.GITHUB_TOKEN }}

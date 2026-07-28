@@ -1,6 +1,10 @@
-# LSR 012 关于函数式编程 (FP)
+LSR 012 关于函数式编程 (FP)
+====================
 
-## 基本信息
+
+基本信息
+----
+
 
 - LSR 编号: 012
 - 标题: 关于函数式编程
@@ -9,13 +13,17 @@
 - 类型: 标准规范
 - 创建日期: 10-18-2025
 
-# 摘要
+摘要
+==
+
 
 为增强 Lamina 在表达式抽象、组合性与不可变性方面的能力，提出对函数式编程特性的语言级支持：高阶函数、闭包、尾递归优化、map/filter/reduce、柯里化与部分应用、以及对纯函数与装饰器的规范说明。
 
 目标是提供简洁、安全且可组合的函数式原语，使库与用户代码更易推理与并行化实现。
 
-## 规范要点
+规范要点
+----
+
 
 - 高阶函数（Higher-order functions）：函数可以作为参数被传递，或作为返回值返回。
 - 闭包（Closures）：函数捕获创建时的环境变量并保持其生命周期。
@@ -24,97 +32,115 @@
 - 柯里化与部分应用：支持将多参函数部分应用以生成新的可复用函数。
 - 纯函数与装饰器：提供 @pure 等标记以增强静态分析与优化可能性。
 
-## 语法示例
+语法示例
+----
+
 
 高阶/匿名函数：
-```
-// 常规形式
-do |arguments| {
-    statements
-};
+.. code-block:: text
 
-// 无参数时简写
-do {
-    statements
-};
+   // 常规形式
+   do |arguments| {
+       statements
+   };
+   
+   // 无参数时简写
+   do {
+       statements
+   };
+   
+   // 表达式简写
+   |a,b| => a + b
 
-// 表达式简写
-|a,b| => a + b
-```
 
 示例：
-```
-var float_add: callable[float, [float,float]] = |a,b| => a+b
+.. code-block:: text
 
-var int_add: callable[int,[int,int]] =
-do |a,b| {
-    return a+b
-}
-```
+   var float_add: callable[float, [float,float]] = |a,b| => a+b
+   
+   var int_add: callable[int,[int,int]] =
+   do |a,b| {
+       return a+b
+   }
+
 
 闭包示例：
-```
-func make_adder(x){
-    return |y| => x + y
-}
+.. code-block:: text
 
-var add5 = make_adder(5)
-assert add5(3) == 8
-```
+   func make_adder(x){
+       return |y| => x + y
+   }
+   
+   var add5 = make_adder(5)
+   assert add5(3) == 8
+
 
 尾递归示例（建议启用 TCO）：
-```
-func fact_tr(n, acc){
-    if n == 0 { return acc }
-    return fact_tr(n-1, acc * n)  // 尾调用
-}
+.. code-block:: text
 
-var f = fact_tr(5, 1)  // =120
-```
+   func fact_tr(n, acc){
+       if n == 0 { return acc }
+       return fact_tr(n-1, acc * n)  // 尾调用
+   }
+   
+   var f = fact_tr(5, 1)  // =120
+
 
 map/filter/reduce 示例：
-```
-var nums = [1,2,3,4]
-var squares = nums.map(|x| => x * x)
-var evens = nums.filter(|x| => x % 2 == 0)
-var sum = nums.reduce(|acc, x| => acc + x, 0)
-```
+.. code-block:: text
+
+   var nums = [1,2,3,4]
+   var squares = nums.map(|x| => x * x)
+   var evens = nums.filter(|x| => x % 2 == 0)
+   var sum = nums.reduce(|acc, x| => acc + x, 0)
+
 
 柯里化/部分应用：
-```
-func add(a,b){ return a + b }
-var add10 = add.curried()(10)  // 部分应用，得到一个接受 b 的函数
-```
+.. code-block:: text
+
+   func add(a,b){ return a + b }
+   var add10 = add.curried()(10)  // 部分应用，得到一个接受 b 的函数
+
 
 装饰器与纯函数：
-```
-@pure
-func add(a,b){ return a+b }
-```
+.. code-block:: text
+
+   @pure
+   func add(a,b){ return a+b }
+
 
 注：标准库中还应包含 Option/Result 类型以便与纯函数和不可变数据结构配合，详情见错误处理规范（LSR-013）。
 
-## 兼容性与实现注意
+兼容性与实现注意
+--------
+
 
 - 建议将高阶函数与直接函数调用的调用约定保持一致以减少性能开销。
 - 对闭包捕获的变量应区分按值捕获与按引用捕获，默认按值以保证不可变语义，但提供显式按引用捕获语法（例 &x）。
 - 尾递归优化必须只在明确的尾调用位置生效，编译器/解释器实现应提供测试套件以验证优化正确性。
 
 
-## 装饰器
+装饰器
+---
+
 
 ---
-### 核心语法：
-```
-@function_name  // 装饰器函数
-func name(arguments){
-    statements
-}
-```
-### 使用示例：
-```
-@pure  // 标记函数为纯函数（无副作用）
-func add(a,b){
-    return a+b
-}
-```
+核心语法：
+~~~~~
+
+.. code-block:: text
+
+   @function_name  // 装饰器函数
+   func name(arguments){
+       statements
+   }
+
+使用示例：
+~~~~~
+
+.. code-block:: text
+
+   @pure  // 标记函数为纯函数（无副作用）
+   func add(a,b){
+       return a+b
+   }

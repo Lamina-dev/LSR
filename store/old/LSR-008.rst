@@ -1,0 +1,56 @@
+LSR 008 - 结构体
+=============
+
+
+基本信息
+----
+
+
+- LSR 编号 008
+- 标题 结构体
+- 作者 azhz1107cat
+- 状态 应用
+- 类型 标准规范
+- 创建日期 08-28-2025
+- Lamina 版本 Beta
+
+摘要
+--
+
+
+在Lamina持续发展的过程中，为进一步完善语言功能、提升使用便捷性与灵活性，故引入结构体。
+
+技术规范
+----
+
+
+核心语法：
+~~~~~
+
+.. code-block:: text
+
+   struct Name{
+       item_name: type  // 结构体成员及类型定义
+   };
+
+使用示例：
+~~~~~
+
+.. code-block:: text
+
+   // 命名结构体
+   struct Dog{
+       weight: int,
+       height: int,
+       width: int,
+       master: str
+   };
+   
+   // 匿名结构体
+   var x = {
+     weight = 100,
+     master = "Tom"
+   };
+   
+   x.weight // 访问x的weight字段:100
+   x.master = "Tim"; // 设置x的master字段为Tim

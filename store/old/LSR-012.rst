@@ -1,6 +1,10 @@
-# LSR 013 错误处理规范
+LSR 013 错误处理规范
+==============
 
-## 基本信息
+
+基本信息
+----
+
 
 - LSR 编号: 013
 - 标题: 错误处理规范
@@ -9,63 +13,76 @@
 - 类型: 标准规范
 - 创建日期: 10-18-2025
 
-## 摘要
+摘要
+--
+
 
 定义 Lamina 的错误处理风格：优先使用可组合的 Result/Option 类型进行显式错误传播；在需要时提供异常机制供边界层或 interop 使用；并定义 panic 策略与 API 约定。
 
 目标：减少隐式异常带来的不可预测性，提高库级错误处理的一致性，并兼顾易用性与性能。
 
-## 主要概念
+主要概念
+----
+
 
 - Option[T]：用于可能为空的返回值，包含 Some(value) 或 None。
 - Result[T, E]：用于返回成功或失败，包含 Ok(value) 或 Err(error)。
 - Try/ ? 运算符：在表达式中便捷传播 Err（例：var x = may_fail()?），等同于匹配并早返回 Err。
 - panic：不可恢复错误导致程序立即终止或进入定义的回退策略（用于严重运行时错误）。
 
-## 语法与示例
+语法与示例
+-----
+
 
 返回 Result 的函数：
-```
-func parse_int(s: string) -> Result[int, ParseError] {
-	if is_number(s) { return Ok( to_int(s) ) }
-	return Err(ParseError("not a number"))
-}
+.. code-block:: text
 
-// 使用 ? 运算符传播错误
-func sum_pair(a: string, b: string) -> Result[int, ParseError] {
-	var x = parse_int(a)?
-	var y = parse_int(b)?
-	return Ok(x + y)
-}
-```
+   func parse_int(s: string) -> Result[int, ParseError] {
+   	if is_number(s) { return Ok( to_int(s) ) }
+   	return Err(ParseError("not a number"))
+   }
+   
+   // 使用 ? 运算符传播错误
+   func sum_pair(a: string, b: string) -> Result[int, ParseError] {
+   	var x = parse_int(a)?
+   	var y = parse_int(b)?
+   	return Ok(x + y)
+   }
+
 
 Option 示例：
-```
-func maybe_head(xs: [T]) -> Option[T] {
-	if xs.len == 0 { return None }
-	return Some(xs[0])
-}
-```
+.. code-block:: text
+
+   func maybe_head(xs: [T]) -> Option[T] {
+   	if xs.len == 0 { return None }
+   	return Some(xs[0])
+   }
+
 
 异常互操作（建议作为边界层）：
-```
-try {
-	// 调用可能抛出异常的 FFI 或旧 API
-} catch (e) {
-	// 将异常转换为 Err 或记录
-}
-```
+.. code-block:: text
+
+   try {
+   	// 调用可能抛出异常的 FFI 或旧 API
+   } catch (e) {
+   	// 将异常转换为 Err 或记录
+   }
+
 
 Panic 策略：
 - 默认：panic 将打印错误与回溯并中止当前线程/进程。
 - 可配置：在嵌入模式下，可通过 runtime 配置为返回错误代码或触发回调。
 
-## 与标准库的集成
+与标准库的集成
+-------
+
 
 - 鼓励库函数返回 Result/Option，而非直接 panic。
 - 提供从异常到 Result 的桥接函数，例 catch_to_result(func) -> Result
 
-## 向后兼容与迁移策略
+向后兼容与迁移策略
+---------
+
 
 - 现有抛出异常的 API 应逐步提供 Result/Option 版本，并在文档中给出迁移指南。
 
