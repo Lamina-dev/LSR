@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>LSR 004 - 标准库 &#8212; LSR  文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=7d86a446"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="LSR 005 - 模式匹配" href="LSR-005.html" />
+    <link rel="prev" title="LSR 003 - Lamina C 扩展与插件规范" href="LSR-003.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lsr-004">
+<h1>LSR 004 - 标准库<a class="headerlink" href="#lsr-004" title="链接到此标题。">¶</a></h1>
+<section id="id1">
+<h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>LSR 编号 004</p></li>
+<li><p>标题 标准库</p></li>
+<li><p>作者 Ziyang-Bai</p></li>
+<li><p>状态 草案</p></li>
+<li><p>类型 标准规范</p></li>
+<li><p>创建日期 02-04-2026</p></li>
+<li><p>归属项目 通用</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
+<p>定义 Lamina 标准库（<code class="docutils literal notranslate"><span class="pre">std</span></code> ）的模块结构、导入与调用规则、数学核心 API 和错误模型。</p>
+</section>
+<section id="id3">
+<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<section id="id4">
+<h3>1. 设计目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>统一、稳定、可组合的标准 API</p></li>
+<li><p>对齐 LSR-000 的静态强类型与单位系统</p></li>
+<li><p>覆盖数学核心能力（数值、线代、统计、随机、单位）</p></li>
+<li><p>同名函数跨平台语义一致</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>2. 命名空间与模块结构<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<p>标准库顶级命名空间固定为 <code class="docutils literal notranslate"><span class="pre">std</span></code>。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>模块</p></th>
+<th class="head"><p>作用域</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.math</span></code></p></td>
+<td><p>通用数学</p></td>
+<td><p>初等函数、三角函数、指数对数、舍入、数值辅助</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.linalg</span></code></p></td>
+<td><p>线性代数</p></td>
+<td><p>矩阵分解、求解、逆、行列式、特征值</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.stats</span></code></p></td>
+<td><p>统计</p></td>
+<td><p>描述统计、分位数、协方差、相关系数</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.random</span></code></p></td>
+<td><p>随机数</p></td>
+<td><p>伪随机引擎、分布采样、种子控制</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.units</span></code></p></td>
+<td><p>单位工具</p></td>
+<td><p>单位转换辅助与量纲工具函数</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.constants</span></code></p></td>
+<td><p>常量集</p></td>
+<td><p>统一暴露 LSR-002 常量</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.io</span></code></p></td>
+<td><p>基础 I/O</p></td>
+<td><p>文本输入输出与格式化</p></td>
+</tr>
+</tbody>
+</table>
+<p>规则：</p>
+<ul class="simple">
+<li><p>模块名称与路径大小写敏感</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std</span></code> 根命名空间保留；用户模块定义在非 <code class="docutils literal notranslate"><span class="pre">std</span></code> 命名空间</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>3. 导入与库调用约定<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<section id="id7">
+<h4>3.1 导入语法<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.math
+import std.linalg as la
+
+use std.math.{sin, cos, pi}
+use std.constants.{G as GRAVITY}
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">a.b</span></code> 绑定模块对象到当前作用域（默认名为末段标识符）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">a.b</span> <span class="pre">as</span> <span class="pre">x</span></code> 使用别名绑定模块对象</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use</span> <span class="pre">a.b.{x,</span> <span class="pre">y</span> <span class="pre">as</span> <span class="pre">z}</span></code> 导入符号；若与当前作用域重名则编译报错</p></li>
+</ul>
+</section>
+<section id="id8">
+<h4>3.2 调用约定<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let y = math.sin(math.pi / 2)
+let detA = la.det(A)
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p>模块函数调用统一使用 <code class="docutils literal notranslate"><span class="pre">module.func(args...)</span></code></p></li>
+<li><p>对 <code class="docutils literal notranslate"><span class="pre">use</span></code> 导入的符号可直接调用</p></li>
+<li><p>标准库函数以纯函数语义为默认，参数只读</p></li>
+</ul>
+</section>
+<section id="id9">
+<h4>3.3 <code class="docutils literal notranslate"><span class="pre">.</span></code> 规则<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">.</span></code> 用于命名空间路径与成员访问；<code class="docutils literal notranslate"><span class="pre">import</span></code>/<code class="docutils literal notranslate"><span class="pre">use</span></code> 中路径与符号选择均使用 <code class="docutils literal notranslate"><span class="pre">.</span></code>。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.math
+use std.math.{sin, cos}
+
+let a = math.sin(pi / 2)   # &#39;.&#39; 成员访问
+let b = sin(pi / 2)        # 通过 use 导入后可直接访问
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">a.b</span></code> / <code class="docutils literal notranslate"><span class="pre">use</span> <span class="pre">a.b.{...}</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">.</span></code> 表示命名空间路径</p></li>
+<li><p>运行期表达式的 <code class="docutils literal notranslate"><span class="pre">a.b</span></code> 表示成员访问（模块对象、表、对象）</p></li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h3>4. 数学系统<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<section id="std-math">
+<h4>4.1 <code class="docutils literal notranslate"><span class="pre">std.math</span></code><a class="headerlink" href="#std-math" title="链接到此标题。">¶</a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>函数</p></th>
+<th class="head"><p>签名</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">abs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">abs(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>绝对值</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sqrt</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">sqrt(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>平方根</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">pow(x</span> <span class="pre">num,</span> <span class="pre">y</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>幂</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exp</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">exp(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>指数函数</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">log</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">log(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>自然对数</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log10</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">log10(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>常用对数</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sin</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">sin(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>正弦</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cos</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">cos(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>余弦</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tan</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">tan(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>正切</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">asin</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">asin(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>反正弦</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">acos</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">acos(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>反余弦</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">atan</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">atan(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>反正切</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">floor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">floor(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>向下取整</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ceil</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">ceil(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>向上取整</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">round</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">round(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>四舍五入</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">clamp</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">clamp(x</span> <span class="pre">num,</span> <span class="pre">lo</span> <span class="pre">num,</span> <span class="pre">hi</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>截断到区间</p></td>
+</tr>
+</tbody>
+</table>
+<p>常量：<code class="docutils literal notranslate"><span class="pre">pi</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code>, <code class="docutils literal notranslate"><span class="pre">phi</span></code>。</p>
+</section>
+<section id="std-linalg">
+<h4>4.2 <code class="docutils literal notranslate"><span class="pre">std.linalg</span></code><a class="headerlink" href="#std-linalg" title="链接到此标题。">¶</a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>函数</p></th>
+<th class="head"><p>签名</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">shape(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">vector&lt;int&gt;</span></code></p></td>
+<td><p>返回维度 <code class="docutils literal notranslate"><span class="pre">[rows,</span> <span class="pre">cols]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">transpose</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">transpose(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">matrix</span></code></p></td>
+<td><p>非共轭转置</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">adjoint</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">adjoint(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">matrix</span></code></p></td>
+<td><p>共轭转置</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">det</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">det(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>行列式（方阵）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">inv(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">matrix</span></code></p></td>
+<td><p>矩阵逆（方阵）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rank</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">rank(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">int</span></code></p></td>
+<td><p>矩阵秩</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">trace</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">trace(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>迹</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">solve_left</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">solve_left(A</span> <span class="pre">matrix,</span> <span class="pre">B</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">matrix</span></code></p></td>
+<td><p>解 <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">X</span> <span class="pre">=</span> <span class="pre">B</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">solve_right</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">solve_right(B</span> <span class="pre">matrix,</span> <span class="pre">A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">matrix</span></code></p></td>
+<td><p>解 <code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">A</span> <span class="pre">=</span> <span class="pre">B</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eig</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">eig(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">table&lt;text,</span> <span class="pre">matrix&gt;</span></code></p></td>
+<td><p>特征值/特征向量</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">svd</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">svd(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">table&lt;text,</span> <span class="pre">matrix&gt;</span></code></p></td>
+<td><p>奇异值分解</p></td>
+</tr>
+</tbody>
+</table>
+<p>语义对齐：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">solve_left(A,</span> <span class="pre">B)</span></code> 与运算符 <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">\\</span> <span class="pre">B</span></code> 等价</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">solve_right(B,</span> <span class="pre">A)</span></code> 与运算符 <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">/</span> <span class="pre">A</span></code> （矩阵语义）等价</p></li>
+</ul>
+</section>
+<section id="std-stats">
+<h4>4.3 <code class="docutils literal notranslate"><span class="pre">std.stats</span></code><a class="headerlink" href="#std-stats" title="链接到此标题。">¶</a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>函数</p></th>
+<th class="head"><p>签名</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">mean(x</span> <span class="pre">vector&lt;num&gt;)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>均值</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">median</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">median(x</span> <span class="pre">vector&lt;num&gt;)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>中位数</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">var</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">var(x</span> <span class="pre">vector&lt;num&gt;)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>方差</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">std(x</span> <span class="pre">vector&lt;num&gt;)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>标准差</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">quantile</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">quantile(x</span> <span class="pre">vector&lt;num&gt;,</span> <span class="pre">q</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>分位数</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cov</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">cov(x</span> <span class="pre">vector&lt;num&gt;,</span> <span class="pre">y</span> <span class="pre">vector&lt;num&gt;)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>协方差</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">corr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">corr(x</span> <span class="pre">vector&lt;num&gt;,</span> <span class="pre">y</span> <span class="pre">vector&lt;num&gt;)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>相关系数</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="std-random">
+<h4>4.4 <code class="docutils literal notranslate"><span class="pre">std.random</span></code><a class="headerlink" href="#std-random" title="链接到此标题。">¶</a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>函数</p></th>
+<th class="head"><p>签名</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">seed(s</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code></p></td>
+<td><p>设置随机种子</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rand</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">rand()</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">U(0,1)</span></code> 采样</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">randint</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">randint(lo</span> <span class="pre">int,</span> <span class="pre">hi</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">int</span></code></p></td>
+<td><p>区间整数采样</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">normal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">normal(mu</span> <span class="pre">num,</span> <span class="pre">sigma</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>正态采样</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">choice</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">choice(x</span> <span class="pre">vector&lt;num&gt;)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>离散采样</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="std-units">
+<h4>4.5 <code class="docutils literal notranslate"><span class="pre">std.units</span></code><a class="headerlink" href="#std-units" title="链接到此标题。">¶</a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>函数</p></th>
+<th class="head"><p>签名</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">convert</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">convert(x</span> <span class="pre">num,</span> <span class="pre">u</span> <span class="pre">text)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>将数值转换到单位字符串 <code class="docutils literal notranslate"><span class="pre">u</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">strip</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">strip(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p>等价于 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">as</span> <span class="pre">num</span></code> （见 LSR-008）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_dimensionless</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">is_dimensionless(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code></p></td>
+<td><p>是否无量纲</p></td>
+</tr>
+</tbody>
+</table>
+<p>规则：<code class="docutils literal notranslate"><span class="pre">strip</span></code> 只是函数入口，语义以 LSR-008 为准。</p>
+</section>
+</section>
+<section id="id11">
+<h3>5. 常量系统<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">std.constants</span></code> 暴露 LSR-002 定义的常量集合</p></li>
+<li><p>常量以只读绑定导出</p></li>
+<li><p>常量单位必须与 LSR-000 量纲系统一致</p></li>
+</ul>
+<section id="id12">
+<h4>5.1 用户自定义常量<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
+<p>用户可在模块内定义常量：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>module user.constants {
+     const G_MARS = 3.72076&lt;m/s^2&gt;
+     const TAU = 2 * pi
+}
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">const</span></code> 必须在声明时初始化</p></li>
+<li><p>初始化表达式必须可在编译期求值</p></li>
+<li><p>常量为只读绑定；编译期校验覆盖重定义与写入</p></li>
+</ul>
+</section>
+<section id="id13">
+<h4>5.2 用户自定义单位<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h4>
+<p>用户可在模块内定义单位：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>module user.units {
+     unit score
+     unit token
+
+     unit km = 1000&lt;m&gt;
+     unit min = 60&lt;s&gt;
+     unit knot = 0.514444&lt;m/s&gt;
+     unit level = 100&lt;score&gt;
+}
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">unit</span></code> 声明进入当前命名空间</p></li>
+<li><p>允许定义抽象基单位（不归约到 SI）</p></li>
+<li><p>派生单位必须可归约到已知单位（SI 或抽象基单位）</p></li>
+<li><p>可通过 <code class="docutils literal notranslate"><span class="pre">import</span></code>/<code class="docutils literal notranslate"><span class="pre">use</span></code> 跨模块复用</p></li>
+</ul>
+<p>示例：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.constants.{G, C, EARTH_GRAVITY}
+let v = EARTH_GRAVITY * 2&lt;s&gt;
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h3>6. 错误模型<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
+<p>标准库错误采用可诊断错误码，至少覆盖：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DomainError</span></code> ：输入超出定义域（如 <code class="docutils literal notranslate"><span class="pre">log(-1)</span></code> ）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DimensionMismatch</span></code> ：线代/广播维度不匹配</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SingularMatrix</span></code> ：矩阵奇异或线性系统奇异</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EmptyInput</span></code> ：统计函数输入为空</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code> ：参数类型或取值非法</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>7. 性能与确定性约束<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>同版本标准库在同一输入下必须给出可重现结果（随机模块除外）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.random</span></code> 在固定种子下必须可重放</p></li>
+<li><p>线性代数实现允许后端差异，但数值误差须在文档化容差内</p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>8. 版本与稳定性<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">std</span></code> 下 API 采用语义化版本管理</p></li>
+<li><p>对外函数签名变更属于破坏性变更，需提升主版本</p></li>
+<li><p>新增函数保持向后兼容调用行为；既有函数语义保持稳定</p></li>
+</ul>
+</section>
+<section id="id17">
+<h3>9. 示例<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.math
+import std.linalg as la
+use std.stats.{mean, std}
+use std.units.{strip}
+
+let A = mat[2,1;1,3]
+let B = mat[1;2]
+let X = A \\ B
+
+let angle = math.pi / 4
+let s = math.sin(angle)
+
+let speed = 36&lt;km/h&gt;
+let raw_si = strip(speed as &lt;m/s&gt;)
+
+let xs = vec[1,2,3,4,5]
+let m = mean(xs)
+let sd = std(xs)
+</pre></div>
+</div>
+</section>
+<section id="lsr">
+<h3>10. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>LSR-000：语言核心语法与运算符语义</p></li>
+<li><p>LSR-002：标准常量定义来源</p></li>
+<li><p>LSR-003：标准库可由扩展模块补充实现</p></li>
+<li><p>LSR-008：<code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 量纲剥离语义来源</p></li>
+<li><p>LSR-009：多个同类标准库结果使用 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code> 表示</p></li>
+<li><p>LSR-010：<code class="docutils literal notranslate"><span class="pre">std.math</span></code> 复数常量与复数函数语义来源</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/icon.svg" alt="LSR 的 Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">LSR</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">当前规范</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="LSR-000.html">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-001.html">LSR 001 - LSR 流程规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 004 - 标准库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LSR-003.html" title="上一章">LSR 003 - Lamina C 扩展与插件规范</a></li>
+      <li>Next: <a href="LSR-005.html" title="下一章">LSR 005 - 模式匹配</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/store/LSR-004.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

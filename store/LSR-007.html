@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>LSR 007 - === 数学等价判定规范 &#8212; LSR  文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=7d86a446"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="LSR 008 - 量纲剥离（Unit Stripping）规范" href="LSR-008.html" />
+    <link rel="prev" title="LSR 006 - Lambda 表达式与类型推导规范" href="LSR-006.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lsr-007">
+<h1>LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范<a class="headerlink" href="#lsr-007" title="链接到此标题。">¶</a></h1>
+<section id="id1">
+<h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>LSR 编号 007</p></li>
+<li><p>标题 <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</p></li>
+<li><p>作者 Ziyang-Bai</p></li>
+<li><p>状态 草案</p></li>
+<li><p>类型 标准规范</p></li>
+<li><p>创建日期 04-05-2026</p></li>
+<li><p>归属项目 编译器、CAS</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
+<p>定义 <code class="docutils literal notranslate"><span class="pre">===</span></code> 在 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上的判定语义、化简边界与终止策略。采用有限规则与预算：可证明返回 <code class="docutils literal notranslate"><span class="pre">true</span></code>，否则 <code class="docutils literal notranslate"><span class="pre">false</span></code>。</p>
+</section>
+<section id="id3">
+<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<section id="id4">
+<h3>1. 适用范围<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 仅适用于 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
+<li><p>非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 操作数使用 <code class="docutils literal notranslate"><span class="pre">===</span></code> 必须在类型检查阶段报错 <code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code></p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>2. 语义定义<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<p>对 <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">===</span> <span class="pre">b</span></code> 执行有限证明流程：</p>
+<ol class="arabic simple">
+<li><p>对 <code class="docutils literal notranslate"><span class="pre">a</span></code>、<code class="docutils literal notranslate"><span class="pre">b</span></code> 执行量纲标准化预处理（见第 4.3 节）</p></li>
+<li><p>对预处理后的纯数学核心分别执行受限规范化（见第 4 节）</p></li>
+<li><p>若量纲签名一致且核心结构相同，则返回 <code class="docutils literal notranslate"><span class="pre">true</span></code></p></li>
+<li><p>否则返回 <code class="docutils literal notranslate"><span class="pre">false</span></code></p></li>
+</ol>
+<p>规则：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> 含义为“在当前规则与预算下未能证明等价”，不等价于“数学上必不等价”</p></li>
+<li><p>该定义保证判定过程总能终止</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>3. 判定边界<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>根据 Richardson 定理，包含初等函数的恒等式判定采用有限规则集</p></li>
+<li><p>承诺范围限定为可终止性与规则内可靠性（soundness over supported rules）</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>4. 规范化规则与化简深度<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
+<section id="core">
+<h4>4.1 必选规则集（Core）<a class="headerlink" href="#core" title="链接到此标题。">¶</a></h4>
+<p>1. 常量折叠
+- 有理数与整数的精确化简
+- 代数恒等式：<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">0</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>，<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">1</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>，<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">0</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code>，<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code></p>
+<p>2. 多项式标准形（交换/结合规范化）
+- 对 <code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">*</span></code> 进行交换与结合归一化
+- 同类项合并
+- 有理系数多项式标准化</p>
+<p>3. 分式与幂的基础化简
+- 分式约分（可约分项）
+- 整数幂规则（在安全条件下）</p>
+</section>
+<section id="extended-profile">
+<h4>4.2 可选规则集（Extended，profile）<a class="headerlink" href="#extended-profile" title="链接到此标题。">¶</a></h4>
+<p>1. Trig-Basic（可选）
+- 基础恒等式：<code class="docutils literal notranslate"><span class="pre">sin(x)^2</span> <span class="pre">+</span> <span class="pre">cos(x)^2</span> <span class="pre">-&gt;</span> <span class="pre">1</span></code>
+- 奇偶性：<code class="docutils literal notranslate"><span class="pre">sin(-x)</span> <span class="pre">-&gt;</span> <span class="pre">-sin(x)</span></code>，<code class="docutils literal notranslate"><span class="pre">cos(-x)</span> <span class="pre">-&gt;</span> <span class="pre">cos(x)</span></code></p>
+<p>2. ExpLog-Basic（可选）
+- 在定义域安全前提下：<code class="docutils literal notranslate"><span class="pre">exp(log(x))</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>
+- 常量级规则：<code class="docutils literal notranslate"><span class="pre">log(1)</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code>，<code class="docutils literal notranslate"><span class="pre">exp(0)</span> <span class="pre">-&gt;</span> <span class="pre">1</span></code></p>
+<p>默认 profile：<code class="docutils literal notranslate"><span class="pre">Core</span></code>。</p>
+</section>
+<section id="canonicalization">
+<h4>4.3 量纲标准化预处理（Canonicalization）<a class="headerlink" href="#canonicalization" title="链接到此标题。">¶</a></h4>
+<p>在进入 <code class="docutils literal notranslate"><span class="pre">===</span></code> 核心化简前，必须执行“量纲提取”步骤：</p>
+<ul class="simple">
+<li><p>将表达式中的量纲标签提取并合并到最外层</p></li>
+<li><p>纯数学核心与量纲签名分离后再进入重写系统</p></li>
+</ul>
+<p>示意：</p>
+<ul class="simple">
+<li><p>输入：<code class="docutils literal notranslate"><span class="pre">x&lt;m&gt;</span> <span class="pre">*</span> <span class="pre">y&lt;s&gt;</span></code></p></li>
+<li><p>预处理：<code class="docutils literal notranslate"><span class="pre">(x</span> <span class="pre">*</span> <span class="pre">y)&lt;m*s&gt;</span></code></p></li>
+</ul>
+<p>判定规则：</p>
+<ul class="simple">
+<li><p>量纲签名一致时进入核心比较；其他情况结果为 <code class="docutils literal notranslate"><span class="pre">false</span></code></p></li>
+</ul>
+<p>作用：</p>
+<ul class="simple">
+<li><p>降低符号重写图规模</p></li>
+<li><p>减少 <code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code> 发生概率</p></li>
+</ul>
+</section>
+</section>
+<section id="id8">
+<h3>5. 预算与终止策略<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<p>为保证终止，<code class="docutils literal notranslate"><span class="pre">===</span></code> 必须设置预算上限：</p>
+<ul class="simple">
+<li><p>最大重写步数：<code class="docutils literal notranslate"><span class="pre">maxRewriteSteps</span> <span class="pre">=</span> <span class="pre">256</span></code></p></li>
+<li><p>最大递归深度：<code class="docutils literal notranslate"><span class="pre">maxRewriteDepth</span> <span class="pre">=</span> <span class="pre">64</span></code></p></li>
+<li><p>最大节点增长倍数：<code class="docutils literal notranslate"><span class="pre">maxNodeGrowthFactor</span> <span class="pre">=</span> <span class="pre">4</span></code></p></li>
+</ul>
+<p>任一预算耗尽即停止化简并返回 <code class="docutils literal notranslate"><span class="pre">false</span></code> （可附带诊断标记 <code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code> ）。</p>
+</section>
+<section id="id9">
+<h3>6. 决策流程<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>eqv(a, b):
+  if type(a) != Expr or type(b) != Expr: type error
+  (ua, ca) = canonicalize_units(a)
+  (ub, cb) = canonicalize_units(b)
+  if ua != ub: return false
+  na = normalize(ca, profile, budget)
+  nb = normalize(cb, profile, budget)
+  if structurally_equal(na, nb): return true
+  else: return false
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>7. 示例<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<section id="id11">
+<h4>7.1 Core 下必然成立<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
+x + 0 === x                       # true
+x^2 + 2*x + 1 === (x + 1)^2       # true
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>7.2 Core 下不保证成立<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sin(pi/4)^2 + cos(pi/4)^2 === 1   # 在 Core profile 下通常为 false
+</pre></div>
+</div>
+</section>
+<section id="trig-basic">
+<h4>7.3 开启 Trig-Basic 后可成立<a class="headerlink" href="#trig-basic" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># 假设 profile = Trig-Basic
+sin(pi/4)^2 + cos(pi/4)^2 === 1   # true
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id13">
+<h3>8. 配置接口<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set_eqv_profile(&quot;Core&quot;</span> <span class="pre">|</span> <span class="pre">&quot;Trig-Basic&quot;</span> <span class="pre">|</span> <span class="pre">&quot;ExpLog-Basic&quot;)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_eqv_budget(steps,</span> <span class="pre">depth,</span> <span class="pre">growth)</span></code></p></li>
+</ul>
+<p>未设置时采用默认值：<code class="docutils literal notranslate"><span class="pre">Core</span></code> + 第 5 节预算。</p>
+</section>
+<section id="id14">
+<h3>9. 错误与诊断<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code>: <code class="docutils literal notranslate"><span class="pre">===</span></code> 作用于非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code>: 达到预算上限，停止证明</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EqvRuleDisabled</span></code>: 依赖的规则集未启用（可选诊断）</p></li>
+</ul>
+</section>
+<section id="lsr">
+<h3>10. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>LSR-000：声明 <code class="docutils literal notranslate"><span class="pre">===</span></code> 存在并引用本规范作为唯一语义来源</p></li>
+<li><p>LSR-005：match 守卫中的 <code class="docutils literal notranslate"><span class="pre">===</span></code> 语义依赖本规范</p></li>
+<li><p>LSR-006：Lambda 中若出现 <code class="docutils literal notranslate"><span class="pre">===</span></code>，同样遵循本规范</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/icon.svg" alt="LSR 的 Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">LSR</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">当前规范</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="LSR-000.html">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-001.html">LSR 001 - LSR 流程规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LSR-006.html" title="上一章">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+      <li>Next: <a href="LSR-008.html" title="下一章">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/store/LSR-007.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

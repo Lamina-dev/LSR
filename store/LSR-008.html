@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>LSR 008 - 量纲剥离（Unit Stripping）规范 &#8212; LSR  文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=7d86a446"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="LSR 009 - 集合与多结果返回规范" href="LSR-009.html" />
+    <link rel="prev" title="LSR 007 - === 数学等价判定规范" href="LSR-007.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lsr-008-unit-stripping">
+<h1>LSR 008 - 量纲剥离（Unit Stripping）规范<a class="headerlink" href="#lsr-008-unit-stripping" title="链接到此标题。">¶</a></h1>
+<section id="id1">
+<h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>LSR 编号 008</p></li>
+<li><p>标题 量纲剥离（Unit Stripping）规范</p></li>
+<li><p>作者 Ziyang-Bai</p></li>
+<li><p>状态 草案</p></li>
+<li><p>类型 标准规范</p></li>
+<li><p>创建日期 04-05-2026</p></li>
+<li><p>归属项目 编译器、通用</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
+<p>定义带量纲数值到无量纲数值的剥离路径，覆盖 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 与 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code>。</p>
+</section>
+<section id="id3">
+<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<section id="id4">
+<h3>1. 设计目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>为带量纲值提供单一、明确、可预测的剥离语法</p></li>
+<li><p>与现有 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">&lt;unit&gt;</span></code> 单位转换保持组合性</p></li>
+<li><p>剥离仅显式触发，精度与安全边界清晰</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>2. 语法<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<section id="id6">
+<h4>2.1 基础语法<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>expr as num
+expr as scalar
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> ：先转换到 SI 基准量值，再移除单位签名</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> ：仅移除单位签名，不进行数值缩放</p></li>
+</ul>
+</section>
+<section id="id7">
+<h4>2.2 与单位转换组合<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(expr as &lt;target_unit&gt;) as num
+</pre></div>
+</div>
+<p>规则：先转换到目标单位，再剥离为纯数值。</p>
+</section>
+</section>
+<section id="id8">
+<h3>3. 语义定义<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<section id="id9">
+<h4>3.1 默认基准<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">expr</span> <span class="pre">as</span> <span class="pre">num</span></code> 采用 SI 基准量值</p></li>
+<li><p>例：<code class="docutils literal notranslate"><span class="pre">10&lt;km&gt;</span> <span class="pre">as</span> <span class="pre">num</span></code> 的结果是 <code class="docutils literal notranslate"><span class="pre">10000</span></code></p></li>
+<li><p>对抽象基单位（如 <code class="docutils literal notranslate"><span class="pre">score</span></code>、<code class="docutils literal notranslate"><span class="pre">token</span></code> ），<code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 采用该基单位自身刻度</p></li>
+<li><p>例：<code class="docutils literal notranslate"><span class="pre">10&lt;score&gt;</span> <span class="pre">as</span> <span class="pre">num</span></code> 结果为 <code class="docutils literal notranslate"><span class="pre">10</span></code></p></li>
+</ul>
+</section>
+<section id="id10">
+<h4>3.2 目标单位下剥离<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p>若用户希望在某单位刻度下得到纯数值，必须先显式转换单位</p></li>
+<li><p>例：<code class="docutils literal notranslate"><span class="pre">(10&lt;km&gt;</span> <span class="pre">as</span> <span class="pre">&lt;km&gt;)</span> <span class="pre">as</span> <span class="pre">num</span></code> 结果为 <code class="docutils literal notranslate"><span class="pre">10</span></code></p></li>
+<li><p>抽象单位之间仅在存在显式比例定义时允许转换</p></li>
+</ul>
+</section>
+<section id="as-scalar">
+<h4>3.3 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> 语义<a class="headerlink" href="#as-scalar" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">expr</span> <span class="pre">as</span> <span class="pre">scalar</span></code> 保留当前显示刻度，仅移除单位标签</p></li>
+<li><p>例：<code class="docutils literal notranslate"><span class="pre">10&lt;km&gt;</span> <span class="pre">as</span> <span class="pre">scalar</span></code> 结果为 <code class="docutils literal notranslate"><span class="pre">10</span></code></p></li>
+<li><p>适用于符号推导或公式整理，保持当前刻度，降低系数膨胀</p></li>
+</ul>
+</section>
+<section id="lsr-000">
+<h4>3.4 编译期降级（与 LSR-000 对齐）<a class="headerlink" href="#lsr-000" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p>量纲在编译期追踪，运行期普通数值不携带单位标签</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 与 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> 在 Codegen 前应降级为纯数值表达式</p></li>
+</ul>
+</section>
+</section>
+<section id="id11">
+<h3>4. 类型规则<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>输入必须是带量纲或无量纲的数值类型（<code class="docutils literal notranslate"><span class="pre">num</span></code> 及其子层级）</p></li>
+<li><p>输出类型为无量纲 <code class="docutils literal notranslate"><span class="pre">num</span></code></p></li>
+<li><p>对非数值类型（如 <code class="docutils literal notranslate"><span class="pre">vector</span></code>, <code class="docutils literal notranslate"><span class="pre">matrix</span></code>, <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">bool</span></code> ）使用 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 或 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code>，编译报错 <code class="docutils literal notranslate"><span class="pre">UnitStripTypeMismatch</span></code></p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>5. 与外部函数/底层操作的交互<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
+<section id="id13">
+<h4>5.1 外部函数调用<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h4>
+<p>当外部函数仅接受无量纲参数时，调用端必须显式剥离：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let dist = 1200&lt;m&gt;
+let raw = dist as num
+let r = c_ext_fft(raw)
+</pre></div>
+</div>
+</section>
+<section id="api">
+<h4>5.2 位运算/底层数值 API<a class="headerlink" href="#api" title="链接到此标题。">¶</a></h4>
+<p>位运算和底层原语仅接受无量纲数值；带量纲值必须先 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> ：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let t = 8&lt;s&gt;
+let bits = bit_and((t as num), 3)
+</pre></div>
+</div>
+<p>规则：外部函数若要求保留当前单位刻度数值，使用 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code>。</p>
+</section>
+</section>
+<section id="id14">
+<h3>6. 安全约束与错误模型<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitStripTypeMismatch</span></code>: 作用于非数值类型</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitStripOverflow</span></code>: 剥离过程发生表示范围溢出（实现相关）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitStripInvalid</span></code>: 单位转换阶段失败（例无效目标单位）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitStripLegacySyntax</span></code>: 使用了废弃语法 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num&lt;_&gt;</span></code></p></li>
+</ul>
+<p>规则：</p>
+<ul class="simple">
+<li><p>单位维度检查由上游运算与 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">&lt;unit&gt;</span></code> 阶段完成</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 会按 SI 基准缩放后再剥离，<code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> 仅剥离标签</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>7. 语法约束<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>仅允许 <code class="docutils literal notranslate"><span class="pre">expr</span> <span class="pre">as</span> <span class="pre">num</span></code> 与 <code class="docutils literal notranslate"><span class="pre">expr</span> <span class="pre">as</span> <span class="pre">scalar</span></code></p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>8. 示例<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let speed = 20&lt;m/s&gt;
+let raw_si = speed as num                 # SI 基准量值
+let raw_kmh = (speed as &lt;km/h&gt;) as num    # km/h 刻度数值
+let raw_keep = speed as scalar             # 保留当前刻度值
+
+func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
+    return ((s as num) / 3600) as num&lt;h&gt;
+}
+</pre></div>
+</div>
+</section>
+<section id="lsr">
+<h3>9. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>LSR-000：在量纲系统章节引用本规范，定义主入口</p></li>
+<li><p>LSR-003：扩展接口中若需无量纲实参，可按本规范显式剥离</p></li>
+<li><p>LSR-007：<code class="docutils literal notranslate"><span class="pre">===</span></code> 不依赖单位剥离语义，二者正交</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/icon.svg" alt="LSR 的 Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">LSR</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">当前规范</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="LSR-000.html">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-001.html">LSR 001 - LSR 流程规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LSR-007.html" title="上一章">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+      <li>Next: <a href="LSR-009.html" title="下一章">LSR 009 - 集合与多结果返回规范</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/store/LSR-008.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

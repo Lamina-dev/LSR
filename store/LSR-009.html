@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>LSR 009 - 集合与多结果返回规范 &#8212; LSR  文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=7d86a446"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="LSR 010 - 虚数单位与复数规范" href="LSR-010.html" />
+    <link rel="prev" title="LSR 008 - 量纲剥离（Unit Stripping）规范" href="LSR-008.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lsr-009">
+<h1>LSR 009 - 集合与多结果返回规范<a class="headerlink" href="#lsr-009" title="链接到此标题。">¶</a></h1>
+<section id="id1">
+<h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>LSR 编号 009</p></li>
+<li><p>标题 集合与多结果返回规范</p></li>
+<li><p>作者 Ziyang-Bai</p></li>
+<li><p>状态 草案</p></li>
+<li><p>类型 标准规范</p></li>
+<li><p>创建日期 07-28-2026</p></li>
+<li><p>归属项目 编译器、标准库、CAS</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
+<p>定义 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code> 的核心语义，并规定需要返回多个同类数学结果时使用集合返回值，而不是语言级多值返回。</p>
+</section>
+<section id="id3">
+<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<section id="id4">
+<h3>1. 设计目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>保持函数调用模型为单返回值</p></li>
+<li><p>为方程解、根、集合运算等多结果场景提供标准表示</p></li>
+<li><p>避免为当前语言核心引入 tuple、多返回和解构返回</p></li>
+<li><p>使 CAS 结果能表达无解、有限多个解和未排序结果</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>2. 集合类型<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code> 表示无序、去重、同构元素集合。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = {1, 2, 3}
+let b set&lt;int&gt; = {}
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p>集合元素类型必须可统一到同一 <code class="docutils literal notranslate"><span class="pre">T</span></code></p></li>
+<li><p>集合不保证迭代顺序</p></li>
+<li><p>集合去重使用该类型的相等性语义</p></li>
+<li><p>空集合必须能由上下文推出元素类型，否则需要显式标注</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>3. 字面量与类型推导<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let ints = {1, 2, 3}
+let nums = {1, 1/2, 3}
+let exprs = {x, x + 1}
+let empty set&lt;Expr&gt; = {}
+</pre></div>
+</div>
+<p>推导规则：</p>
+<ul class="simple">
+<li><p>非空集合按元素类型统一推导 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code></p></li>
+<li><p>数值元素按 LSR-000 数值塔提升</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 与非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 混合时整体提升为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
+<li><p>无法统一元素类型时报错 <code class="docutils literal notranslate"><span class="pre">SetElementTypeMismatch</span></code></p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>4. 集合运算<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>运算</p></th>
+<th class="head"><p>说明</p></th>
+<th class="head"><p>示例</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">in</span></code> / <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code></p></td>
+<td><p>元素从属</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">in</span> <span class="pre">{1,2,3}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">subset</span></code></p></td>
+<td><p>子集判断</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{1,2}</span> <span class="pre">subset</span> <span class="pre">{1,2,3}</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">|</span></code></p></td>
+<td><p>并集</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{1,2}</span> <span class="pre">|</span> <span class="pre">{2,3}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&amp;</span></code></p></td>
+<td><p>交集</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{1,2}</span> <span class="pre">&amp;</span> <span class="pre">{2,3}</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+<td><p>差集</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{1,2}</span> <span class="pre">-</span> <span class="pre">{2}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">xor</span></code></p></td>
+<td><p>对称差</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{1,2}</span> <span class="pre">xor</span> <span class="pre">{2,3}</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>规则：</p>
+<ul class="simple">
+<li><p>二元集合运算的两个操作数必须是集合</p></li>
+<li><p>元素类型必须相同或可统一</p></li>
+<li><p>运算结果类型为统一后的 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code></p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>5. 多结果返回约定<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<p>Lamina 不定义语言级多值返回。函数仍然只有一个返回值；当结果是多个同类值时，返回 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code>。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func roots(expr Expr, var Expr) -&gt; set&lt;Expr&gt;
+func solve(eq Expr, var Expr) -&gt; set&lt;Expr&gt;
+</pre></div>
+</div>
+<p>示例：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
+let rs = roots(x^2 - 1, x)    # {-1, 1}
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p>无解返回空集合 <code class="docutils literal notranslate"><span class="pre">{}</span></code>，不是错误</p></li>
+<li><p>多个同类结果返回 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code></p></li>
+<li><p>集合不表达重数；需要重数时使用 <code class="docutils literal notranslate"><span class="pre">table</span></code> 或专门结果类型</p></li>
+<li><p>需要多个命名分量的结果继续使用 <code class="docutils literal notranslate"><span class="pre">table&lt;text,</span> <span class="pre">V&gt;</span></code> 或后续专门类型，不使用多值返回</p></li>
+</ul>
+</section>
+<section id="cas">
+<h3>6. CAS 结果集合<a class="headerlink" href="#cas" title="链接到此标题。">¶</a></h3>
+<p>CAS 中的有限解集使用 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 表示。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
+solve(x^2 + 1 == 0, x)    # {-i, i}
+solve(x^2 + 1 == 0, x) subset {C}
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p>有限可枚举解集返回 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code></p></li>
+<li><p>无解返回空 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code></p></li>
+<li><p>无法在当前算法与预算内确定完整解集时，标准库函数必须返回诊断错误或专门的不确定结果，不得伪造空集合</p></li>
+<li><p>若结果有定义域条件，条件表达由调用的具体标准库规范定义</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3>7. 错误模型<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SetElementTypeMismatch</span></code>: 集合元素类型无法统一</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SetOperandTypeMismatch</span></code>: 集合运算作用于非集合</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SetElementNotHashable</span></code>: 元素类型不可哈希且未提供 <code class="docutils literal notranslate"><span class="pre">.hash()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SetResultInconclusive</span></code>: CAS 无法确认完整结果集合</p></li>
+</ul>
+</section>
+<section id="lsr">
+<h3>8. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>LSR-000：声明 <code class="docutils literal notranslate"><span class="pre">set</span></code> 基础类型、集合运算符和数值塔提升</p></li>
+<li><p>LSR-004：标准库中返回多个同类结果的函数应使用 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code></p></li>
+<li><p>LSR-007：<code class="docutils literal notranslate"><span class="pre">Expr</span></code> 集合去重可使用结构相等；数学等价去重需由具体 CAS 函数显式声明</p></li>
+<li><p>LSR-010：复数根可作为 <code class="docutils literal notranslate"><span class="pre">set&lt;complex&gt;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 元素返回</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/icon.svg" alt="LSR 的 Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">LSR</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">当前规范</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="LSR-000.html">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-001.html">LSR 001 - LSR 流程规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 009 - 集合与多结果返回规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LSR-008.html" title="上一章">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+      <li>Next: <a href="LSR-010.html" title="下一章">LSR 010 - 虚数单位与复数规范</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/store/LSR-009.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

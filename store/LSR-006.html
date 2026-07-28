@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>LSR 006 - Lambda 表达式与类型推导规范 &#8212; LSR  文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=7d86a446"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="LSR 007 - === 数学等价判定规范" href="LSR-007.html" />
+    <link rel="prev" title="LSR 005 - 模式匹配" href="LSR-005.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lsr-006-lambda">
+<h1>LSR 006 - Lambda 表达式与类型推导规范<a class="headerlink" href="#lsr-006-lambda" title="链接到此标题。">¶</a></h1>
+<section id="id1">
+<h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>LSR 编号 006</p></li>
+<li><p>标题 Lambda 表达式与类型推导规范</p></li>
+<li><p>作者 Ziyang-Bai</p></li>
+<li><p>状态 草案</p></li>
+<li><p>类型 标准规范</p></li>
+<li><p>创建日期 04-05-2026</p></li>
+<li><p>归属项目 编译器、通用</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
+<p>定义 Lambda 的语法、类型推导、闭包捕获与管道交互。Lambda 独立推导，返回类型由表达式推导。</p>
+</section>
+<section id="id3">
+<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<section id="id4">
+<h3>1. 设计目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>提供轻量匿名函数语法</p></li>
+<li><p>与管道 <code class="docutils literal notranslate"><span class="pre">|&gt;</span></code> 平滑协作</p></li>
+<li><p>在保持静态强类型前提下支持局部推导</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>2. 语法<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<section id="id6">
+<h4>2.1 基础语法<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>|x| -&gt; x + 1
+|x, y| -&gt; x * y
+|x num, y num| -&gt; x + y
+</pre></div>
+</div>
+<p>规则：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">|...|</span></code> 为参数列表</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-&gt;</span></code> 右侧为单表达式函数体</p></li>
+<li><p>Lambda 自身是表达式，可赋值、可传参、可返回</p></li>
+</ul>
+</section>
+<section id="id7">
+<h4>2.2 与命名函数语法的关系<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p>命名函数：<code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">name(params...)</span> <span class="pre">-&gt;</span> <span class="pre">ReturnType</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code></p></li>
+<li><p>Lambda：<code class="docutils literal notranslate"><span class="pre">|params|</span> <span class="pre">-&gt;</span> <span class="pre">expr</span></code></p></li>
+</ul>
+<p>Lambda 返回类型由函数体表达式推导。</p>
+</section>
+</section>
+<section id="id8">
+<h3>3. 类型推导规则<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<section id="id9">
+<h4>3.1 参数类型<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p>可显式标注：<code class="docutils literal notranslate"><span class="pre">|x</span> <span class="pre">num|</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
+<li><p>可省略标注：<code class="docutils literal notranslate"><span class="pre">|x|</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
+<li><p>省略时依赖上下文约束推导参数类型</p></li>
+</ul>
+</section>
+<section id="id10">
+<h4>3.2 返回类型<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p>返回类型由 <code class="docutils literal notranslate"><span class="pre">-&gt;</span></code> 右侧表达式推导</p></li>
+<li><p>返回类型需可由上下文确定</p></li>
+<li><p>若无法确定，编译报 <code class="docutils literal notranslate"><span class="pre">LambdaTypeAmbiguous</span></code></p></li>
+</ul>
+</section>
+<section id="contextual-typing">
+<h4>3.3 上下文定型（contextual typing）<a class="headerlink" href="#contextual-typing" title="链接到此标题。">¶</a></h4>
+<ol class="arabic simple">
+<li><p>赋值上下文</p></li>
+</ol>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let f = |x num| -&gt; x^2
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>参数上下文</p></li>
+</ol>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let out = map(vec[1,2,3], |x| -&gt; x^2)
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>返回上下文</p></li>
+</ol>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func make_inc() -&gt; (num -&gt; num) {
+    return |x| -&gt; x + 1
+}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id11">
+<h3>4. 与管道 <code class="docutils literal notranslate"><span class="pre">|&gt;</span></code> 的交互<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<section id="id12">
+<h4>4.1 一元函数管道<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let res = vec[1,2,3,4]
+  |&gt; filter(|x| -&gt; x % 2 == 0)
+  |&gt; map(|x| -&gt; x^2)
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>4.2 歧义与优先级<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">|&gt;</span></code> 左结合</p></li>
+<li><p>当 Lambda 参数列表与外层调用产生歧义时，必须加括号</p></li>
+</ul>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let res = data |&gt; map((|x| -&gt; x + 1))
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h3>5. 闭包捕获规则<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>Lambda 可捕获外层 <code class="docutils literal notranslate"><span class="pre">let</span></code> 绑定（只读）</p></li>
+<li><p>外层 <code class="docutils literal notranslate"><span class="pre">var</span></code> 更新通过显式返回值传递</p></li>
+<li><p>若需更新状态，必须显式通过返回值传递新状态</p></li>
+</ul>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let base = 10
+let add_base = |x| -&gt; x + base
+</pre></div>
+</div>
+</section>
+<section id="cow">
+<h3>6. 与值语义/COW 的关系<a class="headerlink" href="#cow" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>捕获复合类型（<code class="docutils literal notranslate"><span class="pre">vector</span></code>, <code class="docutils literal notranslate"><span class="pre">matrix</span></code>, <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code> ）见 LSR-000 第 4.6 节</p></li>
+<li><p>只读捕获不触发复制</p></li>
+<li><p>若 Lambda 内部对局部可变副本突变，触发 COW，不回写原对象</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>7. 错误与诊断<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LambdaTypeAmbiguous</span></code>: Lambda 参数或返回类型无法由上下文确定</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LambdaCaptureMutation</span></code>: 非法写入外层 <code class="docutils literal notranslate"><span class="pre">var</span></code> 捕获</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LambdaArityMismatch</span></code>: 传入参数个数与 Lambda 形参不一致</p></li>
+</ul>
+</section>
+<section id="lsr">
+<h3>8. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>LSR-000：定义核心类型系统、局部推导总原则与管道运算符</p></li>
+<li><p>LSR-005：match 规范来源</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/icon.svg" alt="LSR 的 Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">LSR</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">当前规范</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="LSR-000.html">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-001.html">LSR 001 - LSR 流程规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LSR-005.html" title="上一章">LSR 005 - 模式匹配</a></li>
+      <li>Next: <a href="LSR-007.html" title="下一章">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/store/LSR-006.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

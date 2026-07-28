@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>LSR 001 - LSR 流程规范 &#8212; LSR  文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=7d86a446"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="LSR 002 - 标准常量规范" href="LSR-002.html" />
+    <link rel="prev" title="LSR 000 - Lamina 核心语言规范（草案）" href="LSR-000.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lsr-001-lsr">
+<h1>LSR 001 - LSR 流程规范<a class="headerlink" href="#lsr-001-lsr" title="链接到此标题。">¶</a></h1>
+<section id="id1">
+<h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>LSR 编号 001</p></li>
+<li><p>标题 LSR 流程规范</p></li>
+<li><p>作者 Ziyang-Bai, Ange1PLSGreet, CGrakeski</p></li>
+<li><p>状态 应用</p></li>
+<li><p>类型 流程类</p></li>
+<li><p>创建日期 08-06-2025</p></li>
+<li><p>归属项目 通用</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
+<p>定义 LSR 的目的、文档结构、状态流转和提交流程。所有 LSR 必须遵循。</p>
+</section>
+<section id="id3">
+<h2>1. 定义<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<p>LSR（Lamina Standard Recommendation）是 Lamina 标准提案文档，记录语言特性、实现方案和流程变更。</p>
+</section>
+<section id="id4">
+<h2>2. 目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>建立统一提案流程</p></li>
+<li><p>保证评审可追踪</p></li>
+<li><p>保证规范可实现</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>3. 类型<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h2>
+<section id="id6">
+<h3>3.1 标准规范<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<p>用于定义语法、语义、标准库或实现行为。</p>
+</section>
+<section id="id7">
+<h3>3.2 信息类<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
+<p>用于提供设计讨论或实践建议，不直接引入新特性。</p>
+</section>
+<section id="id8">
+<h3>3.3 流程类<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<p>用于定义治理、发布和评审流程。</p>
+</section>
+</section>
+<section id="id9">
+<h2>4. 必填结构<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h2>
+<p>必含：</p>
+<ul class="simple">
+<li><p>标题（<code class="docutils literal notranslate"><span class="pre">LSR</span> <span class="pre">XXX</span> <span class="pre">-</span> <span class="pre">标题</span></code> ）</p></li>
+<li><p>基本信息（编号、作者、状态、类型、创建日期、归属项目）</p></li>
+<li><p>摘要（建议 200 字以内）</p></li>
+<li><p>技术规范（标准规范类必填）</p></li>
+</ul>
+<p>可选：</p>
+<ul class="simple">
+<li><p>基本原理</p></li>
+<li><p>参考实现</p></li>
+</ul>
+</section>
+<section id="id10">
+<h2>5. 状态流转<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>草案 -&gt; 接受 -&gt; 应用
+草案 -&gt; 撤回
+草案 -&gt; 拒绝
+</pre></div>
+</div>
+<p>含义：</p>
+<ul class="simple">
+<li><p>草案：提案中，开放讨论</p></li>
+<li><p>接受：评审通过，进入实施</p></li>
+<li><p>应用：实现完成并发布</p></li>
+<li><p>撤回：作者主动撤回</p></li>
+<li><p>拒绝：维护者拒绝</p></li>
+</ul>
+</section>
+<section id="id11">
+<h2>6. 编号规则<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>使用三位数字递增编号：<code class="docutils literal notranslate"><span class="pre">001</span></code>, <code class="docutils literal notranslate"><span class="pre">002</span></code>, <code class="docutils literal notranslate"><span class="pre">003</span></code>...</p></li>
+<li><p>编号一经分配不得复用</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LSR-001</span></code> 固定为本规范</p></li>
+<li><p>修订草案可使用后缀（如 <code class="docutils literal notranslate"><span class="pre">LSR-005-A</span></code> ），通过后合并回主编号</p></li>
+</ul>
+</section>
+<section id="id12">
+<h2>7. 提交流程<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h2>
+<ol class="arabic simple">
+<li><p>在 Discussions 进行初步讨论</p></li>
+<li><p>创建 LSR 草案文件</p></li>
+<li><p>提交 Pull Request</p></li>
+<li><p>社区评审并收集反馈</p></li>
+<li><p>根据反馈修订</p></li>
+<li><p>维护者给出决定</p></li>
+<li><p>实施并验收</p></li>
+<li><p>状态更新为接受/应用</p></li>
+</ol>
+</section>
+<section id="id13">
+<h2>8. 维护者职责<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>校验格式与完整性</p></li>
+<li><p>组织评审</p></li>
+<li><p>给出接受/拒绝决定</p></li>
+<li><p>维护索引和状态</p></li>
+</ul>
+</section>
+<section id="id14">
+<h2>9. 质量要求<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>术语一致</p></li>
+<li><p>语义清晰</p></li>
+<li><p>可实现</p></li>
+<li><p>明确兼容性影响</p></li>
+<li><p>提供必要示例或测试用例</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/icon.svg" alt="LSR 的 Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">LSR</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">当前规范</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="LSR-000.html">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 001 - LSR 流程规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LSR-000.html" title="上一章">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+      <li>Next: <a href="LSR-002.html" title="下一章">LSR 002 - 标准常量规范</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/store/LSR-001.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
