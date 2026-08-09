@@ -120,7 +120,7 @@
 <li><p>成员访问： <code class="code docutils literal notranslate"><span class="pre">.</span></code></p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span># 管道符是语法糖
-let a = b |&gt; foo(); # let a = foo(b);
+let a = b |&gt; foo; # let a = foo(b);
 # `.` 左边不是mod, 且右边为方法调用时,也是语法糖
 let a = b.m1(); # let a = (typeof b).m1(b);
 </pre></div>
@@ -287,7 +287,7 @@ a = 20   # 编译报错
 </section>
 <section id="id17">
 <h3>4.5 可空类型<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
-<p>写法： <code class="code docutils literal notranslate"><span class="pre">T?</span></code> ，表示可能为null, 对于上文定义的值类型它是无效多余的，编译器也不会让T为值类型，用于判断对象的引用是否为空引用
+<p>写法： <code class="code docutils literal notranslate"><span class="pre">T?</span></code> ，表示可能为null, 用于判断价值是否为null
 必须处理空情况才能正常使用</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>var s text? = null
 
