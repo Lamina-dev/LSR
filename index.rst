@@ -1,4 +1,4 @@
-LSR 目录
+Lamina Standard Recommendation
 ================================================================================
 
 .. toctree::
@@ -16,7 +16,8 @@ LSR 目录
    store/LSR-008
    store/LSR-009
    store/LSR-010
+   store/LSR-011
+   store/LSR-012
+   store/LSR-013
    store/LSR-015
    store/LSR-undefined
-
-归档规范保留在 ``store/old``，默认不参与站点构建。
