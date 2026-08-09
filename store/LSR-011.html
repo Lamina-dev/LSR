@@ -85,26 +85,22 @@ let b Option&lt;int&gt; = Option.None
 </section>
 <section id="id6">
 <h3>3. 构造器字段<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
-<p>构造器可以没有字段、使用位置字段，或使用命名字段 <a class="footnote-reference brackets" href="#id16" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。</p>
+<p>构造器可以没有字段，或使用位置字段 <a class="footnote-reference brackets" href="#id16" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>type Ordering =
     Less
   | Equal
   | Greater
 
-type Point =
-    Point { x real, y real }
-
 type Expr =
     Number(frac)
   | Symbol(text)
-  | Add { lhs Expr, rhs Expr }
+  | Add(Expr, Expr)
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>零字段构造器表示枚举分支</p></li>
 <li><p>位置字段按声明顺序参与构造和匹配</p></li>
-<li><p>命名字段按字段名参与构造和匹配</p></li>
-<li><p>同一个构造器内不得混用位置字段和命名字段</p></li>
+<li><p>ADT 构造器不定义命名字段</p></li>
 <li><p>ADT 字段默认不可变</p></li>
 </ul>
 </section>
@@ -141,13 +137,12 @@ type Expr =
 <h3>6. 构造表达式<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
 <p>构造器调用产生对应 ADT 值。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let ok = Ok(1)
-let point = Point { x = 1, y = 2 }
+let expr = Add(Symbol(&quot;x&quot;), Number(1/2))
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>构造器实参与字段声明必须匹配</p></li>
-<li><p>缺失字段、重复字段或未知字段均为编译错误</p></li>
-<li><p>命名字段构造时字段顺序不影响语义</p></li>
+<li><p>实参数量不匹配是编译错误</p></li>
 <li><p>构造器本身不是可变对象</p></li>
 </ul>
 </section>
@@ -160,7 +155,7 @@ let point = Point { x = 1, y = 2 }
 }
 
 match expr {
-    Add { lhs, rhs } =&gt; lhs + rhs
+    Add(lhs, rhs) =&gt; lhs + rhs
     Number(n) =&gt; n
     _ =&gt; 0
 }
@@ -170,7 +165,7 @@ match expr {
 <li><p>对封闭 ADT 的 <code class="docutils literal notranslate"><span class="pre">match</span></code> 必须穷尽</p></li>
 <li><p>非穷尽匹配是编译错误，除非存在 <code class="docutils literal notranslate"><span class="pre">_</span></code> 分支</p></li>
 <li><p>不可达分支应产生诊断</p></li>
-<li><p>位置字段模式和命名字段模式必须匹配构造器定义</p></li>
+<li><p>构造器模式的字段数量必须匹配构造器定义</p></li>
 </ul>
 </section>
 <section id="id12">
