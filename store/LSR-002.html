@@ -51,18 +51,18 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 Lamina 标准常量集合（科学/工程计算）。常量由 <code class="docutils literal notranslate"><span class="pre">std.constants</span></code> 导出，命名使用 <code class="docutils literal notranslate"><span class="pre">UPPER_SNAKE_CASE</span></code>。</p>
+<p>定义 Lamina 标准常量集合（科学/工程计算）。常量由 <code class="docutils literal notranslate"><span class="pre">std.constants</span></code> <a class="footnote-reference brackets" href="#id10" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 导出，命名使用 <code class="docutils literal notranslate"><span class="pre">UPPER_SNAKE_CASE</span></code>。</p>
 </section>
-<section id="id3">
-<h2>1. 导出规则<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<section id="id4">
+<h2>1. 导出规则<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
 <ul class="simple">
 <li><p>常量不可变导出</p></li>
 <li><p>常量名称使用 <code class="docutils literal notranslate"><span class="pre">UPPER_SNAKE_CASE</span></code></p></li>
-<li><p>单位表达必须与 LSR-000 量纲系统一致</p></li>
+<li><p>单位表达必须与 LSR-000 <a class="footnote-reference brackets" href="#id9" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 量纲系统一致</p></li>
 </ul>
 </section>
-<section id="id4">
-<h2>2. 物理常量<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
+<section id="id6">
+<h2>2. 物理常量<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>名称</p></th>
@@ -140,8 +140,8 @@
 </tbody>
 </table>
 </section>
-<section id="id5">
-<h2>3. 化学常量<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h2>
+<section id="id7">
+<h2>3. 化学常量<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>名称</p></th>
@@ -189,12 +189,18 @@
 </tbody>
 </table>
 </section>
-<section id="lsr">
-<h2>4. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h2>
-<ul class="simple">
-<li><p>LSR-000：量纲与类型系统</p></li>
-<li><p>LSR-004：通过 <code class="docutils literal notranslate"><span class="pre">std.constants</span></code> 对外导出</p></li>
-</ul>
+<section id="id8">
+<h2>4. 引用<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id9" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 量纲与类型系统</p>
+</aside>
+<aside class="footnote brackets" id="id10" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 通过 <code class="docutils literal notranslate"><span class="pre">std.constants</span></code> 对外导出</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -240,7 +246,10 @@
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 

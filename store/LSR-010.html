@@ -16,7 +16,7 @@
     <link rel="icon" href="../_static/favicon.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="LSR 0015 - LAMMP 接口规范" href="LSR-015.html" />
+    <link rel="next" title="LSR 011 - 代数数据类型规范" href="LSR-011.html" />
     <link rel="prev" title="LSR 009 - 集合与多结果返回规范" href="LSR-009.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -51,12 +51,12 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义虚数单位 <code class="docutils literal notranslate"><span class="pre">i</span></code>、复数字面量、复数类型提升和 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 中复数的表示边界。</p>
+<p>定义虚数单位 <code class="docutils literal notranslate"><span class="pre">i</span></code>、复数字面量、复数类型提升和 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 中复数的表示边界 <a class="footnote-reference brackets" href="#id17" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id18" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。</p>
 </section>
-<section id="id3">
-<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
-<section id="id4">
-<h3>1. 设计目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<section id="id5">
+<h2>技术规范<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h2>
+<section id="id6">
+<h3>1. 设计目标<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>明确 <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4i</span></code> 的语法含义</p></li>
 <li><p>避免虚数单位与普通变量或 <code class="docutils literal notranslate"><span class="pre">sym</span></code> 声明冲突</p></li>
@@ -64,8 +64,8 @@
 <li><p>为 LMCAS 提供稳定的复数表达接口</p></li>
 </ul>
 </section>
-<section id="id5">
-<h3>2. 虚数单位<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<section id="id7">
+<h3>2. 虚数单位<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">i</span></code> 是预定义虚数单位，满足：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>i^2 == -1
 </pre></div>
@@ -78,8 +78,8 @@
 <li><p>标准库可同时导出 <code class="docutils literal notranslate"><span class="pre">std.math.i</span></code> 与 <code class="docutils literal notranslate"><span class="pre">std.math.I</span></code>，二者表示同一虚数单位</p></li>
 </ul>
 </section>
-<section id="id6">
-<h3>3. 复数字面量<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<section id="id8">
+<h3>3. 复数字面量<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
 <p>虚数字面量由数值字面量紧跟后缀 <code class="docutils literal notranslate"><span class="pre">i</span></code> 构成，中间不得有空白。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = 4i
 let b = 3 + 4i
@@ -95,8 +95,8 @@ let d = 1/2 + 3/4i
 <li><p><code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">i</span></code> 非法，必须报错 <code class="docutils literal notranslate"><span class="pre">ComplexLiteralSpacing</span></code></p></li>
 </ul>
 </section>
-<section id="id7">
-<h3>4. 复数类型<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
+<section id="id9">
+<h3>4. 复数类型<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">complex</span></code> 表示复数值，逻辑结构为实部与虚部：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>complex = real_part + imaginary_part * i
 </pre></div>
@@ -124,9 +124,9 @@ let z = x + 2i       # Expr
 <li><p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 降级为 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 必须显式求值，且表达式中不得有未绑定符号</p></li>
 </ul>
 </section>
-<section id="id8">
-<h3>6. 相等性<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
-<p>结构相等 <code class="docutils literal notranslate"><span class="pre">==</span></code> 与数学等价 <code class="docutils literal notranslate"><span class="pre">===</span></code> 分别遵循 LSR-000 和 LSR-007。</p>
+<section id="id10">
+<h3>6. 相等性<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<p>结构相等 <code class="docutils literal notranslate"><span class="pre">==</span></code> 与数学等价 <code class="docutils literal notranslate"><span class="pre">===</span></code> 分别遵循 LSR-000 <a class="footnote-reference brackets" href="#id17" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 和 LSR-007 <a class="footnote-reference brackets" href="#id19" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(i * i) === -1       # true，若当前等价 profile 支持复数基础规则
 </pre></div>
 </div>
@@ -137,9 +137,9 @@ let z = x + 2i       # Expr
 <li><p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 中复数等价判定仍受预算限制</p></li>
 </ul>
 </section>
-<section id="id9">
-<h3>7. 标准库要求<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">std.math</span></code> 必须暴露：</p>
+<section id="id13">
+<h3>7. 标准库要求<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">std.math</span></code> 必须暴露；复数多结果场景按集合返回约定处理 <a class="footnote-reference brackets" href="#id20" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>：</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>名称</p></th>
@@ -179,8 +179,8 @@ let z = x + 2i       # Expr
 </tbody>
 </table>
 </section>
-<section id="id10">
-<h3>8. 错误模型<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<section id="id15">
+<h3>8. 错误模型<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">ImaginaryUnitReserved</span></code>: 尝试绑定或声明 <code class="docutils literal notranslate"><span class="pre">i</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ComplexLiteralSpacing</span></code>: 虚数字面量后缀前存在非法空白</p></li>
@@ -188,14 +188,27 @@ let z = x + 2i       # Expr
 <li><p><code class="docutils literal notranslate"><span class="pre">ComplexEvalUnboundSymbol</span></code>: <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 降级为 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 时存在未绑定符号</p></li>
 </ul>
 </section>
-<section id="lsr">
-<h3>9. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p>LSR-000：声明 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 类型、数值塔和 <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4i</span></code> 示例</p></li>
-<li><p>LSR-004：<code class="docutils literal notranslate"><span class="pre">std.math</span></code> 应暴露复数相关常量与函数</p></li>
-<li><p>LSR-007：<code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上复数等价判定由有限规则和预算约束</p></li>
-<li><p>LSR-009：复数结果可出现在 <code class="docutils literal notranslate"><span class="pre">set&lt;complex&gt;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 中</p></li>
-</ul>
+<section id="id16">
+<h3>9. 引用<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id17" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id11">2</a>)</span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 声明 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 类型、数值塔和 <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4i</span></code> 示例</p>
+</aside>
+<aside class="footnote brackets" id="id18" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - <code class="docutils literal notranslate"><span class="pre">std.math</span></code> 应暴露复数相关常量与函数</p>
+</aside>
+<aside class="footnote brackets" id="id19" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-007.html"><span class="doc">LSR-007 - 数学等价判定规范</span></a> - <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上复数等价判定由有限规则和预算约束</p>
+</aside>
+<aside class="footnote brackets" id="id20" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">4</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-009.html"><span class="doc">LSR-009 - 集合与多结果返回规范</span></a> - 复数结果可出现在 <code class="docutils literal notranslate"><span class="pre">set&lt;complex&gt;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 中</p>
+</aside>
+</aside>
 </section>
 </section>
 </section>
@@ -242,7 +255,10 @@ let z = x + 2i       # Expr
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 
@@ -251,7 +267,7 @@ let z = x + 2i       # Expr
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="LSR-009.html" title="上一章">LSR 009 - 集合与多结果返回规范</a></li>
-      <li>Next: <a href="LSR-015.html" title="下一章">LSR 0015 - LAMMP 接口规范</a></li>
+      <li>Next: <a href="LSR-011.html" title="下一章">LSR 011 - 代数数据类型规范</a></li>
   </ul></li>
 </ul>
 </div>

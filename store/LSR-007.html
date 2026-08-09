@@ -51,19 +51,19 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 <code class="docutils literal notranslate"><span class="pre">===</span></code> 在 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上的判定语义、化简边界与终止策略。采用有限规则与预算：可证明返回 <code class="docutils literal notranslate"><span class="pre">true</span></code>，否则 <code class="docutils literal notranslate"><span class="pre">false</span></code>。</p>
+<p>定义 <code class="docutils literal notranslate"><span class="pre">===</span></code> 在 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上的判定语义、化简边界与终止策略 <a class="footnote-reference brackets" href="#id19" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。采用有限规则与预算：可证明返回 <code class="docutils literal notranslate"><span class="pre">true</span></code>，否则 <code class="docutils literal notranslate"><span class="pre">false</span></code>。</p>
 </section>
-<section id="id3">
-<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
 <section id="id4">
-<h3>1. 适用范围<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<h2>技术规范<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
+<section id="id5">
+<h3>1. 适用范围<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 仅适用于 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p>非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 操作数使用 <code class="docutils literal notranslate"><span class="pre">===</span></code> 必须在类型检查阶段报错 <code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 仅适用于 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>；match 守卫中的 <code class="docutils literal notranslate"><span class="pre">===</span></code> 遵循同一语义 <a class="footnote-reference brackets" href="#id20" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
+<li><p>非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 操作数使用 <code class="docutils literal notranslate"><span class="pre">===</span></code> 必须在类型检查阶段报错 <code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code>；Lambda 内部使用 <code class="docutils literal notranslate"><span class="pre">===</span></code> 时同样遵循本规范 <a class="footnote-reference brackets" href="#id21" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
 </ul>
 </section>
-<section id="id5">
-<h3>2. 语义定义<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<section id="id8">
+<h3>2. 语义定义<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
 <p>对 <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">===</span> <span class="pre">b</span></code> 执行有限证明流程：</p>
 <ol class="arabic simple">
 <li><p>对 <code class="docutils literal notranslate"><span class="pre">a</span></code>、<code class="docutils literal notranslate"><span class="pre">b</span></code> 执行量纲标准化预处理（见第 4.3 节）</p></li>
@@ -77,15 +77,15 @@
 <li><p>该定义保证判定过程总能终止</p></li>
 </ul>
 </section>
-<section id="id6">
-<h3>3. 判定边界<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<section id="id9">
+<h3>3. 判定边界<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>根据 Richardson 定理，包含初等函数的恒等式判定采用有限规则集</p></li>
 <li><p>承诺范围限定为可终止性与规则内可靠性（soundness over supported rules）</p></li>
 </ul>
 </section>
-<section id="id7">
-<h3>4. 规范化规则与化简深度<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
+<section id="id10">
+<h3>4. 规范化规则与化简深度<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
 <section id="core">
 <h4>4.1 必选规则集（Core）<a class="headerlink" href="#core" title="链接到此标题。">¶</a></h4>
 <p>1. 常量折叠
@@ -132,8 +132,8 @@
 </ul>
 </section>
 </section>
-<section id="id8">
-<h3>5. 预算与终止策略<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<section id="id11">
+<h3>5. 预算与终止策略<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
 <p>为保证终止，<code class="docutils literal notranslate"><span class="pre">===</span></code> 必须设置预算上限：</p>
 <ul class="simple">
 <li><p>最大重写步数：<code class="docutils literal notranslate"><span class="pre">maxRewriteSteps</span> <span class="pre">=</span> <span class="pre">256</span></code></p></li>
@@ -142,8 +142,8 @@
 </ul>
 <p>任一预算耗尽即停止化简并返回 <code class="docutils literal notranslate"><span class="pre">false</span></code> （可附带诊断标记 <code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code> ）。</p>
 </section>
-<section id="id9">
-<h3>6. 决策流程<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<section id="id12">
+<h3>6. 决策流程<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>eqv(a, b):
   if type(a) != Expr or type(b) != Expr: type error
   (ua, ca) = canonicalize_units(a)
@@ -156,18 +156,18 @@
 </pre></div>
 </div>
 </section>
-<section id="id10">
-<h3>7. 示例<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
-<section id="id11">
-<h4>7.1 Core 下必然成立<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h4>
+<section id="id13">
+<h3>7. 示例<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<section id="id14">
+<h4>7.1 Core 下必然成立<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h4>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
 x + 0 === x                       # true
 x^2 + 2*x + 1 === (x + 1)^2       # true
 </pre></div>
 </div>
 </section>
-<section id="id12">
-<h4>7.2 Core 下不保证成立<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
+<section id="id15">
+<h4>7.2 Core 下不保证成立<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h4>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sin(pi/4)^2 + cos(pi/4)^2 === 1   # 在 Core profile 下通常为 false
 </pre></div>
 </div>
@@ -180,29 +180,38 @@ sin(pi/4)^2 + cos(pi/4)^2 === 1   # true
 </div>
 </section>
 </section>
-<section id="id13">
-<h3>8. 配置接口<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<section id="id16">
+<h3>8. 配置接口<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">set_eqv_profile(&quot;Core&quot;</span> <span class="pre">|</span> <span class="pre">&quot;Trig-Basic&quot;</span> <span class="pre">|</span> <span class="pre">&quot;ExpLog-Basic&quot;)</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">set_eqv_budget(steps,</span> <span class="pre">depth,</span> <span class="pre">growth)</span></code></p></li>
 </ul>
 <p>未设置时采用默认值：<code class="docutils literal notranslate"><span class="pre">Core</span></code> + 第 5 节预算。</p>
 </section>
-<section id="id14">
-<h3>9. 错误与诊断<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
+<section id="id17">
+<h3>9. 错误与诊断<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code>: <code class="docutils literal notranslate"><span class="pre">===</span></code> 作用于非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code>: 达到预算上限，停止证明</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">EqvRuleDisabled</span></code>: 依赖的规则集未启用（可选诊断）</p></li>
 </ul>
 </section>
-<section id="lsr">
-<h3>10. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p>LSR-000：声明 <code class="docutils literal notranslate"><span class="pre">===</span></code> 存在并引用本规范作为唯一语义来源</p></li>
-<li><p>LSR-005：match 守卫中的 <code class="docutils literal notranslate"><span class="pre">===</span></code> 语义依赖本规范</p></li>
-<li><p>LSR-006：Lambda 中若出现 <code class="docutils literal notranslate"><span class="pre">===</span></code>，同样遵循本规范</p></li>
-</ul>
+<section id="id18">
+<h3>10. 引用<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id19" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 声明 <code class="docutils literal notranslate"><span class="pre">===</span></code> 存在并引用本规范作为唯一语义来源</p>
+</aside>
+<aside class="footnote brackets" id="id20" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-005.html"><span class="doc">LSR-005 - 模式匹配</span></a> - match 守卫中的 <code class="docutils literal notranslate"><span class="pre">===</span></code> 语义依赖本规范</p>
+</aside>
+<aside class="footnote brackets" id="id21" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-006.html"><span class="doc">LSR-006 - Lambda 表达式与类型推导规范</span></a> - Lambda 中若出现 <code class="docutils literal notranslate"><span class="pre">===</span></code>，同样遵循本规范</p>
+</aside>
+</aside>
 </section>
 </section>
 </section>
@@ -249,7 +258,10 @@ sin(pi/4)^2 + cos(pi/4)^2 === 1   # true
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 

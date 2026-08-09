@@ -60,7 +60,7 @@
 <p>最小交付：</p>
 <ul class="simple">
 <li><p>动态库（编译生成的 <code class="code docutils literal notranslate"><span class="pre">.dll/.so/.dylib</span></code> ，符号建议按C ABI导出）</p></li>
-<li><p>Lamina 模块声明文件（默认文件名为module.lm）</p></li>
+<li><p>Lamina 模块声明文件（默认文件名为module.lm） <a class="footnote-reference brackets" href="#id12" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
 </ul>
 <p>推荐目录（非强制）：</p>
 <ul class="simple">
@@ -69,12 +69,12 @@
 <li><p><code class="code docutils literal notranslate"><span class="pre">[root]/include/</span></code> （可选）</p></li>
 </ul>
 </section>
-<section id="id5">
-<h3>2. 接口映射语法（必需）<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
-<p>在 <code class="code docutils literal notranslate"><span class="pre">module.lm</span></code> 中使用 <code class="code docutils literal notranslate"><span class="pre">static</span></code> 绑定动态库
-编写动态库代码，需要包含Lamina的核心头文件&quot;lmx.h&quot;，内部具有lamina的一些api与类型定义。</p>
 <section id="id6">
-<h4>3 接口示例<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h4>
+<h3>2. 接口映射语法（必需）<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<p>在 <code class="code docutils literal notranslate"><span class="pre">module.lm</span></code> 中使用 <code class="code docutils literal notranslate"><span class="pre">static</span></code> 绑定动态库 <a class="footnote-reference brackets" href="#id12" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id13" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>
+编写动态库代码，需要包含Lamina的核心头文件&quot;lmx.h&quot;，内部具有lamina的一些api与类型定义；无量纲实参剥离按 LSR-008 <a class="footnote-reference brackets" href="#id14" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 处理。</p>
+<section id="id10">
+<h4>3 接口示例<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h4>
 <p>假设有动态库 libadd.so，内有
 LmInt add(LmInt a, LmInt b);函数</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>static &quot;add&quot;
@@ -86,13 +86,23 @@ func so_add(a int, b int) -&gt; int = &quot;add&quot;
 </div>
 </section>
 </section>
-<section id="lsr">
-<h3>4. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p>LSR-000：核心类型系统、值语义，复合引用语义</p></li>
-<li><p>LSR-004：标准库定义，扩展可作为补充实现</p></li>
-<li><p>LSR-008：量纲剥离规则（扩展无量纲入参场景）</p></li>
-</ul>
+<section id="id11">
+<h3>4. 引用<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id12" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 核心类型系统、值语义，复合引用语义</p>
+</aside>
+<aside class="footnote brackets" id="id13" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 标准库定义，扩展可作为补充实现</p>
+</aside>
+<aside class="footnote brackets" id="id14" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-008.html"><span class="doc">LSR-008 - 量纲剥离（Unit Stripping）规范</span></a> - 量纲剥离规则（扩展无量纲入参场景）</p>
+</aside>
+</aside>
 </section>
 </section>
 </section>
@@ -139,7 +149,10 @@ func so_add(a int, b int) -&gt; int = &quot;add&quot;
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 

@@ -51,22 +51,22 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 <code class="docutils literal notranslate"><span class="pre">match</span></code> 的语法、模式系统、穷尽检查、类型规则与求值顺序。<code class="docutils literal notranslate"><span class="pre">match</span></code> 为表达式，支持常量、解构、守卫与 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 匹配。</p>
+<p>定义 <code class="docutils literal notranslate"><span class="pre">match</span></code> 的语法、模式系统、穷尽检查、类型规则与求值顺序 <a class="footnote-reference brackets" href="#id23" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。<code class="docutils literal notranslate"><span class="pre">match</span></code> 为表达式，支持常量、解构、守卫与 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 匹配。</p>
 </section>
-<section id="id3">
-<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
 <section id="id4">
-<h3>1. 设计目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<h2>技术规范<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
+<section id="id5">
+<h3>1. 设计目标<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>提供可组合、可推导、可穷尽检查的分支表达式</p></li>
 <li><p>控制 <code class="docutils literal notranslate"><span class="pre">if-else</span></code> 嵌套深度，提升分支组合性</p></li>
 <li><p>支持符号计算场景的 AST 结构匹配</p></li>
 </ul>
 </section>
-<section id="id5">
-<h3>2. 语法<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
 <section id="id6">
-<h4>2.1 基础语法<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h4>
+<h3>2. 语法<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<section id="id7">
+<h4>2.1 基础语法<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h4>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>match target {
     pattern1 [if guard1] =&gt; expr1,
     pattern2 [if guard2] =&gt; expr2,
@@ -81,8 +81,8 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">_</span></code> 是通配符，必须放在最后一个分支</p></li>
 </ul>
 </section>
-<section id="id7">
-<h4>2.2 模式种类<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h4>
+<section id="id8">
+<h4>2.2 模式种类<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h4>
 <ol class="arabic simple">
 <li><p>常量模式</p></li>
 </ol>
@@ -135,51 +135,52 @@
 }
 </pre></div>
 </div>
+<p>其中 <code class="docutils literal notranslate"><span class="pre">===</span></code> 的数学等价判定由 LSR-007 <a class="footnote-reference brackets" href="#id24" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 定义。</p>
 </section>
 </section>
-<section id="id8">
-<h3>3. 穷尽检查与可达性<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
-<section id="id9">
-<h4>3.1 穷尽检查<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h4>
+<section id="id10">
+<h3>3. 穷尽检查与可达性<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<section id="id11">
+<h4>3.1 穷尽检查<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">target</span></code> 为有限可枚举类型时，必须覆盖全部分支或给出 <code class="docutils literal notranslate"><span class="pre">_</span></code></p></li>
 <li><p>当 <code class="docutils literal notranslate"><span class="pre">target</span></code> 类型是开放类型（如 <code class="docutils literal notranslate"><span class="pre">num</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">Expr</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code>, <code class="docutils literal notranslate"><span class="pre">table</span></code> ）时，必须存在 <code class="docutils literal notranslate"><span class="pre">_</span></code> 分支</p></li>
 </ul>
 </section>
-<section id="id10">
-<h4>3.2 可达性检查<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h4>
+<section id="id12">
+<h4>3.2 可达性检查<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
 <li><p>若某分支被前序分支完全覆盖，编译器报 <code class="docutils literal notranslate"><span class="pre">UnreachablePattern</span></code></p></li>
 <li><p>分支顺序规则：<code class="docutils literal notranslate"><span class="pre">_</span></code> 作为最后一个分支</p></li>
 </ul>
 </section>
 </section>
-<section id="id11">
-<h3>4. 类型规则<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
-<section id="id12">
-<h4>4.1 目标与模式类型一致性<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
+<section id="id13">
+<h3>4. 类型规则<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<section id="id14">
+<h4>4.1 目标与模式类型一致性<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
 <li><p>模式必须与 <code class="docutils literal notranslate"><span class="pre">target</span></code> 类型可统一</p></li>
 <li><p>统一性为必需条件，失败时报 <code class="docutils literal notranslate"><span class="pre">PatternTypeMismatch</span></code></p></li>
 </ul>
 </section>
-<section id="id13">
-<h4>4.2 分支返回类型<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h4>
+<section id="id15">
+<h4>4.2 分支返回类型<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
-<li><p>所有分支表达式返回类型必须一致，或满足 LSR-000 数值塔提升规则</p></li>
+<li><p>所有分支表达式返回类型必须一致，或满足 LSR-000 <a class="footnote-reference brackets" href="#id22" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 数值塔提升规则</p></li>
 <li><p>无法统一时报 <code class="docutils literal notranslate"><span class="pre">MatchBranchTypeMismatch</span></code></p></li>
 </ul>
 </section>
-<section id="id14">
-<h4>4.3 绑定变量作用域<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h4>
+<section id="id17">
+<h4>4.3 绑定变量作用域<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
 <li><p>模式内新绑定变量仅在对应分支可见</p></li>
 <li><p>守卫表达式可访问该分支绑定变量</p></li>
 </ul>
 </section>
 </section>
-<section id="id15">
-<h3>5. 求值与副作用规则<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
+<section id="id18">
+<h3>5. 求值与副作用规则<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">target</span></code> 仅求值一次</p></li>
 <li><p>仅执行首个命中分支的右侧表达式</p></li>
@@ -189,13 +190,13 @@
 <section id="expr">
 <h3>6. Expr 匹配特化规则<a class="headerlink" href="#expr" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 用于数学等价判断，仅限 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，其判定语义与化简边界由 LSR-007 定义</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 用于数学等价判断，仅限 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，其判定语义与化简边界由 LSR-007 <a class="footnote-reference brackets" href="#id24" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 定义</p></li>
 <li><p>对交换律节点（如加法）可启用交换律感知匹配：<code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">+</span> <span class="pre">g</span></code> 可匹配 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">1</span></code> 与 <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">x</span></code></p></li>
 <li><p>交换律感知不改写源 AST 的标准顺序</p></li>
 </ul>
 </section>
-<section id="id16">
-<h3>7. 错误与诊断<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<section id="id20">
+<h3>7. 错误与诊断<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">MissingWildcard</span></code>: 开放类型 match 缺失 <code class="docutils literal notranslate"><span class="pre">_</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">UnreachablePattern</span></code>: 分支被前序覆盖</p></li>
@@ -203,13 +204,23 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">MatchBranchTypeMismatch</span></code>: 分支返回类型无法统一</p></li>
 </ul>
 </section>
-<section id="lsr">
-<h3>8. 与其他 LSR 的关系<a class="headerlink" href="#lsr" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p>LSR-000：提供核心类型系统、表达式语义与返回类型统一规则</p></li>
-<li><p>LSR-006：Lambda 规范来源</p></li>
-<li><p>LSR-007：定义 <code class="docutils literal notranslate"><span class="pre">===</span></code> 的数学等价判定边界与化简策略</p></li>
-</ul>
+<section id="id21">
+<h3>8. 引用<a class="headerlink" href="#id21" title="链接到此标题。">¶</a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id22" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 提供核心类型系统、表达式语义与返回类型统一规则</p>
+</aside>
+<aside class="footnote brackets" id="id23" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-006.html"><span class="doc">LSR-006 - Lambda 表达式与类型推导规范</span></a> - Lambda 规范来源</p>
+</aside>
+<aside class="footnote brackets" id="id24" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id9">1</a>,<a role="doc-backlink" href="#id19">2</a>)</span>
+<p><a class="reference internal" href="LSR-007.html"><span class="doc">LSR-007 - 数学等价判定规范</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">===</span></code> 的数学等价判定边界与化简策略</p>
+</aside>
+</aside>
 </section>
 </section>
 </section>
@@ -256,7 +267,10 @@
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 0015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 
