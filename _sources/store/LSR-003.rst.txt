@@ -30,160 +30,42 @@ LSR 003 - Lamina C 扩展与插件规范
 
 最小交付：
 
-- 动态库项目（可编译生成 ``.dll/.so/.dylib`` ）
-- Lamina 模块声明文件（默认文件名 ``lib.lm`` ）
+- 动态库（编译生成的 :code:`.dll/.so/.dylib` ，符号建议按C ABI导出）
+- Lamina 模块声明文件（默认文件名为module.lm）
 
 推荐目录（非强制）：
 
-- ``[root]/lib.lm``
-- ``[root]/src/``
-- ``[root]/include/`` （可选）
+- :code:`[root]/module.lm`
+- :code:`[root]/src/`
+- :code:`[root]/include/` （可选）
 
-2. 元数据文件（可选）
+2. 接口映射语法（必需）
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-``lampm.json`` 可选，用于补充包管理与自动构建信息；接口绑定前置条件仅为动态库与 ``lib.lm``。
-
-若提供 ``lampm.json``，建议字段如下：
-
-.. list-table::
-   :header-rows: 1
-
-   * - 字段
-     - 类型
-     - 说明
-   * - ``name``
-     - String
-     - 包名
-   * - ``type``
-     - String
-     - 建议为 ``"extension"``
-   * - ``language``
-     - String
-     - C/C++ 标准版本
-   * - ``build.cflags``
-     - Array
-     - 编译参数
-   * - ``build.libs``
-     - Array
-     - 链接库列表
-   * - ``interface``
-     - String
-     - 接口文件路径，默认 ``"lib.lm"``
-   * - ``entry``
-     - String
-     - 动态库入口函数名，默认 ``"lsr_init"``
+在 :code:`module.lm` 中使用 :code:`static` 绑定动态库
+编写动态库代码，需要包含Lamina的核心头文件"lmx.h"，内部具有lamina的一些api与类型定义。
 
 
-未提供 ``lampm.json`` 时，工具链按默认约定加载：
+3 接口示例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- 接口文件：``lib.lm``
-- 入口符号：``lsr_init``
-- 动态库名称：由构建系统决定
-
-3. 接口映射语法（必需）
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-在 ``lib.lm`` 中使用 ``module`` 声明扩展命名空间，函数签名遵循 LSR-000：
-
-- 静态强类型
-- 参数与返回类型必须显式
-- 类型标注语法采用 ``name Type``
+假设有动态库 libadd.so，内有
+LmInt add(LmInt a, LmInt b);函数
 
 .. code-block:: text
 
-   module example {
-     # 语法：func name(param Type, ...) -> ReturnType = "c_symbol"
-     func det(m matrix) -> num = "c_ext_det"
-     func eig(m matrix) -> matrix = "c_ext_eig"
-   }
+   static "add"
+
+   func so_add(a int, b int) -> int = "add"
+
+   # 等于号后面为动态库的导出符号
 
 
-3.1 ``table`` 类型接口约束
+4. 与其他 LSR 的关系
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-当接口参数或返回值使用 ``table<K, V>`` 时，必须满足：
-
-- ``K`` 必须可哈希
-- 默认允许键类型：``num``、``complex``、``text``、``bool``
-- 默认键类型范围仅包含：``num``、``complex``、``text``、``bool``
-- 其他类型作为键需显式声明哈希语义（如 ``vector``、``matrix``、``set``、``table`` ）
-
-违反约束时接口绑定报错并停止生成桥接代码。
-
-.. code-block:: text
-
-   module ext_table {
-     func score_of(t table<text, num>, name text) -> num = "c_ext_score_of"
-     # 示例：vector 作为键需显式哈希语义
-     # func bad(t table<vector, num>) -> num = "c_ext_bad"
-   }
-
-
-3.2 复合对象内存安全与所有权协议
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-复合对象参数必须声明访问模式：
-
-- ``@readonly`` ：只读视图；原地写入需先 ``clone_if_shared``
-- ``@move`` ：所有权转移，扩展接管生命周期
-
-默认 ``@readonly``。
-
-3.2.1 引用计数约束
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-- ``@readonly`` 绑定必须增加持有计数，释放时归还
-- ``@move`` 绑定后 Lamina 侧引用失效，生命周期转移到扩展
-- 扩展持有指针需显式声明所有权
-
-3.2.2 写入前克隆要求
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-在 ``@readonly`` 模式下，如需写入，必须调用运行时接口：
-
-``clone_if_shared(obj)``
-
-- 独占对象：直接返回可写对象
-- 共享对象：先复制再返回可写对象
-
-共享对象写入前必须调用该接口；运行时对未调用写入触发 ``ExtensionMutationViolation``。
-
-3.2.3 接口示例
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-.. code-block:: text
-
-   module ext_safe {
-     func frobenius(a matrix @readonly) -> num = "c_ext_frob"
-     func consume(t table<text, num> @move) -> bool = "c_ext_consume"
-   }
-
-
-规则：``@readonly`` / ``@move`` 为接口注解。未声明时默认 ``@readonly``。
-
-4. 错误与诊断
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-至少支持：
-
-- ``InterfaceBindError`` ：接口映射失败
-- ``TableKeyTypeError`` ：``table`` 键类型不合法
-- ``OwnershipViolation`` ：所有权协议违规
-- ``ExtensionMutationViolation`` ：未按规则写共享对象
-
-5. 与其他 LSR 的关系
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-- LSR-000：核心类型系统、值语义、COW 语义
+- LSR-000：核心类型系统、值语义，复合引用语义
 - LSR-004：标准库定义，扩展可作为补充实现
 - LSR-008：量纲剥离规则（扩展无量纲入参场景）
