@@ -328,7 +328,7 @@ LMMP 类型分为两大体系：
 
 .. code-block:: c
 
-   #include "LMMP/lmpz.h"
+   #include "lmmp/lmpz.h"
    
    int main() {
        // 初始化全局环境建议在进程或线程创建时调用
