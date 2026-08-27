@@ -79,7 +79,7 @@ expr as scalar
 </section>
 <section id="id8">
 <h4>2.2 与单位转换组合<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h4>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(expr as &lt;target_unit&gt;) as num
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(expr as &lt;target_unit&gt;) as scalar
 </pre></div>
 </div>
 <p>规则：先转换到目标单位，再剥离为纯数值。</p>
@@ -100,7 +100,7 @@ expr as scalar
 <h4>3.2 目标单位下剥离<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
 <li><p>若用户希望在某单位刻度下得到纯数值，必须先显式转换单位</p></li>
-<li><p>例：<code class="docutils literal notranslate"><span class="pre">(10&lt;km&gt;</span> <span class="pre">as</span> <span class="pre">&lt;km&gt;)</span> <span class="pre">as</span> <span class="pre">num</span></code> 结果为 <code class="docutils literal notranslate"><span class="pre">10</span></code></p></li>
+<li><p>例：<code class="docutils literal notranslate"><span class="pre">(10&lt;km&gt;</span> <span class="pre">as</span> <span class="pre">&lt;km&gt;)</span> <span class="pre">as</span> <span class="pre">scalar</span></code> 结果为 <code class="docutils literal notranslate"><span class="pre">10</span></code></p></li>
 <li><p>抽象单位之间仅在存在显式比例定义时允许转换</p></li>
 </ul>
 </section>
@@ -173,11 +173,11 @@ let bits = bit_and((t as num), 3)
 <h3>8. 示例<a class="headerlink" href="#id19" title="链接到此标题。">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let speed = 20&lt;m/s&gt;
 let raw_si = speed as num                 # SI 基准量值
-let raw_kmh = (speed as &lt;km/h&gt;) as num    # km/h 刻度数值
+let raw_kmh = (speed as &lt;km/h&gt;) as scalar # km/h 刻度数值
 let raw_keep = speed as scalar             # 保留当前刻度值
 
 func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
-    return ((s as num) / 3600) as num&lt;h&gt;
+    return s as &lt;h&gt;
 }
 </pre></div>
 </div>
@@ -244,10 +244,14 @@ func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>LSR 014 - 运算符规范 &#8212; LSR  文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=7d86a446"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <link rel="icon" href="../_static/favicon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="LSR 015 - LAMMP 接口规范" href="LSR-015.html" />
+    <link rel="prev" title="LSR 013 - 集合类型规范" href="LSR-013.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="lsr-014">
+<h1>LSR 014 - 运算符规范<a class="headerlink" href="#lsr-014" title="链接到此标题。">¶</a></h1>
+<section id="id1">
+<h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
+<ul class="simple">
+<li><p>LSR 编号 014</p></li>
+<li><p>标题 运算符规范</p></li>
+<li><p>作者 Ziyang-Bai</p></li>
+<li><p>状态 草案</p></li>
+<li><p>类型 标准规范</p></li>
+<li><p>创建日期 08-11-2026</p></li>
+<li><p>归属项目 编译器、标准库、CAS</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
+<p>定义 Lamina 中数学表达式和普通表达式可使用的运算符、分隔符、关键字型运算符、优先级和结合性。Lamina 源码和标准文档示例都必须使用本规范列出的 token。</p>
+</section>
+<section id="id3">
+<h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<section id="id4">
+<h3>1. 范围<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<p>本规范定义 Lamina 源码层运算符集合。标准库函数名、CAS 内部表示和错误消息文本不由本规范强制。</p>
+<p>实现不得接受未列入本规范的数学符号作为运算符替代写法。</p>
+</section>
+<section id="token">
+<h3>2. 源码 token<a class="headerlink" href="#token" title="链接到此标题。">¶</a></h3>
+<p>源码中的运算符、分隔符和关键字型运算符由下列 token 组成。保留但未定义语义的 token 在第 8 节单独列出。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>类别</p></th>
+<th class="head"><p>token</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>算术</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">-</span></code>、<code class="docutils literal notranslate"><span class="pre">*</span></code>、<code class="docutils literal notranslate"><span class="pre">/</span></code>、<code class="docutils literal notranslate"><span class="pre">//</span></code>、<code class="docutils literal notranslate"><span class="pre">%</span></code>、<code class="docutils literal notranslate"><span class="pre">^</span></code></p></td>
+<td><p>加、减、乘、除、整除、取余、幂</p></td>
+</tr>
+<tr class="row-odd"><td><p>广播算术</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.+</span></code>、<code class="docutils literal notranslate"><span class="pre">.-</span></code>、<code class="docutils literal notranslate"><span class="pre">.*</span></code>、<code class="docutils literal notranslate"><span class="pre">./</span></code>、<code class="docutils literal notranslate"><span class="pre">.^</span></code></p></td>
+<td><p>向量、矩阵或同形状容器的元素级运算</p></td>
+</tr>
+<tr class="row-even"><td><p>矩阵除法</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">\\</span></code></p></td>
+<td><p>矩阵左除</p></td>
+</tr>
+<tr class="row-odd"><td><p>比较</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></td>
+<td><p>标量相等和顺序关系</p></td>
+</tr>
+<tr class="row-even"><td><p>广播比较</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.==</span></code>、<code class="docutils literal notranslate"><span class="pre">.!=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></td>
+<td><p>向量、矩阵或同形状容器的元素级比较</p></td>
+</tr>
+<tr class="row-odd"><td><p>逻辑</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">and</span></code>、<code class="docutils literal notranslate"><span class="pre">or</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span></code>、<code class="docutils literal notranslate"><span class="pre">!</span></code></p></td>
+<td><p>逻辑与、逻辑或、逻辑非</p></td>
+</tr>
+<tr class="row-even"><td><p>集合</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">in</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code>、<code class="docutils literal notranslate"><span class="pre">subset</span></code>、<code class="docutils literal notranslate"><span class="pre">|</span></code>、<code class="docutils literal notranslate"><span class="pre">&amp;</span></code>、<code class="docutils literal notranslate"><span class="pre">xor</span></code></p></td>
+<td><p>从属、子集、并集、交集、对称差</p></td>
+</tr>
+<tr class="row-odd"><td><p>调用与访问</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(</span></code>、<code class="docutils literal notranslate"><span class="pre">)</span></code>、<code class="docutils literal notranslate"><span class="pre">[</span></code>、<code class="docutils literal notranslate"><span class="pre">]</span></code>、<code class="docutils literal notranslate"><span class="pre">.</span></code>、<code class="docutils literal notranslate"><span class="pre">,</span></code></p></td>
+<td><p>调用、分组、元组、数组、索引、成员访问、参数分隔</p></td>
+</tr>
+<tr class="row-even"><td><p>线性代数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'</span></code>、<code class="docutils literal notranslate"><span class="pre">.'</span></code></p></td>
+<td><p>共轭转置、非共轭转置</p></td>
+</tr>
+<tr class="row-odd"><td><p>集合字面量</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{</span></code>、<code class="docutils literal notranslate"><span class="pre">}</span></code></p></td>
+<td><p>集合和集合推导式</p></td>
+</tr>
+<tr class="row-even"><td><p>流程与函数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">=&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">-&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">|&gt;</span></code></p></td>
+<td><p>Binding 构造、match 分支、函数箭头、管道</p></td>
+</tr>
+<tr class="row-odd"><td><p>绑定</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">=</span></code></p></td>
+<td><p>绑定或赋值，由语句语法决定</p></td>
+</tr>
+</tbody>
+</table>
+<p>以下示例使用合法 token。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = x^2 + 1
+let b = x &lt;= y and y != 0
+let c = item in values
+let d = 2 * x * sin(x)
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;=</span></code> 是合法源码运算符</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span></code> 是合法源码运算符</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">and</span></code>、<code class="docutils literal notranslate"><span class="pre">or</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span></code> 是逻辑运算关键字</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>、<code class="docutils literal notranslate"><span class="pre">||</span></code> 不属于 Lamina 核心逻辑运算符</p></li>
+<li><p>乘法必须显式写作 <code class="docutils literal notranslate"><span class="pre">*</span></code></p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>3. 运算符表<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>类别</p></th>
+<th class="head"><p>运算符</p></th>
+<th class="head"><p>结合性</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>后缀</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">()</span></code>、<code class="docutils literal notranslate"><span class="pre">.</span></code>、<code class="docutils literal notranslate"><span class="pre">[]</span></code>、<code class="docutils literal notranslate"><span class="pre">'</span></code>、<code class="docutils literal notranslate"><span class="pre">.'</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>调用、成员访问、索引、转置</p></td>
+</tr>
+<tr class="row-odd"><td><p>幂</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">^</span></code>、<code class="docutils literal notranslate"><span class="pre">.^</span></code></p></td>
+<td><p>右结合</p></td>
+<td><p>数值、矩阵、<code class="docutils literal notranslate"><span class="pre">Expr</span></code> 或元素级幂</p></td>
+</tr>
+<tr class="row-even"><td><p>一元</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">-</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span></code>、<code class="docutils literal notranslate"><span class="pre">!</span></code></p></td>
+<td><p>右结合</p></td>
+<td><p>正号、负号、逻辑非</p></td>
+</tr>
+<tr class="row-odd"><td><p>乘法</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code>、<code class="docutils literal notranslate"><span class="pre">/</span></code>、<code class="docutils literal notranslate"><span class="pre">//</span></code>、<code class="docutils literal notranslate"><span class="pre">%</span></code>、<code class="docutils literal notranslate"><span class="pre">\\</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>乘、除、整除、取余、矩阵左除</p></td>
+</tr>
+<tr class="row-even"><td><p>广播乘法</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.*</span></code>、<code class="docutils literal notranslate"><span class="pre">./</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>元素级乘、除</p></td>
+</tr>
+<tr class="row-odd"><td><p>加法</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>加、减</p></td>
+</tr>
+<tr class="row-even"><td><p>广播加法</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.+</span></code>、<code class="docutils literal notranslate"><span class="pre">.-</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>元素级加、减</p></td>
+</tr>
+<tr class="row-odd"><td><p>比较</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></td>
+<td><p>不链式</p></td>
+<td><p>标量比较</p></td>
+</tr>
+<tr class="row-even"><td><p>广播比较</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.==</span></code>、<code class="docutils literal notranslate"><span class="pre">.!=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></td>
+<td><p>不链式</p></td>
+<td><p>元素级比较</p></td>
+</tr>
+<tr class="row-odd"><td><p>从属</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">in</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code></p></td>
+<td><p>不链式</p></td>
+<td><p>集合或容器从属</p></td>
+</tr>
+<tr class="row-even"><td><p>逻辑与</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">and</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>短路逻辑与</p></td>
+</tr>
+<tr class="row-odd"><td><p>逻辑或</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">or</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>短路逻辑或</p></td>
+</tr>
+<tr class="row-even"><td><p>管道</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">|&gt;</span></code></p></td>
+<td><p>左结合</p></td>
+<td><p>函数调用语法糖</p></td>
+</tr>
+<tr class="row-odd"><td><p>Binding</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">=&gt;</span></code></p></td>
+<td><p>右结合</p></td>
+<td><p>表达式位置构造 <code class="docutils literal notranslate"><span class="pre">Binding</span></code>；match 分支中的 <code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 由 match 语法接管</p></td>
+</tr>
+<tr class="row-even"><td><p>范围外</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">=</span></code></p></td>
+<td><p>由对应语法定义</p></td>
+<td><p>函数类型、绑定或赋值</p></td>
+</tr>
+</tbody>
+</table>
+<p>比较、从属和逻辑运算的完整类型规则由核心语言和集合规范定义 <a class="footnote-reference brackets" href="#id18" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id19" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。</p>
+</section>
+<section id="id8">
+<h3>4. 表达式形式<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<p>以下表达式形式属于本规范定义的表面语法。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>形式</p></th>
+<th class="head"><p>示例</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>函数调用</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">f(x,</span> <span class="pre">y)</span></code></p></td>
+<td><p>支持零个、一个或多个参数</p></td>
+</tr>
+<tr class="row-odd"><td><p>集合字面量</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{1,</span> <span class="pre">2,</span> <span class="pre">x}</span></code></p></td>
+<td><p>有限集合；类型规则由集合规范定义 <a class="footnote-reference brackets" href="#id19" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>集合推导式</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{x^2</span> <span class="pre">for</span> <span class="pre">x</span> <span class="pre">in</span> <span class="pre">values}</span></code></p></td>
+<td><p>产生有限集合</p></td>
+</tr>
+<tr class="row-odd"><td><p>元组</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b,</span> <span class="pre">c)</span></code></p></td>
+<td><p>固定长度有序组合；类型规则由元组规范定义 <a class="footnote-reference brackets" href="#id20" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>分组</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(x</span> <span class="pre">+</span> <span class="pre">1)</span></code></p></td>
+<td><p>单元素圆括号表达式是分组，不是元组</p></td>
+</tr>
+</tbody>
+</table>
+<p>函数名后紧跟圆括号时，圆括号内容解析为函数实参列表。</p>
+<p>圆括号中的逗号分隔表达式解析为元组；函数名后的圆括号解析为实参列表；方括号中的逗号分隔表达式解析为数组。</p>
+<p>区间由标准库的命名构造函数创建 <a class="footnote-reference brackets" href="#id23" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>。分组、元组、数组、调用和索引分别保持本节规定的括号语义。</p>
+<p>集合字面量 <code class="docutils literal notranslate"><span class="pre">{}</span></code> 表示空集合时必须由上下文确定元素类型。集合推导式中的 <code class="docutils literal notranslate"><span class="pre">for</span></code> 和 <code class="docutils literal notranslate"><span class="pre">if</span></code> 按核心语言推导式规则解析。</p>
+</section>
+<section id="id12">
+<h3>5. 显式乘法<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
+<p>Lamina 不提供隐式乘法。任何乘法都必须写出 <code class="docutils literal notranslate"><span class="pre">*</span></code>。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>2 * x       # 合法
+2x          # 非法
+2 * (x + 1) # 合法
+2(x + 1)    # 非法
+x * sin(x)  # 合法
+x sin(x)    # 非法
+</pre></div>
+</div>
+<p>该规则同时适用于 Lamina 源码和任何接收表达式文本的库接口。</p>
+</section>
+<section id="id13">
+<h3>6. 优先级<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<p>优先级从高到低如下：</p>
+<ol class="arabic simple">
+<li><p>后缀：<code class="docutils literal notranslate"><span class="pre">()</span></code>、<code class="docutils literal notranslate"><span class="pre">.</span></code>、<code class="docutils literal notranslate"><span class="pre">[]</span></code>、<code class="docutils literal notranslate"><span class="pre">'</span></code>、<code class="docutils literal notranslate"><span class="pre">.'</span></code></p></li>
+<li><p>幂：<code class="docutils literal notranslate"><span class="pre">^</span></code>、<code class="docutils literal notranslate"><span class="pre">.^</span></code></p></li>
+<li><p>一元：<code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">-</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span></code>、<code class="docutils literal notranslate"><span class="pre">!</span></code></p></li>
+<li><p>乘法：<code class="docutils literal notranslate"><span class="pre">*</span></code>、<code class="docutils literal notranslate"><span class="pre">/</span></code>、<code class="docutils literal notranslate"><span class="pre">//</span></code>、<code class="docutils literal notranslate"><span class="pre">%</span></code>、<code class="docutils literal notranslate"><span class="pre">\\</span></code>、<code class="docutils literal notranslate"><span class="pre">.*</span></code>、<code class="docutils literal notranslate"><span class="pre">./</span></code></p></li>
+<li><p>加法：<code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">-</span></code>、<code class="docutils literal notranslate"><span class="pre">.+</span></code>、<code class="docutils literal notranslate"><span class="pre">.-</span></code></p></li>
+<li><p>比较：<code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">.==</span></code>、<code class="docutils literal notranslate"><span class="pre">.!=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></li>
+<li><p>从属：<code class="docutils literal notranslate"><span class="pre">in</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code></p></li>
+<li><p>逻辑与：<code class="docutils literal notranslate"><span class="pre">and</span></code></p></li>
+<li><p>逻辑或：<code class="docutils literal notranslate"><span class="pre">or</span></code></p></li>
+<li><p>管道：<code class="docutils literal notranslate"><span class="pre">|&gt;</span></code></p></li>
+<li><p>Binding 构造：<code class="docutils literal notranslate"><span class="pre">=&gt;</span></code></p></li>
+<li><p>绑定、赋值和函数箭头</p></li>
+</ol>
+<p>比较和从属运算不得隐式链式解析。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>a &lt; b &lt; c       # 非法
+a &lt; b and b &lt; c # 合法
+</pre></div>
+</div>
+<p>表达式位置的 <code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 构造 <code class="docutils literal notranslate"><span class="pre">Binding</span></code> 值，语义由 LSR-011 定义 <a class="footnote-reference brackets" href="#id22" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。
+<code class="docutils literal notranslate"><span class="pre">match</span></code> 分支中的 <code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 不按表达式运算符解析，由 LSR-005 定义。</p>
+</section>
+<section id="expr">
+<h3>7. Expr 直接定义<a class="headerlink" href="#expr" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 允许由 Lamina 表达式直接定义，不需要通过标准库字符串解析函数创建。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
+let expr = x^2 + 1
+let roots set&lt;Expr&gt; = {-1, 1}
+let domain = std.interval_closed_open(0, 1)
+let call = max(x, y, 0)
+</pre></div>
+</div>
+<p>当期望类型为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时，数值字面量、符号、函数调用和集合可以构造符号表达式；区间通过普通的标准库函数调用构造。具体提升边界由 LSR-016 定义 <a class="footnote-reference brackets" href="#id21" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>；本规范只规定可用 token 和表面语法。</p>
+<p>本规范不要求标准库提供通用的表达式字符串解析入口。若实现内部或第三方库接收表达式文本，该文本不得扩展本规范列出的运算符 token，乘法仍必须显式写作 <code class="docutils literal notranslate"><span class="pre">*</span></code>。</p>
+</section>
+<section id="id16">
+<h3>8. 保留与禁止<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<p>以下 token 在核心语言中保留，未定义语义前不得被库代码重新解释：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">..</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">...</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">?:</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">??</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">::</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&#64;</span></code></p></li>
+</ul>
+<p>以下写法不属于核心运算符：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">||</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">**</span></code></p></li>
+<li><p>隐式乘法</p></li>
+<li><p>未列入本规范的数学符号</p></li>
+</ul>
+<p>Lamina 源码和表达式文本中的幂运算固定为 <code class="docutils literal notranslate"><span class="pre">^</span></code>。</p>
+<p>使用未列入本规范的 token 必须产生词法或语法错误。实现不得把未知 token 当作标识符、函数名或库可重载运算符继续解析。</p>
+</section>
+<section id="id17">
+<h3>9. 引用<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id18" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 定义核心表达式、绑定、控制流和基础类型</p>
+</aside>
+<aside class="footnote brackets" id="id19" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id9">2</a>)</span>
+<p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">in</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code>、集合运算和集合相等</p>
+</aside>
+<aside class="footnote brackets" id="id20" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-012.html"><span class="doc">LSR-012 - 元组类型规范</span></a> - 定义元组字面量、元组类型和位置访问</p>
+</aside>
+<aside class="footnote brackets" id="id21" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">4</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - Expr 构造与提升规范</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的直接构造、自动提升和函数调用解析</p>
+</aside>
+<aside class="footnote brackets" id="id22" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">5</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-011.html"><span class="doc">LSR-011 - 代数数据类型规范</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">Binding</span></code> ADT 与表达式位置的 <code class="docutils literal notranslate"><span class="pre">=&gt;</span></code></p>
+</aside>
+<aside class="footnote brackets" id="id23" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">6</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-017.html"><span class="doc">LSR-017 - 区间类型规范</span></a> - 定义标准库命名构造函数、区间类型和成员判断</p>
+</aside>
+</aside>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/icon.svg" alt="LSR 的 Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">LSR</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">当前规范</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="LSR-000.html">LSR 000 - Lamina 核心语言规范（草案）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-001.html">LSR 001 - LSR 流程规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 014 - 运算符规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LSR-013.html" title="上一章">LSR 013 - 集合类型规范</a></li>
+      <li>Next: <a href="LSR-015.html" title="下一章">LSR 015 - LAMMP 接口规范</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/store/LSR-014.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

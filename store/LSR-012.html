@@ -17,7 +17,7 @@
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="LSR 013 - 集合类型规范" href="LSR-013.html" />
-    <link rel="prev" title="LSR 011 - 代数数据类型规范" href="LSR-011.html" />
+    <link rel="prev" title="LSR 011 - 代数数据类型" href="LSR-011.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -51,17 +51,16 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 Lamina 元组类型。元组是固定长度、按位置索引、创建后不可变的匿名积类型，可用于函数返回、临时组合和模式匹配 <a class="footnote-reference brackets" href="#id17" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。</p>
+<p>定义 Lamina 元组类型。元组是固定长度、按位置索引、创建后不可变的匿名积类型，可用于函数返回、临时组合和模式匹配 <a class="footnote-reference brackets" href="#id25" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。本规范同时规定元组与分组、函数实参、数组及区间构造之间的语法边界。</p>
 </section>
 <section id="id4">
 <h2>技术规范<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
 <section id="id5">
 <h3>1. 范围<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
-<p>元组用于组合少量按位置区分的值。元组不是数组：长度属于类型，元素类型可以不同。元组也不是 ADT <a class="footnote-reference brackets" href="#id18" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>：它没有构造器标签，不能追加命名分支。</p>
-<p>元组不定义空元组和单元素元组。</p>
+<p>元组用于组合少量按位置区分的值。元组的长度和各位置元素类型共同组成其类型。元组字面量包含至少两个元素；分组、函数调用、数组和区间分别使用各自的语法规则。</p>
 </section>
-<section id="id7">
-<h3>2. 元组类型<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
+<section id="id6">
+<h3>2. 元组类型<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
 <p>元组类型由一组有序元素类型组成。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(int, text)
 (int, text, Expr)
@@ -72,50 +71,49 @@
 <li><p>元组元素可以是不同类型</p></li>
 <li><p>元组类型由长度和每个位置的类型共同决定</p></li>
 <li><p>元组值默认不可变</p></li>
+<li><p>元组类型是结构类型；元素类型序列相同的两个元组类型相同</p></li>
 </ul>
 </section>
-<section id="id8">
-<h3>3. 元组字面量<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
-<p>元组字面量使用圆括号。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let pair = (1, &quot;one&quot;)
-let triple = (1, &quot;x&quot;, true)
+<section id="id7">
+<h3>3. 元组字面量<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
+<p>元组字面量使用圆括号，并以逗号分隔元素。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let pair = (1, "one")
+let triple = (1, "x", true)
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>非空元组按元素表达式推导类型</p></li>
 <li><p>元组字面量至少包含两个元素</p></li>
-<li><p>单元素圆括号表达式不是元组</p></li>
+<li><p>单元素圆括号表达式按分组表达式解析</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> 始终解析为二元素元组</p></li>
+<li><p>函数名后紧跟的 <code class="docutils literal notranslate"><span class="pre">f(a,</span> <span class="pre">b)</span></code> 按函数调用解析</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.interval_open(a,</span> <span class="pre">b)</span></code> 是普通函数调用，其结果为开区间 <a class="footnote-reference brackets" href="#id28" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></li>
 </ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = (1)      # int
-let b = (1,)     # 非法，单元素元组不属于本规范
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = (1)      # 分组表达式，类型为 int
 </pre></div>
 </div>
 </section>
 <section id="id9">
-<h3>4. 空元组<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
-<p>空元组不属于本规范。</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">()</span></code> 不作为元组字面量解析</p></li>
-<li><p>不得把 <code class="docutils literal notranslate"><span class="pre">()</span></code> 当作零字段元组推导</p></li>
-<li><p>无返回值函数仍由现有返回语义定义</p></li>
-</ul>
+<h3>4. 元数<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<p>元组字面量的元数至少为二。<code class="docutils literal notranslate"><span class="pre">(value)</span></code> 是分组表达式；<code class="docutils literal notranslate"><span class="pre">f()</span></code> 是零实参函数调用。函数的返回语义由核心语言规范定义 <a class="footnote-reference brackets" href="#id25" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。</p>
 </section>
-<section id="id10">
-<h3>5. 元组访问<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<section id="id11">
+<h3>5. 元组访问<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
 <p>元组元素按位置访问，索引从 1 开始，与 Lamina 现有线性代数索引规则保持一致。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let p = (10, &quot;x&quot;)
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let p = (10, "x")
 let a = p.1
 let b = p.2
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>元组索引必须是编译期常量正整数</p></li>
+<li><p>第一个元素的位置为 <code class="docutils literal notranslate"><span class="pre">1</span></code></p></li>
 <li><p>访问位置超过元组长度是编译错误</p></li>
-<li><p>元组位置访问不等同于对象字段修改</p></li>
+<li><p>元组位置访问读取创建元组时绑定在该位置的元素</p></li>
 </ul>
 </section>
-<section id="id11">
-<h3>6. 元组解构<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<section id="id12">
+<h3>6. 元组解构<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
 <p>元组可在 <code class="docutils literal notranslate"><span class="pre">let</span></code> 和 <code class="docutils literal notranslate"><span class="pre">match</span></code> 中解构。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let (x, y) = (1, 2)
 
@@ -128,10 +126,11 @@ match value {
 <li><p>解构模式长度必须与元组长度一致</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">_</span></code> 可忽略对应位置</p></li>
 <li><p>解构绑定的变量类型由对应位置推导</p></li>
+<li><p>解构保持原元组值，并为各位置创建对应绑定</p></li>
 </ul>
 </section>
-<section id="id12">
-<h3>7. 函数返回元组<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
+<section id="id13">
+<h3>7. 函数返回元组<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
 <p>函数可以返回元组作为单一返回值。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func divmod(a int, b int) -&gt; (int, int) {
     return (a / b, a % b)
@@ -142,23 +141,32 @@ let (q, r) = divmod(10, 3)
 </div>
 <ul class="simple">
 <li><p>Lamina 仍然是单返回值语言</p></li>
-<li><p>多个不同类型结果应使用元组返回</p></li>
-<li><p>多个同类型、无序数学结果应使用集合返回</p></li>
+<li><p>多个按位置区分的结果应使用元组返回；元素类型可以相同或不同</p></li>
+<li><p>多个同类型、无序数学结果应使用集合返回 <a class="footnote-reference brackets" href="#id27" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
+<li><p>需要表达命名分支、成功或失败状态时应使用 ADT <a class="footnote-reference brackets" href="#id26" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
 </ul>
 </section>
-<section id="id13">
-<h3>8. 相等性与哈希<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<section id="id16">
+<h3>8. 相等性与哈希<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
 <p>元组按位置结构比较。</p>
 <ul class="simple">
 <li><p>两个元组长度不同，则类型不同</p></li>
 <li><p>两个同类型元组逐位置相等时，整体相等</p></li>
 <li><p>只有所有元素可比较时，元组才支持 <code class="docutils literal notranslate"><span class="pre">==</span></code></p></li>
 <li><p>只有所有元素可哈希时，元组才可作为哈希键</p></li>
-<li><p>元组不自动获得排序关系</p></li>
 </ul>
 </section>
-<section id="id14">
-<h3>9. 与数组和集合的区别<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
+<section id="id17">
+<h3>9. 求值与存储语义<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<p>元组字面量的元素表达式按源码从左到右各求值一次。元组值创建后，元素位置和元素绑定保持不变。</p>
+<ul class="simple">
+<li><p>元组的不可变性是浅层不可变；元素若引用可变对象，该对象仍遵循自身语义</p></li>
+<li><p>实现可以内联、装箱或共享元组存储；各种表示具有相同的求值顺序、结构相等和可观察生命周期行为</p></li>
+<li><p>跨模块接口必须保留元组长度、元素顺序和每个位置的静态类型</p></li>
+</ul>
+</section>
+<section id="id18">
+<h3>10. 与数组、集合和区间的区别<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>类型</p></th>
@@ -181,29 +189,58 @@ let (q, r) = divmod(10, 3)
 <td><p>有序</p></td>
 <td><p>程序式序列</p></td>
 </tr>
-<tr class="row-even"><td><p>集合 <a class="footnote-reference brackets" href="#id19" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+<tr class="row-even"><td><p>集合 <a class="footnote-reference brackets" href="#id27" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
 <td><p>运行期大小</p></td>
 <td><p>同构</p></td>
 <td><p>无序</p></td>
 <td><p>去重数学集合</p></td>
 </tr>
+<tr class="row-odd"><td><p>区间 <a class="footnote-reference brackets" href="#id28" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></td>
+<td><p>两个端点</p></td>
+<td><p>同构</p></td>
+<td><p>有序边界</p></td>
+<td><p>表示连续或离散范围</p></td>
+</tr>
 </tbody>
 </table>
 </section>
-<section id="id16">
-<h3>10. 引用<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<section id="id21">
+<h3>11. 诊断<a class="headerlink" href="#id21" title="链接到此标题。">¶</a></h3>
+<p>实现至少应区分下列错误：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TupleArityMismatch</span></code>：解构模式长度与元组长度不同</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TupleIndexNotConstant</span></code>：位置访问不是编译期常量</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TupleIndexOutOfBounds</span></code>：位置不在 <code class="docutils literal notranslate"><span class="pre">1</span></code> 到元组长度之间</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TupleAssignment</span></code>：试图修改元组元素绑定</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TupleTypeMismatch</span></code>：目标元组类型与元素类型序列不兼容</p></li>
+</ul>
+<p>错误名称可以映射到实现的统一诊断系统。</p>
+</section>
+<section id="id22">
+<h3>12. 兼容性<a class="headerlink" href="#id22" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> 统一表示元组。原开区间写法 <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> 迁移为 <code class="docutils literal notranslate"><span class="pre">std.interval_open(a,</span> <span class="pre">b)</span></code> <a class="footnote-reference brackets" href="#id28" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>。</p>
+</section>
+<section id="id24">
+<h3>13. 引用<a class="headerlink" href="#id24" title="链接到此标题。">¶</a></h3>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id17" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">1</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id25" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id10">2</a>)</span>
 <p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 提供基础类型、函数返回和模式匹配语法</p>
 </aside>
-<aside class="footnote brackets" id="id18" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">2</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id26" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-011.html"><span class="doc">LSR-011 - 代数数据类型规范</span></a> - 定义 ADT；元组可作为 ADT 字段</p>
 </aside>
-<aside class="footnote brackets" id="id19" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">3</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id27" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id14">1</a>,<a role="doc-backlink" href="#id19">2</a>)</span>
 <p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 定义集合；集合元素可以是可哈希元组</p>
+</aside>
+<aside class="footnote brackets" id="id28" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id8">1</a>,<a role="doc-backlink" href="#id20">2</a>,<a role="doc-backlink" href="#id23">3</a>)</span>
+<p><a class="reference internal" href="LSR-017.html"><span class="doc">LSR-017 - 区间类型规范</span></a> - 定义标准库区间构造函数和区间类型</p>
 </aside>
 </aside>
 </section>
@@ -252,10 +289,14 @@ let (q, r) = divmod(10, 3)
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 012 - 元组类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 
@@ -263,7 +304,7 @@ let (q, r) = divmod(10, 3)
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="LSR-011.html" title="上一章">LSR 011 - 代数数据类型规范</a></li>
+      <li>Previous: <a href="LSR-011.html" title="上一章">LSR 011 - 代数数据类型</a></li>
       <li>Next: <a href="LSR-013.html" title="下一章">LSR 013 - 集合类型规范</a></li>
   </ul></li>
 </ul>

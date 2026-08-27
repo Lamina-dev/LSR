@@ -16,8 +16,8 @@
     <link rel="icon" href="../_static/favicon.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="LSR-undefined" href="LSR-undefined.html" />
-    <link rel="prev" title="LSR 013 - 集合类型规范" href="LSR-013.html" />
+    <link rel="next" title="LSR 016 - Expr 构造与提升规范" href="LSR-016.html" />
+    <link rel="prev" title="LSR 014 - 运算符规范" href="LSR-014.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -357,7 +357,7 @@ void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</
 <section id="id20">
 <h2>6. 编码示例<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h2>
 <p>仅作为参考，实际代码应根据具体实现进行调整。</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;lammp/lmpz.h&quot;</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"lammp/lmpz.h"</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// 初始化全局环境建议在进程或线程创建时调用</span>
@@ -389,7 +389,7 @@ void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;lammp/nint.h&quot;</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"lammp/nint.h"</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// 初始化全局环境建议在进程或线程创建时调用</span>
@@ -474,10 +474,14 @@ void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 015 - LAMMP 接口规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 
@@ -485,8 +489,8 @@ void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="LSR-013.html" title="上一章">LSR 013 - 集合类型规范</a></li>
-      <li>Next: <a href="LSR-undefined.html" title="下一章">LSR-undefined</a></li>
+      <li>Previous: <a href="LSR-014.html" title="上一章">LSR 014 - 运算符规范</a></li>
+      <li>Next: <a href="LSR-016.html" title="下一章">LSR 016 - Expr 构造与提升规范</a></li>
   </ul></li>
 </ul>
 </div>
