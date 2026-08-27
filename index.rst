@@ -19,5 +19,9 @@ Lamina Standard Recommendation
    store/LSR-011
    store/LSR-012
    store/LSR-013
+   store/LSR-014
    store/LSR-015
+   store/LSR-016
+   store/LSR-017
+   store/LSR-018
    store/LSR-undefined

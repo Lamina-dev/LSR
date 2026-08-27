@@ -57,7 +57,7 @@ LSR 008 - 量纲剥离（Unit Stripping）规范
 
 .. code-block:: text
 
-   (expr as <target_unit>) as num
+   (expr as <target_unit>) as scalar
 
 
 规则：先转换到目标单位，再剥离为纯数值。
@@ -80,7 +80,7 @@ LSR 008 - 量纲剥离（Unit Stripping）规范
 
 
 - 若用户希望在某单位刻度下得到纯数值，必须先显式转换单位
-- 例：``(10<km> as <km>) as num`` 结果为 ``10``
+- 例：``(10<km> as <km>) as scalar`` 结果为 ``10``
 - 抽象单位之间仅在存在显式比例定义时允许转换
 
 3.3 ``as scalar`` 语义
@@ -165,11 +165,11 @@ LSR 008 - 量纲剥离（Unit Stripping）规范
 
    let speed = 20<m/s>
    let raw_si = speed as num                 # SI 基准量值
-   let raw_kmh = (speed as <km/h>) as num    # km/h 刻度数值
+   let raw_kmh = (speed as <km/h>) as scalar # km/h 刻度数值
    let raw_keep = speed as scalar             # 保留当前刻度值
    
    func second2hour(s num<s>) -> num<h> {
-       return ((s as num) / 3600) as num<h>
+       return s as <h>
    }
 
 
