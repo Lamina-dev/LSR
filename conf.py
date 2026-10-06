@@ -5,7 +5,10 @@ language = 'zh_CN'
 extensions = []
 templates_path = ['_templates']
 master_doc = 'index'
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'README.rst', 'store/old/*']
+exclude_patterns = [
+    '_build', 'Thumbs.db', '.DS_Store', 'README.rst',
+    'store/old/**', 'store/withdrawn/**', 'proposals/**',
+]
 
 html_theme = 'alabaster'
 html_static_path = ['assets']
