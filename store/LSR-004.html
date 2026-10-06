@@ -16,7 +16,7 @@
     <link rel="icon" href="../_static/favicon.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="LSR 005 - 模式匹配" href="LSR-005.html" />
+    <link rel="next" title="LSR 006 - Lambda 表达式与类型推导规范" href="LSR-006.html" />
     <link rel="prev" title="LSR 003 - Lamina C 扩展与插件规范" href="LSR-003.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -51,7 +51,7 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 Lamina 标准库（<code class="docutils literal notranslate"><span class="pre">std</span></code> ）的模块结构、导入与调用规则、数学核心 API 和错误模型；扩展模块可补充标准库实现 <a class="footnote-reference brackets" href="#id30" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。</p>
+<p>定义 Lamina 标准库（<code class="docutils literal notranslate"><span class="pre">std</span></code> ）的模块结构、导入与调用规则、数学核心 API 和错误模型；扩展模块可补充标准库实现 <a class="footnote-reference brackets" href="#id37" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。</p>
 </section>
 <section id="id4">
 <h2>技术规范<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
@@ -59,7 +59,7 @@
 <h3>1. 设计目标<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>统一、稳定、可组合的标准 API</p></li>
-<li><p>对齐 LSR-000 <a class="footnote-reference brackets" href="#id28" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 的静态强类型与单位系统</p></li>
+<li><p>对齐 LSR-000 <a class="footnote-reference brackets" href="#id35" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 的静态强类型与单位系统</p></li>
 <li><p>覆盖数学核心能力（数值、线代、统计、随机、单位）</p></li>
 <li><p>同名函数跨平台语义一致</p></li>
 </ul>
@@ -79,29 +79,37 @@
 <td><p>通用数学</p></td>
 <td><p>初等函数、三角函数、指数对数、舍入、数值辅助</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.linalg</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.cas</span></code></p></td>
+<td><p>符号数学</p></td>
+<td><p>符号代入、表达式匹配与重写，接口见 LSR-016 <a class="footnote-reference brackets" href="#id41" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.linalg</span></code></p></td>
 <td><p>线性代数</p></td>
 <td><p>矩阵分解、求解、逆、行列式、特征值</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.stats</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.stats</span></code></p></td>
 <td><p>统计</p></td>
 <td><p>描述统计、分位数、协方差、相关系数</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.random</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.random</span></code></p></td>
 <td><p>随机数</p></td>
 <td><p>伪随机引擎、分布采样、种子控制</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.units</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.units</span></code></p></td>
 <td><p>单位工具</p></td>
 <td><p>单位转换辅助与量纲工具函数</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.constants</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.constants</span></code></p></td>
 <td><p>常量集</p></td>
-<td><p>统一暴露 LSR-002 <a class="footnote-reference brackets" href="#id29" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 常量</p></td>
+<td><p>统一暴露 LSR-002 <a class="footnote-reference brackets" href="#id36" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 常量</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.io</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std.io</span></code></p></td>
 <td><p>基础 I/O</p></td>
 <td><p>文本输入输出与格式化</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std.mathematics_error</span></code></p></td>
+<td><p>数学错误</p></td>
+<td><p>固定内建 <code class="docutils literal notranslate"><span class="pre">MathError</span></code> 的构造、字段与终止函数，接口见 LSR-018 <a class="footnote-reference brackets" href="#id42" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -111,10 +119,10 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">std</span></code> 根命名空间保留；用户模块定义在非 <code class="docutils literal notranslate"><span class="pre">std</span></code> 命名空间</p></li>
 </ul>
 </section>
-<section id="id9">
-<h3>3. 导入与库调用约定<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
-<section id="id10">
-<h4>3.1 导入语法<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h4>
+<section id="id11">
+<h3>3. 导入与库调用约定<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<section id="id12">
+<h4>3.1 导入语法<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.math
 import std.linalg as la
 
@@ -129,8 +137,8 @@ use std.constants.{G as GRAVITY}
 <li><p><code class="docutils literal notranslate"><span class="pre">use</span> <span class="pre">a.b.{x,</span> <span class="pre">y</span> <span class="pre">as</span> <span class="pre">z}</span></code> 导入符号；若与当前作用域重名则编译报错</p></li>
 </ul>
 </section>
-<section id="id11">
-<h4>3.2 调用约定<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h4>
+<section id="id13">
+<h4>3.2 调用约定<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h4>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let y = math.sin(math.pi / 2)
 let detA = la.det(A)
 </pre></div>
@@ -142,8 +150,8 @@ let detA = la.det(A)
 <li><p>标准库函数以纯函数语义为默认，参数只读</p></li>
 </ul>
 </section>
-<section id="id12">
-<h4>3.3 <code class="docutils literal notranslate"><span class="pre">.</span></code> 规则<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
+<section id="id14">
+<h4>3.3 <code class="docutils literal notranslate"><span class="pre">.</span></code> 规则<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">.</span></code> 用于命名空间路径与成员访问；<code class="docutils literal notranslate"><span class="pre">import</span></code>/<code class="docutils literal notranslate"><span class="pre">use</span></code> 中路径与符号选择均使用 <code class="docutils literal notranslate"><span class="pre">.</span></code>。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.math
 use std.math.{sin, cos}
@@ -159,11 +167,11 @@ let b = sin(pi / 2)        # 通过 use 导入后可直接访问
 </ul>
 </section>
 </section>
-<section id="id13">
-<h3>4. 数学系统<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<section id="id15">
+<h3>4. 数学系统<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
 <section id="std-math">
 <h4>4.1 <code class="docutils literal notranslate"><span class="pre">std.math</span></code><a class="headerlink" href="#std-math" title="链接到此标题。">¶</a></h4>
-<p><code class="docutils literal notranslate"><span class="pre">std.math</span></code> 的复数常量与复数函数语义见 LSR-010 <a class="footnote-reference brackets" href="#id33" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">std.math</span></code> 的复数常量与复数函数语义见 LSR-010 <a class="footnote-reference brackets" href="#id40" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>。</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>函数</p></th>
@@ -287,12 +295,12 @@ let b = sin(pi / 2)        # 通过 use 导入后可直接访问
 <td><p>解 <code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">A</span> <span class="pre">=</span> <span class="pre">B</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eig</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">eig(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">table&lt;text,</span> <span class="pre">matrix&gt;</span></code></p></td>
-<td><p>特征值/特征向量</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">eig(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">(matrix,</span> <span class="pre">matrix)</span></code></p></td>
+<td><p>按顺序返回（特征向量矩阵，特征值对角矩阵）</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">svd</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">svd(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">table&lt;text,</span> <span class="pre">matrix&gt;</span></code></p></td>
-<td><p>奇异值分解</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">svd(A</span> <span class="pre">matrix)</span> <span class="pre">-&gt;</span> <span class="pre">(matrix,</span> <span class="pre">matrix,</span> <span class="pre">matrix)</span></code></p></td>
+<td><p>按顺序返回 <code class="docutils literal notranslate"><span class="pre">(U,</span> <span class="pre">S,</span> <span class="pre">V)</span></code>，满足 <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">U</span> <span class="pre">S</span> <span class="pre">V*</span></code>，其中 <code class="docutils literal notranslate"><span class="pre">V*</span></code> 为共轭转置</p></td>
 </tr>
 </tbody>
 </table>
@@ -300,7 +308,14 @@ let b = sin(pi / 2)        # 通过 use 导入后可直接访问
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">solve_left(A,</span> <span class="pre">B)</span></code> 与运算符 <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">\\</span> <span class="pre">B</span></code> 等价</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">solve_right(B,</span> <span class="pre">A)</span></code> 与运算符 <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">/</span> <span class="pre">A</span></code> （矩阵语义）等价</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eig</span></code> 与 <code class="docutils literal notranslate"><span class="pre">svd</span></code> 的各分量按固定位置组成单个元组 <a class="footnote-reference brackets" href="#id43" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a></p></li>
 </ul>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.linalg
+
+let (eigenvectors, eigenvalues) = linalg.eig(A)
+let (U, S, V) = linalg.svd(A)
+</pre></div>
+</div>
 </section>
 <section id="std-stats">
 <h4>4.3 <code class="docutils literal notranslate"><span class="pre">std.stats</span></code><a class="headerlink" href="#std-stats" title="链接到此标题。">¶</a></h4>
@@ -392,7 +407,7 @@ let b = sin(pi / 2)        # 通过 use 导入后可直接访问
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">strip</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">strip(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
-<td><p>等价于 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">as</span> <span class="pre">num</span></code> （见 LSR-008 <a class="footnote-reference brackets" href="#id31" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>）</p></td>
+<td><p>等价于 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">as</span> <span class="pre">num</span></code> （见 LSR-008 <a class="footnote-reference brackets" href="#id38" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>）</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_dimensionless</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">is_dimensionless(x</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code></p></td>
@@ -400,18 +415,22 @@ let b = sin(pi / 2)        # 通过 use 导入后可直接访问
 </tr>
 </tbody>
 </table>
-<p>规则：<code class="docutils literal notranslate"><span class="pre">strip</span></code> 只是函数入口，语义以 LSR-008 <a class="footnote-reference brackets" href="#id31" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 为准。</p>
+<p>规则：<code class="docutils literal notranslate"><span class="pre">strip</span></code> 只是函数入口，语义以 LSR-008 <a class="footnote-reference brackets" href="#id38" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 为准。</p>
+</section>
+<section id="std-cas">
+<h4>4.6 <code class="docutils literal notranslate"><span class="pre">std.cas</span></code><a class="headerlink" href="#std-cas" title="链接到此标题。">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 提供 <code class="docutils literal notranslate"><span class="pre">substitute</span></code> 符号代入、<code class="docutils literal notranslate"><span class="pre">match_expr</span></code> 表达式匹配和 <code class="docutils literal notranslate"><span class="pre">rewrite</span></code> 符号重写。接口签名、内建 <code class="docutils literal notranslate"><span class="pre">rule</span></code>、匹配变量与遍历语义由 LSR-016 <a class="footnote-reference brackets" href="#id41" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> 定义。</p>
 </section>
 </section>
-<section id="id17">
-<h3>5. 常量系统<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<section id="id21">
+<h3>5. 常量系统<a class="headerlink" href="#id21" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">std.constants</span></code> 暴露 LSR-002 <a class="footnote-reference brackets" href="#id29" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 定义的常量集合</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.constants</span></code> 暴露 LSR-002 <a class="footnote-reference brackets" href="#id36" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 定义的常量集合</p></li>
 <li><p>常量以只读绑定导出</p></li>
-<li><p>常量单位必须与 LSR-000 <a class="footnote-reference brackets" href="#id28" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 量纲系统一致</p></li>
+<li><p>常量单位必须与 LSR-000 <a class="footnote-reference brackets" href="#id35" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 量纲系统一致</p></li>
 </ul>
-<section id="id20">
-<h4>5.1 用户自定义常量<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h4>
+<section id="id24">
+<h4>5.1 用户自定义常量<a class="headerlink" href="#id24" title="链接到此标题。">¶</a></h4>
 <p>用户可在模块内定义常量：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>module user.constants {
      const G_MARS = 3.72076&lt;m/s^2&gt;
@@ -426,8 +445,8 @@ let b = sin(pi / 2)        # 通过 use 导入后可直接访问
 <li><p>常量为只读绑定；编译期校验覆盖重定义与写入</p></li>
 </ul>
 </section>
-<section id="id21">
-<h4>5.2 用户自定义单位<a class="headerlink" href="#id21" title="链接到此标题。">¶</a></h4>
+<section id="id25">
+<h4>5.2 用户自定义单位<a class="headerlink" href="#id25" title="链接到此标题。">¶</a></h4>
 <p>用户可在模块内定义单位：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>module user.units {
      unit score
@@ -454,8 +473,8 @@ let v = EARTH_GRAVITY * 2&lt;s&gt;
 </div>
 </section>
 </section>
-<section id="id22">
-<h3>6. 错误模型<a class="headerlink" href="#id22" title="链接到此标题。">¶</a></h3>
+<section id="id26">
+<h3>6. 错误模型<a class="headerlink" href="#id26" title="链接到此标题。">¶</a></h3>
 <p>标准库错误采用可诊断错误码，至少覆盖：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">DomainError</span></code> ：输入超出定义域（如 <code class="docutils literal notranslate"><span class="pre">log(-1)</span></code> ）</p></li>
@@ -464,26 +483,27 @@ let v = EARTH_GRAVITY * 2&lt;s&gt;
 <li><p><code class="docutils literal notranslate"><span class="pre">EmptyInput</span></code> ：统计函数输入为空</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code> ：参数类型或取值非法</p></li>
 </ul>
+<p>普通数学函数直接返回签名所声明的结果值。计算失败通过 LSR-018 <a class="footnote-reference brackets" href="#id42" id="id27" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> 的 <code class="docutils literal notranslate"><span class="pre">raise</span></code> 与 VM 故障传播机制报告。求解接口在证明解集为空时返回空集合，在完整解集待定时给出诊断，具体规则遵循 LSR-013 <a class="footnote-reference brackets" href="#id39" id="id28" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。</p>
 </section>
-<section id="id23">
-<h3>7. 性能与确定性约束<a class="headerlink" href="#id23" title="链接到此标题。">¶</a></h3>
+<section id="id29">
+<h3>7. 性能与确定性约束<a class="headerlink" href="#id29" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>同版本标准库在同一输入下必须给出可重现结果（随机模块除外）</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">std.random</span></code> 在固定种子下必须可重放</p></li>
 <li><p>线性代数实现允许后端差异，但数值误差须在文档化容差内</p></li>
 </ul>
 </section>
-<section id="id24">
-<h3>8. 版本与稳定性<a class="headerlink" href="#id24" title="链接到此标题。">¶</a></h3>
+<section id="id30">
+<h3>8. 版本与稳定性<a class="headerlink" href="#id30" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">std</span></code> 下 API 采用语义化版本管理</p></li>
 <li><p>对外函数签名变更属于破坏性变更，需提升主版本</p></li>
 <li><p>新增函数保持向后兼容调用行为；既有函数语义保持稳定</p></li>
-<li><p>多个同类数学结果使用集合返回约定 <a class="footnote-reference brackets" href="#id32" id="id25" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p></li>
+<li><p>无序、按相等关系去重的同类数学结果使用集合 <a class="footnote-reference brackets" href="#id39" id="id31" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>；按固定位置区分的结果使用元组 <a class="footnote-reference brackets" href="#id43" id="id32" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a>，需要顺序或重数的结果使用向量或接口定义的组合</p></li>
 </ul>
 </section>
-<section id="id26">
-<h3>9. 示例<a class="headerlink" href="#id26" title="链接到此标题。">¶</a></h3>
+<section id="id33">
+<h3>9. 示例<a class="headerlink" href="#id33" title="链接到此标题。">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.math
 import std.linalg as la
 use std.stats.{mean, std}
@@ -505,35 +525,51 @@ let sd = std(xs)
 </pre></div>
 </div>
 </section>
-<section id="id27">
-<h3>10. 引用<a class="headerlink" href="#id27" title="链接到此标题。">¶</a></h3>
+<section id="id34">
+<h3>10. 引用<a class="headerlink" href="#id34" title="链接到此标题。">¶</a></h3>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id28" role="doc-footnote">
+<aside class="footnote brackets" id="id35" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id19">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id23">2</a>)</span>
 <p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 语言核心语法与运算符语义</p>
 </aside>
-<aside class="footnote brackets" id="id29" role="doc-footnote">
+<aside class="footnote brackets" id="id36" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id8">1</a>,<a role="doc-backlink" href="#id18">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id9">1</a>,<a role="doc-backlink" href="#id22">2</a>)</span>
 <p><a class="reference internal" href="LSR-002.html"><span class="doc">LSR-002 - 标准常量规范</span></a> - 标准常量定义来源</p>
 </aside>
-<aside class="footnote brackets" id="id30" role="doc-footnote">
+<aside class="footnote brackets" id="id37" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-003.html"><span class="doc">LSR-003 - Lamina C 扩展与插件规范</span></a> - 标准库可由扩展模块补充实现</p>
 </aside>
-<aside class="footnote brackets" id="id31" role="doc-footnote">
+<aside class="footnote brackets" id="id38" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id15">1</a>,<a role="doc-backlink" href="#id16">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id18">1</a>,<a role="doc-backlink" href="#id19">2</a>)</span>
 <p><a class="reference internal" href="LSR-008.html"><span class="doc">LSR-008 - 量纲剥离（Unit Stripping）规范</span></a> - <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 量纲剥离语义来源</p>
 </aside>
-<aside class="footnote brackets" id="id32" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id25">5</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-009.html"><span class="doc">LSR-009 - 集合与多结果返回规范</span></a> - 多个同类标准库结果使用 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code> 表示</p>
+<aside class="footnote brackets" id="id39" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id28">1</a>,<a role="doc-backlink" href="#id31">2</a>)</span>
+<p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 有限集合与数学解集返回约定</p>
 </aside>
-<aside class="footnote brackets" id="id33" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">6</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id40" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">6</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-010.html"><span class="doc">LSR-010 - 虚数单位与复数规范</span></a> - <code class="docutils literal notranslate"><span class="pre">std.math</span></code> 复数常量与复数函数语义来源</p>
+</aside>
+<aside class="footnote brackets" id="id41" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id8">1</a>,<a role="doc-backlink" href="#id20">2</a>)</span>
+<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - Expr 构造与提升规范</span></a> - <code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 的符号代入、匹配与重写接口</p>
+</aside>
+<aside class="footnote brackets" id="id42" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id10">1</a>,<a role="doc-backlink" href="#id27">2</a>)</span>
+<p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 数学错误值与故障传播</p>
+</aside>
+<aside class="footnote brackets" id="id43" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id17">1</a>,<a role="doc-backlink" href="#id32">2</a>)</span>
+<p><a class="reference internal" href="LSR-012.html"><span class="doc">LSR-012 - 元组类型规范</span></a> - 按固定位置组合与解构多个结果</p>
 </aside>
 </aside>
 </section>
@@ -576,13 +612,10 @@ let sd = std(xs)
 <li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 004 - 标准库</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
@@ -590,7 +623,6 @@ let sd = std(xs)
 <li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 
 <div class="relations">
@@ -598,7 +630,7 @@ let sd = std(xs)
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="LSR-003.html" title="上一章">LSR 003 - Lamina C 扩展与插件规范</a></li>
-      <li>Next: <a href="LSR-005.html" title="下一章">LSR 005 - 模式匹配</a></li>
+      <li>Next: <a href="LSR-006.html" title="下一章">LSR 006 - Lambda 表达式与类型推导规范</a></li>
   </ul></li>
 </ul>
 </div>

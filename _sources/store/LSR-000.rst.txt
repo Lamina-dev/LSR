@@ -16,7 +16,7 @@ Lamina的主要核心为静态、模块化与数学。
 --------------------------------------------------------------------------------
 
 
- :code:`let` , :code:`var` , :code:`const` , :code:`unit` , :code:`func` , :code:`return` , :code:`in` , :code:`not` , :code:`loop` , :code:`while` , :code:`break` , :code:`continue` , :code:`if` , :code:`else` , :code:`match` , :code:`sym` , :code:`import` , :code:`use` , :code:`as` , :code:`and` , :code:`or` , :code:`static`
+ :code:`let` , :code:`var` , :code:`const` , :code:`unit` , :code:`func` , :code:`return` , :code:`in` , :code:`not` , :code:`loop` , :code:`while` , :code:`break` , :code:`continue` , :code:`if` , :code:`else` , :code:`sym` , :code:`import` , :code:`use` , :code:`as` , :code:`and` , :code:`or` , :code:`static`
 
 3. 运算符总览
 --------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ Lamina 运算符 token、优先级和结合性由 LSR-014 定义 [7]_。本节�
 
 
 - Lambda 箭头： :code:`->`
-- match 分支箭头： :code:`=>`
+- CAS 替换规则： :code:`=>` （由 LSR-016 [8]_ 定义）
 - 管道： :code:`|>`
 - 成员访问： :code:`.`
 
@@ -169,7 +169,7 @@ Lamina 运算符 token、优先级和结合性由 LSR-014 定义 [7]_。本节�
 
 - 允许推导：局部 :code:`let/var` 绑定、for 推导式局部变量
 - 必须显式：函数参数类型、函数返回类型、模块导出符号类型
-- Lambda 与 match 的推导规则由 LSR-006 [4]_ 与 LSR-005 [3]_ 定义
+- Lambda 的推导规则由 LSR-006 [4]_ 定义；元组解构绑定的推导规则由 LSR-012 [3]_ 定义
 - 推导结果必须为确定类型；约束不足时编译报错
 
 4.3 声明语法
@@ -226,6 +226,9 @@ Lamina 运算符 token、优先级和结合性由 LSR-014 定义 [7]_。本节�
    * - :code:`set`
      - 无序去重集合
      - :code:`{1,2,3}`
+   * - :code:`(T1, T2)`
+     - 固定长度、有序的元组 [3]_
+     - :code:`(1, "a")`
    * - :code:`vector`
      - 一维同构数值数组（1 索引）
      - :code:`vec[1,2,3]`
@@ -238,6 +241,9 @@ Lamina 运算符 token、优先级和结合性由 LSR-014 定义 [7]_。本节�
    * - :code:`Expr`
      - CAS 符号表达式
      - :code:`x^2 + 1`
+   * - :code:`rule`
+     - CAS 替换规则 [8]_
+     - :code:`x => 2`
 
 
 - 在当前定义中， :code:`int` , :code:`bool` , :code:`frac` 为值类型，其他为对象引用类型
@@ -475,23 +481,30 @@ Lamina 运算符 token、优先级和结合性由 LSR-014 定义 [7]_。本节�
    }
 
 
-6.2 Lambda 与 match 的规范边界
+6.2 Lambda 的规范边界
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-- 本文件不定义 Lambda 语法与类型推导细则
 - Lambda 的语法、类型推导、与管道交互由 LSR-006 [4]_ 单独定义
-- match 的语法、穷尽检查、模式系统由 LSR-005 [3]_ 单独定义
 
 7. 控制流与推导式
 --------------------------------------------------------------------------------
 
 
-7.1 表达式化 if
+7.1 条件执行与 if 表达式
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
- :code:`if` 是表达式，必须有 :code:`else` （或提前 :code:`return` 完全覆盖）。
+ :code:`if` 的条件必须为 :code:`bool` 。语句位置的 :code:`if` 用于条件执行，可以省略 :code:`else` ；条件为 :code:`false` 时继续执行后续语句。
+
+.. code-block:: text
+
+   if residual > tolerance {
+       raise("残差超过容差")
+   }
+
+
+在赋值、函数实参、返回值或函数尾表达式位置， :code:`if` 用于产生值，必须包含 :code:`else` 。正常返回分支提供类型相同或可按数值塔统一的值；终止分支按 LSR-018 [9]_ 的底类型规则参与统一。
 
 .. code-block:: text
 
@@ -756,14 +769,16 @@ lamina只有一种循环，就是无限loop循环，其他循环结构均为其�
 
  :code:`Expr` 降级必须显式：
 
-1. 代入求值： :code:`expr(symbol => value)`
-2. 强制浮点： :code:`evalf(expr)`
+1. 代入后求值： :code:`evalf(substitute(expr, symbol => value))`
+2. 数值近似： :code:`evalf(expr)`
 
 .. code-block:: text
 
+   use std.cas.{substitute}
+
    sym x, y
    let equation = x^2 + 1 + y*2
-   let val1 = equation => (x => 3, y => 4)
+   let val1 = evalf(substitute(equation, {x => 3, y => 4}))
 
    let exact = sin(pi / 4)
    let approx = evalf(exact)
@@ -837,9 +852,10 @@ lamina只有一种循环，就是无限loop循环，其他循环结构均为其�
 
 .. [1] :doc:`LSR-003 - Lamina C 扩展与插件规范 <LSR-003>` - Lamina C 扩展与插件规范
 .. [2] :doc:`LSR-004 - 标准库规范 <LSR-004>` - 标准库规范（模块结构、数学系统、库调用约定）
-.. [3] :doc:`LSR-005 - 模式匹配 <LSR-005>` - match 规范（语法、穷尽检查、模式系统）
+.. [3] :doc:`LSR-012 - 元组类型规范 <LSR-012>` - 元组类型、位置结果与直接解构
 .. [4] :doc:`LSR-006 - Lambda 规范 <LSR-006>` - Lambda 规范（语法、类型推导、管道交互）
 .. [5] :doc:`LSR-007 - 数学等价判定规范 <LSR-007>` - :code:`===` 数学等价规范（判定边界与化简策略）
 .. [6] :doc:`LSR-008 - 量纲剥离规范 <LSR-008>` - 量纲剥离规范（ :code:`as num` 语义、边界与错误模型）
 .. [7] :doc:`LSR-014 - 运算符规范 <LSR-014>` - 运算符 token、优先级和结合性
-.. [8] :doc:`LSR-016 - Expr 构造与提升规范 <LSR-016>` - ``Expr`` 直接构造、自动提升、函数调用和降级边界
+.. [8] :doc:`LSR-016 - Expr 构造与提升规范 <LSR-016>` - ``Expr`` 构造、提升、代入及数学模式操作
+.. [9] :doc:`LSR-018 - Never 底类型与 raise 终止效应规范 <LSR-018>` - 终止分支的类型统一与错误传播

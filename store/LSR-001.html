@@ -117,11 +117,37 @@
 <li><p>使用三位数字递增编号：<code class="docutils literal notranslate"><span class="pre">001</span></code>, <code class="docutils literal notranslate"><span class="pre">002</span></code>, <code class="docutils literal notranslate"><span class="pre">003</span></code>...</p></li>
 <li><p>编号一经分配不得复用</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">LSR-001</span></code> 固定为本规范</p></li>
-<li><p>修订草案可使用后缀（如 <code class="docutils literal notranslate"><span class="pre">LSR-005-A</span></code> ），通过后合并回主编号</p></li>
+<li><p>修订草案可使用后缀（如 <code class="docutils literal notranslate"><span class="pre">LSR-016-A</span></code> ），通过后合并回主编号</p></li>
 </ul>
-</section>
 <section id="id12">
-<h2>7. 提交流程<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h2>
+<h3>6.1 撤回编号<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
+<p>撤回编号继续保留，正文存入 <code class="docutils literal notranslate"><span class="pre">store/withdrawn/</span></code>。当前规范索引列出仍适用的文档；依赖已撤回条款的规范应改为引用承接文档。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>编号</p></th>
+<th class="head"><p>撤回日期</p></th>
+<th class="head"><p>承接规则</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>005</p></td>
+<td><p>09-30-2026</p></td>
+<td><p>普通分支见 <a class="reference internal" href="LSR-000.html"><span class="doc">LSR 000 - Lamina 核心语言规范（草案）</span></a>，直接解构见 <a class="reference internal" href="LSR-012.html"><span class="doc">LSR 012 - 元组类型规范</span></a>，数学模式操作见 <a class="reference internal" href="LSR-016.html"><span class="doc">LSR 016 - Expr 构造与提升规范</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>009</p></td>
+<td><p>09-30-2026</p></td>
+<td><p>集合类型与有限解集返回规则统一到 <a class="reference internal" href="LSR-013.html"><span class="doc">LSR 013 - 集合类型规范</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>011</p></td>
+<td><p>09-30-2026</p></td>
+<td><p>专用替换规则见 <a class="reference internal" href="LSR-016.html"><span class="doc">LSR 016 - Expr 构造与提升规范</span></a>，内建错误值见 <a class="reference internal" href="LSR-018.html"><span class="doc">LSR 018 - Never 底类型与 raise 终止效应规范</span></a>；用户自定义代数数据类型退出核心</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="id13">
+<h2>7. 提交流程<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h2>
 <ol class="arabic simple">
 <li><p>在 Discussions 进行初步讨论</p></li>
 <li><p>创建 LSR 草案文件</p></li>
@@ -133,8 +159,8 @@
 <li><p>状态更新为接受/应用</p></li>
 </ol>
 </section>
-<section id="id13">
-<h2>8. 维护者职责<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h2>
+<section id="id14">
+<h2>8. 维护者职责<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h2>
 <ul class="simple">
 <li><p>校验格式与完整性</p></li>
 <li><p>组织评审</p></li>
@@ -142,8 +168,8 @@
 <li><p>维护索引和状态</p></li>
 </ul>
 </section>
-<section id="id14">
-<h2>9. 质量要求<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h2>
+<section id="id15">
+<h2>9. 质量要求<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h2>
 <ul class="simple">
 <li><p>术语一致</p></li>
 <li><p>语义清晰</p></li>
@@ -190,13 +216,10 @@
 <li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
@@ -204,7 +227,6 @@
 <li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 
 <div class="relations">

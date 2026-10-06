@@ -79,8 +79,6 @@ LSR 018 - Never 底类型与 raise 终止效应规范
 - 显式返回
 - 尾表达式返回
 - 条件分支
-- 模式匹配分支
-- ADT 构造器字段检查
 
 ``Unknown``、``none``、``Null`` 和 ``Never`` 保持各自独立的类型身份。
 
@@ -112,32 +110,40 @@ LSR 018 - Never 底类型与 raise 终止效应规范
 
 上例中 then 分支类型为 ``int``，else 分支类型为 ``Never``，``if`` 表达式类型为 ``int``。
 
-穷尽 ``match`` 表达式按 LSR-005 的分支检查规则折叠所有分支类型 [3]_。``Never`` 分支保持其他正常返回分支确定的结果类型。
-
-.. code-block:: text
-
-   match state {
-       Ready(value) => value,
-       Failed(message) => raise(message)
-   }
-
-
 当全部分支类型均为 ``Never`` 时，整个表达式类型为 ``Never``。
 
-5. ADT 泛型绑定
+5. 内建错误值
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-ADT 构造器字段接收类型为 ``Never`` 的实际表达式时，字段检查成立，泛型参数绑定保持当前状态。
+``std.mathematics_error`` 公开导出固定内建类型 ``MathError`` 及同名构造函数 [2]_：
 
 .. code-block:: text
 
-   type Box<T> = Box(T)
-
-   let value = Box(raise("missing"))
+   func MathError(code text, operation text, message text) -> MathError
 
 
-``raise`` 的终止效应先于构造器创建并结束当前路径。类型推导保持 ``T`` 的当前绑定状态，其他字段或期望类型继续决定 ``T``。
+``MathError`` 保存三个只读 ``text`` 字段：
+
+- ``code``：供程序识别的错误类别
+- ``operation``：发生错误的运算或函数名称
+- ``message``：面向用户的诊断文本
+
+构造函数按源码从左到右对三个实参各求值一次。字段类型在调用处检查；成功构造后可通过 ``error.code``、``error.operation`` 和 ``error.message`` 读取。两个 ``MathError`` 值按三个字段的文本值逐一比较相等。
+
+标准字符串表示为 ``MathError("code", "operation", "message")``，字段按上述顺序输出。每个字段使用双引号包围；字段中的双引号和反斜杠加反斜杠转义，换行、回车和制表符分别写成 ``\n``、``\r`` 和 ``\t``。
+
+.. code-block:: text
+
+   import std.mathematics_error
+
+   let error = mathematics_error.MathError(
+       "DomainError", "sqrt", "negative input"
+   )
+   let operation = error.operation # "sqrt"
+
+
+普通数学函数直接返回计算结果，计算失败沿本规范的终止效应传播。``MathError`` 用于保留错误类别、运算名称和诊断内容。
 
 6. 函数返回
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,7 +226,7 @@ ADT 构造器字段接收类型为 ``Never`` 的实际表达式时，字段检�
    func raise(error MathError) -> Never
 
 
-其参数使用 ``std.mathematics_error.MathError`` 的名义 ADT 类型 [4]_。该函数求值完整错误值，并以错误值的标准字符串表示作为终止载荷。
+参数类型为第 5 节定义的 ``std.mathematics_error.MathError``。该函数接收完整错误值，并以其标准字符串表示作为终止载荷。
 
 .. code-block:: text
 
@@ -253,7 +259,7 @@ ADT 构造器字段接收类型为 ``Never`` 的实际表达式时，字段检�
 7. 结束当前指令流
 8. 展开 VM 调用帧至当前执行边界
 
-终止效应沿表达式求值上下文传播。外层函数调用、算术表达式、条件表达式、模式分支和变量初始化在收到该效应后结束当前执行路径。
+终止效应沿表达式求值上下文传播。外层函数调用、算术表达式、条件表达式和变量初始化在收到该效应后结束当前执行路径。
 
 .. code-block:: text
 
@@ -292,11 +298,11 @@ ADT 构造器字段接收类型为 ``Never`` 的实际表达式时，字段检�
    RuntimeError: boom
 
 
-``MathError`` 载荷保留完整 ADT 字符串表示：
+``MathError`` 载荷保留第 5 节定义的完整字符串表示：
 
 .. code-block:: text
 
-   RuntimeError: MathError(code, operation, message)
+   RuntimeError: MathError("DomainError", "sqrt", "negative input")
 
 
 12. 回调效应
@@ -394,14 +400,13 @@ VM 的两种分派实现共享相同 ``Raise`` 处理器语义：
 符合本规范的实现验证下列行为：
 
 - ``if`` 的一个分支类型为 ``Never`` 时，另一分支决定整体类型
-- 穷尽 ``match`` 的 ``Never`` 分支参与底类型统一
 - 函数尾表达式为 ``raise`` 时满足声明返回类型
 - ``raise`` 作为函数值调用时产生文本终止效应
 - ``raise`` 作为具体返回类型回调传递时产生相同终止效应
 - ``mathematics_error.raise`` 作为限定函数值传递时保留完整错误载荷
 - 用户 ``raise`` 声明产生保留绑定重定义诊断
 - 文本载荷顶层诊断为 ``RuntimeError: <message>``
-- ``MathError`` 载荷顶层诊断包含完整 ``MathError(...)``
+- ``MathError`` 的三个字段保持只读，顶层诊断包含按字段顺序转义后的完整错误内容
 - ``Raise`` 结束函数字节码，当前执行路径在该指令终止
 
 17. 引用
@@ -410,5 +415,3 @@ VM 的两种分派实现共享相同 ``Raise`` 处理器语义：
 
 .. [1] :doc:`LSR-000 - Lamina 核心语言规范（草案） <LSR-000>` - 定义表达式、函数、模块和静态类型检查框架
 .. [2] :doc:`LSR-004 - 标准库 <LSR-004>` - 定义 ``std`` 模块和标准错误类别
-.. [3] :doc:`LSR-005 - 模式匹配 <LSR-005>` - 定义 ``match`` 表达式、穷尽检查和分支类型
-.. [4] :doc:`LSR-011 - 代数数据类型 <LSR-011>` - 定义 ``MathError`` 所使用的 ADT 名义类型与字符串表示边界

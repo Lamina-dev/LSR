@@ -16,7 +16,6 @@
     <link rel="icon" href="../_static/favicon.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="LSR-undefined" href="LSR-undefined.html" />
     <link rel="prev" title="LSR 017 - 区间类型规范" href="LSR-017.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -94,8 +93,6 @@
 <li><p>显式返回</p></li>
 <li><p>尾表达式返回</p></li>
 <li><p>条件分支</p></li>
-<li><p>模式匹配分支</p></li>
-<li><p>ADT 构造器字段检查</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">Unknown</span></code>、<code class="docutils literal notranslate"><span class="pre">none</span></code>、<code class="docutils literal notranslate"><span class="pre">Null</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Never</span></code> 保持各自独立的类型身份。</p>
 </section>
@@ -118,27 +115,34 @@ unify(Never, Never)     = Never
 </pre></div>
 </div>
 <p>上例中 then 分支类型为 <code class="docutils literal notranslate"><span class="pre">int</span></code>，else 分支类型为 <code class="docutils literal notranslate"><span class="pre">Never</span></code>，<code class="docutils literal notranslate"><span class="pre">if</span></code> 表达式类型为 <code class="docutils literal notranslate"><span class="pre">int</span></code>。</p>
-<p>穷尽 <code class="docutils literal notranslate"><span class="pre">match</span></code> 表达式按 LSR-005 的分支检查规则折叠所有分支类型 <a class="footnote-reference brackets" href="#id23" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。<code class="docutils literal notranslate"><span class="pre">Never</span></code> 分支保持其他正常返回分支确定的结果类型。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>match state {
-    Ready(value) =&gt; value,
-    Failed(message) =&gt; raise(message)
-}
-</pre></div>
-</div>
 <p>当全部分支类型均为 <code class="docutils literal notranslate"><span class="pre">Never</span></code> 时，整个表达式类型为 <code class="docutils literal notranslate"><span class="pre">Never</span></code>。</p>
 </section>
-<section id="adt">
-<h3>5. ADT 泛型绑定<a class="headerlink" href="#adt" title="链接到此标题。">¶</a></h3>
-<p>ADT 构造器字段接收类型为 <code class="docutils literal notranslate"><span class="pre">Never</span></code> 的实际表达式时，字段检查成立，泛型参数绑定保持当前状态。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>type Box&lt;T&gt; = Box(T)
-
-let value = Box(raise("missing"))
+<section id="id8">
+<h3>5. 内建错误值<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">std.mathematics_error</span></code> 公开导出固定内建类型 <code class="docutils literal notranslate"><span class="pre">MathError</span></code> 及同名构造函数 <a class="footnote-reference brackets" href="#id22" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func MathError(code text, operation text, message text) -&gt; MathError
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">raise</span></code> 的终止效应先于构造器创建并结束当前路径。类型推导保持 <code class="docutils literal notranslate"><span class="pre">T</span></code> 的当前绑定状态，其他字段或期望类型继续决定 <code class="docutils literal notranslate"><span class="pre">T</span></code>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">MathError</span></code> 保存三个只读 <code class="docutils literal notranslate"><span class="pre">text</span></code> 字段：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">code</span></code>：供程序识别的错误类别</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">operation</span></code>：发生错误的运算或函数名称</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">message</span></code>：面向用户的诊断文本</p></li>
+</ul>
+<p>构造函数按源码从左到右对三个实参各求值一次。字段类型在调用处检查；成功构造后可通过 <code class="docutils literal notranslate"><span class="pre">error.code</span></code>、<code class="docutils literal notranslate"><span class="pre">error.operation</span></code> 和 <code class="docutils literal notranslate"><span class="pre">error.message</span></code> 读取。两个 <code class="docutils literal notranslate"><span class="pre">MathError</span></code> 值按三个字段的文本值逐一比较相等。</p>
+<p>标准字符串表示为 <code class="docutils literal notranslate"><span class="pre">MathError(&quot;code&quot;,</span> <span class="pre">&quot;operation&quot;,</span> <span class="pre">&quot;message&quot;)</span></code>，字段按上述顺序输出。每个字段使用双引号包围；字段中的双引号和反斜杠加反斜杠转义，换行、回车和制表符分别写成 <code class="docutils literal notranslate"><span class="pre">\n</span></code>、<code class="docutils literal notranslate"><span class="pre">\r</span></code> 和 <code class="docutils literal notranslate"><span class="pre">\t</span></code>。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.mathematics_error
+
+let error = mathematics_error.MathError(
+    "DomainError", "sqrt", "negative input"
+)
+let operation = error.operation # "sqrt"
+</pre></div>
+</div>
+<p>普通数学函数直接返回计算结果，计算失败沿本规范的终止效应传播。<code class="docutils literal notranslate"><span class="pre">MathError</span></code> 用于保留错误类别、运算名称和诊断内容。</p>
 </section>
-<section id="id9">
-<h3>6. 函数返回<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<section id="id10">
+<h3>6. 函数返回<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
 <p>函数尾表达式为 <code class="docutils literal notranslate"><span class="pre">Never</span></code> 时，函数体满足任意声明返回类型。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func fail(message text) -&gt; int {
     raise(message)
@@ -148,8 +152,8 @@ let value = Box(raise("missing"))
 <p>函数的声明返回类型保持 <code class="docutils literal notranslate"><span class="pre">int</span></code>；函数体的实际尾表达式类型为 <code class="docutils literal notranslate"><span class="pre">Never</span></code>。执行 <code class="docutils literal notranslate"><span class="pre">fail</span></code> 时产生终止效应。</p>
 <p>编译器为正常返回函数生成 <code class="docutils literal notranslate"><span class="pre">Ret</span></code> 终止操作，为以终止效应结束的内建函数生成 <code class="docutils literal notranslate"><span class="pre">Raise</span></code> 终止操作。函数末尾的终止操作与函数体实际控制流一致。</p>
 </section>
-<section id="id10">
-<h3>7. 函数类型关系<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<section id="id11">
+<h3>7. 函数类型关系<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
 <p>函数类型的参数列表保持精确相等。实际函数返回 <code class="docutils literal notranslate"><span class="pre">Never</span></code> 时，其函数值满足参数列表相同、返回类型为 <code class="docutils literal notranslate"><span class="pre">T</span></code> 的期望函数类型：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func(P...) -&gt; Never &lt;: func(P...) -&gt; T
 </pre></div>
@@ -186,13 +190,13 @@ fail("boom")
 </pre></div>
 </div>
 </section>
-<section id="id11">
-<h3>9. 结构化 <code class="docutils literal notranslate"><span class="pre">raise</span></code> 绑定<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">std.mathematics_error</span></code> 作为标准库模块公开导出下列普通函数 <a class="footnote-reference brackets" href="#id22" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>：</p>
+<section id="id12">
+<h3>9. 结构化 <code class="docutils literal notranslate"><span class="pre">raise</span></code> 绑定<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">std.mathematics_error</span></code> 作为标准库模块公开导出下列普通函数 <a class="footnote-reference brackets" href="#id22" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func raise(error MathError) -&gt; Never
 </pre></div>
 </div>
-<p>其参数使用 <code class="docutils literal notranslate"><span class="pre">std.mathematics_error.MathError</span></code> 的名义 ADT 类型 <a class="footnote-reference brackets" href="#id24" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>。该函数求值完整错误值，并以错误值的标准字符串表示作为终止载荷。</p>
+<p>参数类型为第 5 节定义的 <code class="docutils literal notranslate"><span class="pre">std.mathematics_error.MathError</span></code>。该函数接收完整错误值，并以其标准字符串表示作为终止载荷。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.mathematics_error
 
 func abort(error mathematics_error.MathError) -&gt; int {
@@ -218,7 +222,7 @@ func abort(error mathematics_error.MathError) -&gt; int {
 <li><p>结束当前指令流</p></li>
 <li><p>展开 VM 调用帧至当前执行边界</p></li>
 </ol>
-<p>终止效应沿表达式求值上下文传播。外层函数调用、算术表达式、条件表达式、模式分支和变量初始化在收到该效应后结束当前执行路径。</p>
+<p>终止效应沿表达式求值上下文传播。外层函数调用、算术表达式、条件表达式和变量初始化在收到该效应后结束当前执行路径。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let value = compute(raise("stopped"))
 </pre></div>
 </div>
@@ -244,8 +248,8 @@ func abort(error mathematics_error.MathError) -&gt; int {
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>RuntimeError: boom
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">MathError</span></code> 载荷保留完整 ADT 字符串表示：</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>RuntimeError: MathError(code, operation, message)
+<p><code class="docutils literal notranslate"><span class="pre">MathError</span></code> 载荷保留第 5 节定义的完整字符串表示：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>RuntimeError: MathError("DomainError", "sqrt", "negative input")
 </pre></div>
 </div>
 </section>
@@ -316,14 +320,13 @@ fail(make_message())
 <p>符合本规范的实现验证下列行为：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">if</span></code> 的一个分支类型为 <code class="docutils literal notranslate"><span class="pre">Never</span></code> 时，另一分支决定整体类型</p></li>
-<li><p>穷尽 <code class="docutils literal notranslate"><span class="pre">match</span></code> 的 <code class="docutils literal notranslate"><span class="pre">Never</span></code> 分支参与底类型统一</p></li>
 <li><p>函数尾表达式为 <code class="docutils literal notranslate"><span class="pre">raise</span></code> 时满足声明返回类型</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">raise</span></code> 作为函数值调用时产生文本终止效应</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">raise</span></code> 作为具体返回类型回调传递时产生相同终止效应</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mathematics_error.raise</span></code> 作为限定函数值传递时保留完整错误载荷</p></li>
 <li><p>用户 <code class="docutils literal notranslate"><span class="pre">raise</span></code> 声明产生保留绑定重定义诊断</p></li>
 <li><p>文本载荷顶层诊断为 <code class="docutils literal notranslate"><span class="pre">RuntimeError:</span> <span class="pre">&lt;message&gt;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">MathError</span></code> 载荷顶层诊断包含完整 <code class="docutils literal notranslate"><span class="pre">MathError(...)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MathError</span></code> 的三个字段保持只读，顶层诊断包含按字段顺序转义后的完整错误内容</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Raise</span></code> 结束函数字节码，当前执行路径在该指令终止</p></li>
 </ul>
 </section>
@@ -335,16 +338,9 @@ fail(make_message())
 <p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 定义表达式、函数、模块和静态类型检查框架</p>
 </aside>
 <aside class="footnote brackets" id="id22" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">2</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id9">1</a>,<a role="doc-backlink" href="#id13">2</a>)</span>
 <p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">std</span></code> 模块和标准错误类别</p>
-</aside>
-<aside class="footnote brackets" id="id23" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">3</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-005.html"><span class="doc">LSR-005 - 模式匹配</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">match</span></code> 表达式、穷尽检查和分支类型</p>
-</aside>
-<aside class="footnote brackets" id="id24" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">4</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-011.html"><span class="doc">LSR-011 - 代数数据类型</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">MathError</span></code> 所使用的 ADT 名义类型与字符串表示边界</p>
 </aside>
 </aside>
 </section>
@@ -387,13 +383,10 @@ fail(make_message())
 <li class="toctree-l1"><a class="reference internal" href="LSR-002.html">LSR 002 - 标准常量规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-003.html">LSR 003 - Lamina C 扩展与插件规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-004.html">LSR 004 - 标准库</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-005.html">LSR 005 - 模式匹配</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-006.html">LSR 006 - Lambda 表达式与类型推导规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-007.html">LSR 007 - <code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-008.html">LSR 008 - 量纲剥离（Unit Stripping）规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-009.html">LSR 009 - 集合与多结果返回规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-010.html">LSR 010 - 虚数单位与复数规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-011.html">LSR 011 - 代数数据类型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-012.html">LSR 012 - 元组类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
@@ -401,7 +394,6 @@ fail(make_message())
 <li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-undefined.html">LSR-undefined</a></li>
 </ul>
 
 <div class="relations">
@@ -409,7 +401,6 @@ fail(make_message())
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="LSR-017.html" title="上一章">LSR 017 - 区间类型规范</a></li>
-      <li>Next: <a href="LSR-undefined.html" title="下一章">LSR-undefined</a></li>
   </ul></li>
 </ul>
 </div>
