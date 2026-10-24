@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>LSR 016 - Expr 构造与提升规范 &#8212; LSR  文档</title>
+    <title>LSR 016 - 数学值与符号操作规范 &#8212; LSR  文档</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
@@ -35,13 +35,13 @@
 
           <div class="body" role="main">
             
-  <section id="lsr-016-expr">
-<h1>LSR 016 - Expr 构造与提升规范<a class="headerlink" href="#lsr-016-expr" title="链接到此标题。">¶</a></h1>
+  <section id="lsr-016">
+<h1>LSR 016 - 数学值与符号操作规范<a class="headerlink" href="#lsr-016" title="链接到此标题。">¶</a></h1>
 <section id="id1">
 <h2>基本信息<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
 <ul class="simple">
 <li><p>LSR 编号 016</p></li>
-<li><p>标题 Expr 构造与提升规范</p></li>
+<li><p>标题 数学值与符号操作规范</p></li>
 <li><p>作者 Ziyang-Bai</p></li>
 <li><p>状态 草案</p></li>
 <li><p>类型 标准规范</p></li>
@@ -51,316 +51,342 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 Lamina 中 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的直接构造、普通值到 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的提升边界、符号函数调用解析和 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 降级规则，以及 <code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 的替换规则、结构匹配与重写接口。目标是让 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">1</span></code>、<code class="docutils literal notranslate"><span class="pre">sin(x)</span></code>、<code class="docutils literal notranslate"><span class="pre">max(x,</span> <span class="pre">y,</span> <span class="pre">0)</span></code> 和 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=&gt;</span> <span class="pre">2</span></code> 等表达式在类型检查阶段有确定语义。</p>
+<p>定义统一数学基本类型 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的值构造、符号声明、显式符号函数，以及 <code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 的结构查询、替换规则、数学结构匹配和重写。精确数、符号表达式、关系和近似值使用同一基本类型；函数调用、容器和错误仍遵循各自的普通静态规则。</p>
 </section>
 <section id="id3">
 <h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
 <section id="id4">
-<h3>1. 范围<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
-<p>本规范定义 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 在 Lamina 类型系统和表达式构造阶段的行为，以及显式 CAS 代入、结构匹配和重写。</p>
-<p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 是不可变符号表达式值。<code class="docutils literal notranslate"><span class="pre">Expr</span></code> 可以表示数字、符号、函数调用、集合、区间和由 LSR-014 定义的数学运算符表达式 <a class="footnote-reference brackets" href="#id30" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。区间的普通类型与命名构造函数由 LSR-017 定义 <a class="footnote-reference brackets" href="#id33" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>。</p>
+<h3>1. 范围与数学值<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">num</span></code> 表示数学值，包括精确整数、有理数、复数、符号、未求值数学调用、关系和带精度的近似值。实现可使用小整数、大整数、有理数、AST 或多精度数等不同内部表示，但表示差异不创建用户可见的独立基本数学类型。</p>
+<p>数学运算默认精确、保域（Symbolic-First）。即使所有操作数都是具体数，支持域内尚不能精确完成的运算也可以保留未求值式，例如精确 <code class="docutils literal notranslate"><span class="pre">sin(1)</span></code>；不能因没有 <code class="docutils literal notranslate"><span class="pre">sym</span></code> 参与而强制近似。确定无定义的运算仍报数学错误 <a class="footnote-reference brackets" href="#id36" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id41" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">bool</span></code>、<code class="docutils literal notranslate"><span class="pre">text</span></code>、<code class="docutils literal notranslate"><span class="pre">rule</span></code>、<code class="docutils literal notranslate"><span class="pre">array</span></code>、<code class="docutils literal notranslate"><span class="pre">table</span></code>、<code class="docutils literal notranslate"><span class="pre">tuple</span></code> 及数学容器保留其结构类型。<code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">matrix&lt;num&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">set&lt;num&gt;</span></code> 的元素使用统一数学类型，不能把整个容器或元组隐式变成标量 <code class="docutils literal notranslate"><span class="pre">num</span></code>。区间使用 LSR-017 规定的 <code class="docutils literal notranslate"><span class="pre">interval&lt;num&gt;</span></code> <a class="footnote-reference brackets" href="#id39" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">frac</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 是 <code class="docutils literal notranslate"><span class="pre">num</span></code> 上的值约束。例如 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">-&gt;</span> <span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">vector&lt;int&gt;</span></code> 分别约束参数、返回值、容器元素；基本类型仍为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 或 <code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code>。约束参与调用和返回校验，但不引入按值自动重载：基本签名及参数个数相同的函数不能仅靠约束静态分派。</p>
+<p>函数类型兼容必须保留参数值约束及量纲契约，不能只因基本类型同为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 而放宽受约束参数；数学集合等容器的元素约束同理。</p>
 </section>
-<section id="id7">
-<h3>2. 符号声明<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 声明创建 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 类型的符号值。</p>
+<section id="id8">
+<h3>2. 符号声明<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 声明创建基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的符号值。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
 sym y, z
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 声明的名称在当前作用域绑定为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p>符号名称必须与声明标识符一致</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 不创建运行时可变变量</p></li>
-<li><p>已有同名绑定时，<code class="docutils literal notranslate"><span class="pre">sym</span></code> 必须按普通声明冲突规则报错</p></li>
-</ul>
-</section>
-<section id="id8">
-<h3>3. 直接构造<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
-<p>当表达式的期望类型为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时，允许从 Lamina 表达式直接构造 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-let a Expr = x^2 + 1
-let b Expr = sin(x) + 1
-let c Expr = max(x, 0)
-</pre></div>
-</div>
-<p>以下表达式可在 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 期望上下文中构造符号表达式：</p>
-<ul class="simple">
-<li><p>整数、分数和有限小数字面量</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 产生的符号</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 值</p></li>
-<li><p>使用 LSR-014 中适用于符号表达式的算术、关系、逻辑和集合运算符组成的表达式 <a class="footnote-reference brackets" href="#id30" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
-<li><p>函数调用</p></li>
-<li><p>有限集合字面量和标准库区间构造调用</p></li>
-<li><p>元组，前提是目标 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 构造规则支持元组表达式</p></li>
+<li><p>名称在当前作用域绑定为数学符号，其符号名称与声明标识符一致</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 默认声明复数标量；实性、正性和整数性由假设或值约束提供 <a class="footnote-reference brackets" href="#id42" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 不创建运行时可变变量；已有同名绑定时按普通声明冲突规则报错</p></li>
+<li><p>已证明为整数的符号式可满足 <code class="docutils literal notranslate"><span class="pre">int</span></code> 约束，但循环、索引、FFI 等需要具体整数的操作还须能够具体求值</p></li>
 </ul>
 </section>
 <section id="id10">
-<h3>4. 自动提升<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 自动提升只在表达式已经处于 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上下文时发生。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-let a = x + 1      # Expr
-let b = 1 + 2      # num
-let c Expr = 1 + 2 # Expr
+<h3>3. 直接构造与精确运算<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<p>数学字面量、符号以及已声明数学函数的结果直接构造 <code class="docutils literal notranslate"><span class="pre">num</span></code>，无需期望符号类型或自动提升阶段。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.math.{sin, max}
+
+sym x
+let a num = x^2 + 1
+let b num = sin(x) + 1
+let c num = max(x, 0)
+let d num = 1 + 2
+let e num = sin(1)
 </pre></div>
 </div>
-<p>自动提升规则：</p>
+<p>本规范支持的构造包括：</p>
 <ul class="simple">
-<li><p>任一操作数类型为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时，适用于符号表达式的二元数学运算结果为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p>正负号、逻辑非作用于 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时，结果为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p>目标类型显式为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时，按第 3 节允许的构造范围提升</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 的结果类型固定为 <code class="docutils literal notranslate"><span class="pre">rule</span></code>，<code class="docutils literal notranslate"><span class="pre">===</span></code> 的结果类型固定为 <code class="docutils literal notranslate"><span class="pre">bool</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">is</span></code> 执行普通对象同一性判断，<code class="docutils literal notranslate"><span class="pre">as</span></code> 执行显式转换</p></li>
-<li><p>集合目标类型为 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 时，元素可提升为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> <a class="footnote-reference brackets" href="#id31" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
-<li><p>普通全数值表达式不得因为语法形状自动提升为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
+<li><p>整数、分数和有限小数字面量，默认表示精确数</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 声明的符号及已有 <code class="docutils literal notranslate"><span class="pre">num</span></code> 值</p></li>
+<li><p>LSR-014 中适用于数学值的算术、关系和逻辑运算 <a class="footnote-reference brackets" href="#id36" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
+<li><p>已声明数学函数按其签名与支持域构造的结果或未求值调用</p></li>
 </ul>
+<p><code class="docutils literal notranslate"><span class="pre">a</span></code> 至 <code class="docutils literal notranslate"><span class="pre">e</span></code> 的基本类型均为 <code class="docutils literal notranslate"><span class="pre">num</span></code>。值已精确算出还是保留符号，不影响基本静态类型。内部保留不可变数学结构；普通算术构造可进行保域规范化，但不得借此删除未证明有定义的子式。</p>
 </section>
 <section id="id12">
-<h3>5. 不提升的情况<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
-<p>下列情况不得自动提升为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = 1 + 2
-let b = sin(pi / 2)
-let c = {1, 2, 3}
-</pre></div>
-</div>
+<h3>4. 普通值与数学值的边界<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p>没有 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 操作数、<code class="docutils literal notranslate"><span class="pre">Expr</span></code> 期望类型或 <code class="docutils literal notranslate"><span class="pre">sym</span></code> 参与的普通数值表达式</p></li>
-<li><p>已解析为普通标准库函数调用且实参不含 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的表达式</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bool</span></code>、<code class="docutils literal notranslate"><span class="pre">text</span></code>、<code class="docutils literal notranslate"><span class="pre">rule</span></code>、普通数组、普通矩阵和运行时对象</p></li>
-<li><p>赋值、模块导入、控制流语句和副作用表达式</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bool</span></code> 和 <code class="docutils literal notranslate"><span class="pre">text</span></code> 不因上下文期望 <code class="docutils literal notranslate"><span class="pre">num</span></code> 而隐式变成数学表达式</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 的结果为 <code class="docutils literal notranslate"><span class="pre">rule</span></code>；<code class="docutils literal notranslate"><span class="pre">===</span></code> 的结果为固定状态 <code class="docutils literal notranslate"><span class="pre">std.cas.Equivalence</span></code> <a class="footnote-reference brackets" href="#id38" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
+<li><p>赋值、模块导入、控制流和普通副作用调用不是可自动封装的数学节点</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is</span></code> 只适用于明确提供引用同一性的对象；<code class="docutils literal notranslate"><span class="pre">num</span></code> 和数学容器不提供可观察对象身份</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">as</span></code> 是核心语言定义的显式转换；不得通过转换恢复已擦除的单位或近似输入精度</p></li>
+<li><p>容器采用值语义。实现可共享存储或复制；仅 <code class="docutils literal notranslate"><span class="pre">var</span></code> 根路径提供可写子路径，不能通过元组、<code class="docutils literal notranslate"><span class="pre">let</span></code> 或只读闭包绕过值语义</p></li>
+<li><p>FFI 浮点声明是显式数值边界，返回带 ABI 工作精度的近似数学值；普通精确数学函数不得因隐藏的 FFI 调用而自动失去精确性</p></li>
 </ul>
 </section>
-<section id="id13">
-<h3>6. 函数调用解析<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
-<p>函数调用解析必须先执行普通名称解析，再决定是否构造符号函数调用。</p>
-<p>解析顺序：</p>
+<section id="id14">
+<h3>5. 数学函数与普通调用<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
+<p>调用必须先执行普通名称解析、参数绑定和类型检查，不因结果期望为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 而跳过检查。</p>
 <ol class="arabic simple">
-<li><p>若调用目标解析为普通函数，且实参类型满足该函数签名，则按普通函数调用处理</p></li>
-<li><p>若调用目标解析为普通函数，但任一实参为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，并且没有可用的普通 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 重载，则构造符号函数调用</p></li>
-<li><p>若调用目标未解析为普通函数，但当前上下文期望 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，则构造未解释符号函数调用</p></li>
-<li><p>若调用目标未解析为普通函数，且当前上下文不期望 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，则报未绑定名称错误</p></li>
+<li><p>目标必须解析为已声明的普通函数或显式构造的符号函数</p></li>
+<li><p>所有实参按源码顺序各求值一次，按普通调用规则绑定后检查类型、值约束和参数个数</p></li>
+<li><p>已声明数学函数在其支持域内默认精确执行；精确结果暂不可求时，可保留该数学调用及其参数</p></li>
+<li><p>普通函数仍执行函数体；副作用不会因为实参含符号而被隐式延迟或符号化</p></li>
+<li><p>未绑定名称、错误参数个数和不匹配类型按普通调用规则报错，不回退为未解释调用</p></li>
 </ol>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-let a = sin(pi / 2) # 普通函数调用
-let b = sin(x)      # Expr 符号函数调用
-let c Expr = f(x)   # 未解释符号函数调用
-let d = f(1)        # 未绑定名称错误
+<p>值约束静态可证时提前检查，否则运行期验证；确定违反时报 <code class="docutils literal notranslate"><span class="pre">DomainError</span></code> 或 <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>，仍未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>。已声明数学接口的未知结果可以是未求值式，这不同于绕过该接口要求的参数约束。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.math.{sin}
+
+sym x
+let a num = sin(1)
+let b num = sin(x)
 </pre></div>
 </div>
-<p>标准库可以为常用数学函数提供 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 重载。若存在普通 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 重载，调用该重载；若不存在，则按符号函数调用构造，不得静默降级为数值调用。</p>
-<p>本规范第 10、11 节的 CAS 代入、匹配与重写属于执行接口，与 LSR-018 <a class="footnote-reference brackets" href="#id34" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> 的终止函数采用相同的普通调用规则：调用时按声明的签名检查实参数量和类型，校验通过后执行对应操作，校验失败时直接诊断。</p>
+<p>两个调用使用同一个数学接口。<code class="docutils literal notranslate"><span class="pre">a</span></code> 可以保留精确调用，<code class="docutils literal notranslate"><span class="pre">b</span></code> 可以保留含符号的调用；均不自动转为近似值，也不要求另一套符号重载。</p>
 </section>
 <section id="id15">
-<h3>7. 集合、区间和元组<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
-<p>集合、区间和元组在 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上下文中的构造规则如下。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-let roots set&lt;Expr&gt; = {-1, 1}
-let domain Expr = std.interval_closed_open(0, 1)
-let pair Expr = (x, x + 1)
+<h3>6. 显式符号函数<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 提供：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func symbolic_function(name text, arity int) -&gt; func
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">arity</span></code> 为可具体求值的非负整数，<code class="docutils literal notranslate"><span class="pre">int</span></code> 是值约束。返回的函数值具有固定参数个数，每个参数及返回值的基本类型均为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；其名称和参数个数是符号函数结构的一部分。调用时按普通规则检查参数个数和类型，然后构造未解释数学调用，不执行用户副作用。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
+
+sym x
+let f = cas.symbolic_function("f", 1)
+let pair = cas.symbolic_function("pair", 2)
+let a num = f(x)
+let b num = pair(x, 1)
+</pre></div>
+</div>
+<p>没有上述声明或其他普通绑定时，<code class="docutils literal notranslate"><span class="pre">f(x)</span></code> 即使出现在 <code class="docutils literal notranslate"><span class="pre">let</span> <span class="pre">a</span> <span class="pre">num</span> <span class="pre">=</span> <span class="pre">...</span></code> 中也必须报未绑定名称错误。显式符号函数与普通函数不能仅因显示名称相同而混淆；结构比较还应区分调用目标及其已声明的参数个数。</p>
+<p>CAS 代入、匹配和重写是立即执行的普通接口，不自动变成未求值调用。它们与 LSR-018 的终止函数一样遵循普通实参检查和错误传播 <a class="footnote-reference brackets" href="#id40" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。</p>
+</section>
+<section id="id17">
+<h3>7. 集合、区间和元组<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std
+
+sym x
+let roots set&lt;num&gt; = {-1, 1}
+let domain interval&lt;num&gt; = std.interval_closed_open(0, 1)
+
+func segment(upper real) -&gt; interval&lt;num&gt; {
+    return std.interval_closed_open(0, upper)
+}
+
+let pair = (x, x + 1)
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 期望上下文中，集合元素可逐个提升为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> <a class="footnote-reference brackets" href="#id31" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 期望上下文中，标准库区间构造调用产生区间表达式</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> 始终是元组；开区间写成 <code class="docutils literal notranslate"><span class="pre">std.interval_open(a,</span> <span class="pre">b)</span></code> <a class="footnote-reference brackets" href="#id33" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></li>
-<li><p>含 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 端点的区间构造符号区间表达式；普通端点构造 <code class="docutils literal notranslate"><span class="pre">interval&lt;T&gt;</span></code></p></li>
-<li><p>元组是否可作为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 节点由 CAS 支持域决定；不支持时必须报类型错误或不支持错误</p></li>
-<li><p>无限集合、条件集和全集不由普通集合字面量自动构造</p></li>
+<li><p>集合仍是 <code class="docutils literal notranslate"><span class="pre">set&lt;num&gt;</span></code>，不提升为标量；无限集合、条件集和全集不由有限集合字面量自动构造 <a class="footnote-reference brackets" href="#id37" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
+<li><p>普通和符号端点使用同一 <code class="docutils literal notranslate"><span class="pre">interval&lt;num&gt;</span></code> 数学值语义；默认成员域为实数，整数端点不使区间成为整数范围。端点须满足 <code class="docutils literal notranslate"><span class="pre">real</span></code> 约束，构造上下文不隐式给符号添加实性；上例 <code class="docutils literal notranslate"><span class="pre">upper</span></code> 可为已证明实性的符号，而不必是具体数值</p></li>
+<li><p>端点顺序未知时保留符号区间，代入后继续判定；已知倒置区间为空，同端点按开闭规则处理 <a class="footnote-reference brackets" href="#id39" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> 始终为元组，开区间使用 <code class="docutils literal notranslate"><span class="pre">std.interval_open(a,</span> <span class="pre">b)</span></code></p></li>
+<li><p>异量纲组合可使用静态元组；元组不因含数学元素而变为标量数学节点</p></li>
 </ul>
 </section>
-<section id="id18">
-<h3>8. 比较与逻辑表达式<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code> 作用于 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时，构造类型为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的符号关系表达式。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-let a = x &gt; 0          # Expr
-let b = x &gt; 0 and x &lt; 1 # Expr 条件表达式
-let c = 1 &gt; 0          # bool
+<section id="id20">
+<h3>8. 关系、逻辑与结构查询<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code> 在适用的 <code class="docutils literal notranslate"><span class="pre">num</span></code> 上构造类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的数学关系，包括全数值操作数。实序关系必须满足实数等有序数域要求，不为任意复数提供顺序 <a class="footnote-reference brackets" href="#id42" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
+
+sym x
+let a num = x &gt; 0
+let b num = x &gt; 0 and x &lt; 1
+let c num = 1 &gt; 0
+let d bool = cas.same_structure(x, x)
+let e = (x + 0) === x
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>上述比较运算在全普通值上返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>，含 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时返回 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 接受两个 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 操作数，返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>，按 LSR-007 执行有限证明 <a class="footnote-reference brackets" href="#id32" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
-<li><p>含 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的 <code class="docutils literal notranslate"><span class="pre">and</span></code>、<code class="docutils literal notranslate"><span class="pre">or</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span></code> 构造符号逻辑表达式</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">if</span></code> 和 <code class="docutils literal notranslate"><span class="pre">while</span></code> 按核心语言规则接收 <code class="docutils literal notranslate"><span class="pre">bool</span></code> 条件；<code class="docutils literal notranslate"><span class="pre">Expr</span></code> 条件按类型错误诊断。扩展语法若支持符号条件，须显式定义相应求值规则</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bool</span></code> 上的 <code class="docutils literal notranslate"><span class="pre">and</span></code>、<code class="docutils literal notranslate"><span class="pre">or</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span></code> 保持普通布尔规则及短路语义；关系上的对应操作构造数学逻辑表达式</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">if</span></code>、<code class="docutils literal notranslate"><span class="pre">while</span></code> 接受 <code class="docutils literal notranslate"><span class="pre">bool</span></code> 或数学关系；关系自动判真，仍未知时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code> 或明确的未决条件错误，数字不作真假转换</p></li>
+<li><p>普通控制流只执行已确定分支，不将分支副作用隐式符号化</p></li>
+<li><p>数学 <code class="docutils literal notranslate"><span class="pre">vector</span></code>、<code class="docutils literal notranslate"><span class="pre">matrix</span></code>、<code class="docutils literal notranslate"><span class="pre">set</span></code>、<code class="docutils literal notranslate"><span class="pre">interval</span></code> 整体 <code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code> 构造 <code class="docutils literal notranslate"><span class="pre">num</span></code> 关系；逐元素比较使用适用的点运算符，结果元素是关系值，即 <code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">matrix&lt;num&gt;</span></code> <a class="footnote-reference brackets" href="#id36" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
+<li><p>普通 <code class="docutils literal notranslate"><span class="pre">bool</span></code>、<code class="docutils literal notranslate"><span class="pre">text</span></code>、<code class="docutils literal notranslate"><span class="pre">rule</span></code> 及固定状态的相等仍返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code></p></li>
+<li><p>普通 <code class="docutils literal notranslate"><span class="pre">tuple</span></code>、<code class="docutils literal notranslate"><span class="pre">array</span></code>、<code class="docutils literal notranslate"><span class="pre">table</span></code> 若提供布尔结构相等，其内部数学值递归使用结构比较，不调用构造关系的 <code class="docutils literal notranslate"><span class="pre">==</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 与 <code class="docutils literal notranslate"><span class="pre">std.cas.equivalent</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">cas.Equivalent</span></code>、<code class="docutils literal notranslate"><span class="pre">cas.Different</span></code> 或 <code class="docutils literal notranslate"><span class="pre">cas.Unknown</span></code>，不能将证明未决当作不等价 <a class="footnote-reference brackets" href="#id38" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
 </ul>
+<p><code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 的基础结构查询为：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func same_structure(a num, b num) -&gt; bool
+</pre></div>
+</div>
+<p>支持的容器可提供同名重载。比较数学节点种类、运算符或调用目标、参数个数及有序子节点；符号按名称比较。精确数字叶按数学数值比较，不依赖小整数、大整数、有理数或复数等内部表示。近似节点按表示值、近似类别、目标工作精度等语义结构区分，并与精确叶区别。</p>
+<p>结构查询不进行代数证明、不受证明预算或 profile 影响。集合去重、哈希、规则和匹配必须递归使用同一结构相等关系，不得调用构造数学关系的 <code class="docutils literal notranslate"><span class="pre">==</span></code> 或有限证明 <code class="docutils literal notranslate"><span class="pre">===</span></code>。数学结构不是源码文本：空白、注释、括号拼写和原文字面量形式不参与比较；比较的是求值及构造后已有的节点和顺序，不保证保留原源码的代数写法。</p>
 </section>
 <section id="cas">
 <h3>9. CAS 替换规则<a class="headerlink" href="#cas" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">rule</span></code> 是内建不可变的替换规则类型，类型写作 <code class="docutils literal notranslate"><span class="pre">rule</span></code>。<code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">=&gt;</span> <span class="pre">rhs</span></code> 保存左右两个 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，由代入或重写函数显式应用。</p>
+<p><code class="docutils literal notranslate"><span class="pre">rule</span></code> 是内建不可变的替换规则类型。<code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">=&gt;</span> <span class="pre">rhs</span></code> 保存两个 <code class="docutils literal notranslate"><span class="pre">num</span></code> 数学值，由代入或重写接口显式应用。</p>
 <ul class="simple">
-<li><p>两侧分别处于 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 期望上下文，按第 3 至 7 节的规则构造或提升</p></li>
-<li><p>构造时按先左后右的顺序各求值一次；应用规则时直接读取已保存的两个 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 使用固定二元形式；链式写法 <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=&gt;</span> <span class="pre">b</span> <span class="pre">=&gt;</span> <span class="pre">c</span></code> 产生语法错误，以 <code class="docutils literal notranslate"><span class="pre">rule</span></code> 作为任一操作数产生类型错误</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">rule</span></code> 可绑定名称、作为函数实参或返回值，也可存入 <code class="docutils literal notranslate"><span class="pre">set&lt;rule&gt;</span></code></p></li>
-<li><p>两条规则的 <code class="docutils literal notranslate"><span class="pre">==</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>：左侧和右侧分别结构相等时为 <code class="docutils literal notranslate"><span class="pre">true</span></code>；<code class="docutils literal notranslate"><span class="pre">!=</span></code> 为其取反</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set&lt;rule&gt;</span></code> 以两侧表达式的结构相等关系去重</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">table{...}</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 是表项键值分隔符，由表字面量语法解析为表项</p></li>
+<li><p>构造时按先左后右的顺序各求值一次；应用时直接读取已保存值，不重新执行原表达式</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 使用固定二元形式；<code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=&gt;</span> <span class="pre">b</span> <span class="pre">=&gt;</span> <span class="pre">c</span></code> 为语法错误，以 <code class="docutils literal notranslate"><span class="pre">rule</span></code> 作为任一操作数为类型错误</p></li>
+<li><p>规则可绑定名称、作为函数参数或返回值，也可存入 <code class="docutils literal notranslate"><span class="pre">set&lt;rule&gt;</span></code></p></li>
+<li><p>规则的 <code class="docutils literal notranslate"><span class="pre">==</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>：两侧分别结构相等时为 <code class="docutils literal notranslate"><span class="pre">true</span></code>，<code class="docutils literal notranslate"><span class="pre">!=</span></code> 为其取反</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set&lt;rule&gt;</span></code> 按两侧结构相等去重；任何等价查询的预算不改变去重结果</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">table{...}</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">=&gt;</span></code> 仍是表项键值分隔符，由表字面量语法解析</p></li>
 </ul>
-<p>本规范的结构相等按节点种类、运算符或函数名、实参数量及有序子节点逐项比较；符号按名称比较，数值常量按精确值比较。比较直接使用表达式的既有节点及子节点顺序，所需信息由结构本身完全确定。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
 
 sym x, y
 let replacement rule = x =&gt; 2
 let replacements set&lt;rule&gt; = {replacement, y =&gt; 3, x =&gt; 2}
-# 去重后保留 x =&gt; 2 与 y =&gt; 3
 
-func replace(expr Expr, replacement rule) -&gt; Expr {
+func replace(expr num, replacement rule) -&gt; num {
     return cas.substitute(expr, replacement)
 }
 
-let a = replace(x + 1, x =&gt; 2) # 结构为 2 + 1 的 Expr
+let a num = replace(x + 1, x =&gt; 2)
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">replacements</span></code> 去重后保存 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=&gt;</span> <span class="pre">2</span></code> 与 <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=&gt;</span> <span class="pre">3</span></code>。<code class="docutils literal notranslate"><span class="pre">a</span></code> 保存结构替换得到的 <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">+</span> <span class="pre">1</span></code>，后续化简使用显式接口。</p>
 </section>
-<section id="id20">
-<h3>10. 代入<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h3>
+<section id="id24">
+<h3>10. 代入<a class="headerlink" href="#id24" title="链接到此标题。">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 导出以下普通函数：</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func substitute(expr Expr, replacement rule) -&gt; Expr
-func substitute(expr Expr, replacements set&lt;rule&gt;) -&gt; Expr
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func substitute(expr num, replacement rule) -&gt; num
+func substitute(expr num, replacements set&lt;rule&gt;) -&gt; num
 </pre></div>
 </div>
-<p>单条规则等价于单元素规则集合。代入按源码顺序对所有实参各求值一次，再使用得到的表达式及规则值执行结构替换。</p>
+<p>单条规则等价于单元素规则集合。代入按源码顺序对所有实参各求值一次，绑定并校验后再执行结构替换。</p>
 <ul class="simple">
-<li><p>规则左侧与原表达式的当前整棵子树做结构比较，符号按名称匹配</p></li>
-<li><p>当前节点命中规则时，以规则右侧作为该整棵子树的最终结果，并结束这棵子树的处理</p></li>
-<li><p>当前节点与规则左侧存在结构差异时，按子节点原顺序递归处理；每个原节点至多访问一次</p></li>
-<li><p>集合内所有规则同时作用于原表达式，规则选择由当前子树和规则左侧的结构相等关系确定</p></li>
-<li><p>规则集校验在遍历前覆盖全部规则；相同左侧对应多个结构各异的右侧时，诊断 <code class="docutils literal notranslate"><span class="pre">ExprConflictingRules</span></code></p></li>
-<li><p>空规则集或命中次数为零时返回原 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>；输入和规则值在调用前后保持一致</p></li>
-<li><p>结果保留结构替换产生的表达式形态；后续数值求值和代数化简通过各自的显式接口执行</p></li>
+<li><p>规则左侧与原表达式当前整棵子树做结构比较</p></li>
+<li><p>命中时，以已保存的右侧作为该整棵子树的最终结果，结束这棵子树的处理；不再遍历插入值</p></li>
+<li><p>未命中时，按子节点原顺序递归处理；每个原节点至多访问一次</p></li>
+<li><p>集合内规则同时作用于原表达式，选择由当前子树与左侧的结构相等决定，不依赖集合枚举顺序</p></li>
+<li><p>遍历前校验全部规则；相同左侧对应多个结构各异的右侧时诊断 <code class="docutils literal notranslate"><span class="pre">ExprConflictingRules</span></code>，即使冲突左侧没有出现在输入中也不能跳过</p></li>
+<li><p>空规则集或无命中时返回原数学值；输入及规则在调用前后保持原值</p></li>
+<li><p>输出保留结构替换产生的形态，不隐式数值化或代数化简；明确无定义或不支持的操作仍按错误契约处理</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
 
 sym x, y
-let a = cas.substitute(x + y, {x =&gt; y, y =&gt; 2}) # y + 2，同时代入原表达式
-let b = cas.substitute(x + 1, {(x + 1) =&gt; 9, x =&gt; 2}) # 9
-let c = cas.substitute(x + y, {x =&gt; 3, y =&gt; 4}) # 3 + 4
-let d = cas.substitute(x, {})                  # x
-# cas.substitute(x, {x =&gt; 1, x =&gt; 2})          # ExprConflictingRules
+let a = cas.substitute(x + y, {x =&gt; y, y =&gt; 2})
+let b = cas.substitute(x + 1, {(x + 1) =&gt; 9, x =&gt; 2})
+let c = cas.substitute(x + y, {x =&gt; 3, y =&gt; 4})
+let d = cas.substitute(x, {})
 </pre></div>
 </div>
+<p>结果结构依次为 <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">+</span> <span class="pre">2</span></code>、<code class="docutils literal notranslate"><span class="pre">9</span></code>、<code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4</span></code>、<code class="docutils literal notranslate"><span class="pre">x</span></code>。<code class="docutils literal notranslate"><span class="pre">cas.substitute(x,</span> <span class="pre">{x</span> <span class="pre">=&gt;</span> <span class="pre">1,</span> <span class="pre">x</span> <span class="pre">=&gt;</span> <span class="pre">2})</span></code> 报 <code class="docutils literal notranslate"><span class="pre">ExprConflictingRules</span></code>，不任意选择其中一条。</p>
 </section>
-<section id="id21">
-<h3>11. 数学模式匹配与重写<a class="headerlink" href="#id21" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 导出以下普通函数。模式本身是 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，使用相同的表达式构造语法。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func match_expr(expr Expr, pattern Expr, variables set&lt;Expr&gt;) -&gt; table&lt;text, Expr&gt;?
-func rewrite(expr Expr, replacement rule, variables set&lt;Expr&gt;) -&gt; Expr
+<section id="id25">
+<h3>11. 数学模式匹配与重写<a class="headerlink" href="#id25" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">std.cas</span></code> 导出以下普通函数。模式本身是 <code class="docutils literal notranslate"><span class="pre">num</span></code> 数学值，不是源码字符串或语法 token 模式。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func match_expr(expr num, pattern num, variables set&lt;num&gt;) -&gt; table&lt;text, num&gt;?
+func rewrite(expr num, replacement rule, variables set&lt;num&gt;) -&gt; num
 </pre></div>
 </div>
-<section id="id22">
-<h4>11.1 模式变量与匹配<a class="headerlink" href="#id22" title="链接到此标题。">¶</a></h4>
+<section id="id26">
+<h4>11.1 模式变量与匹配<a class="headerlink" href="#id26" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> 显式列出由 <code class="docutils literal notranslate"><span class="pre">sym</span></code> 产生的符号值；每项必须出现在 <code class="docutils literal notranslate"><span class="pre">pattern</span></code> 中，重写时必须出现在规则左侧</p></li>
-<li><p>集合中的符号是模式变量，可捕获一棵完整的 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 子树；其余符号按名称作字面结构匹配</p></li>
-<li><p>同一模式变量重复出现时，每次捕获的子树必须结构相等；捕获值保存在结果表中，符号声明及其原有绑定保持原值</p></li>
-<li><p>其余节点按第 9 节的结构相等规则递归匹配；算术、幂和函数调用节点必须受支持</p></li>
-<li><p>匹配按表达式既有节点顺序逐项进行，数值常量采用精确值比较</p></li>
-<li><p>实参按源码顺序各求值一次，再检查类型、支持域和模式变量集合；非法变量集合诊断 <code class="docutils literal notranslate"><span class="pre">ExprInvalidPatternVariables</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> 显式列出 <code class="docutils literal notranslate"><span class="pre">sym</span></code> 产生的符号，每项必须出现在模式中，重写时必须出现在规则左侧</p></li>
+<li><p>这些符号可捕获完整数学子树，其余符号按名称作字面结构匹配</p></li>
+<li><p>同一变量重复出现时，各次捕获必须结构相等；捕获保存于结果表，不修改符号的原有绑定</p></li>
+<li><p>其余节点按第 8 节递归比较；必须支持算术、幂及函数调用节点</p></li>
+<li><p>比较既有数学节点顺序和数值语义，不检查源码文字，也不调用有限等价证明来猜测匹配</p></li>
+<li><p>实参按源码顺序各求值一次，再检查类型、支持域及模式变量集合；非法变量集合诊断 <code class="docutils literal notranslate"><span class="pre">ExprInvalidPatternVariables</span></code></p></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">match_expr</span></code> 将整个输入 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 与完整模式进行一次结构匹配，结果按以下规则返回：</p>
-<ul class="simple">
-<li><p>匹配成功：返回完整捕获表，键集合恰好对应 <code class="docutils literal notranslate"><span class="pre">variables</span></code> 中的所有符号名，值为各符号捕获的 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code> 为空且匹配成功：返回空捕获表</p></li>
-<li><p>结构匹配失败：返回 <code class="docutils literal notranslate"><span class="pre">null</span></code></p></li>
-<li><p>类型冲突、节点超出支持域或求值失败：按第 13 节的错误路径传播</p></li>
-</ul>
+<p><code class="docutils literal notranslate"><span class="pre">match_expr</span></code> 将整个输入与完整模式匹配一次：成功返回完整捕获表，键集合恰好对应所有模式变量名；变量集合为空且成功时返回空表；结构匹配失败返回 <code class="docutils literal notranslate"><span class="pre">null</span></code>。类型冲突、不支持节点及求值失败继续传播错误，不作为普通未匹配。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
 
 sym x, y, base, exponent, u
+let pair = cas.symbolic_function("pair", 2)
 let powers = cas.match_expr(x^2, base^exponent, {base, exponent})
-# 成功：键 "base" 对应 Expr 符号 x，键 "exponent" 对应 Expr 常量 2
-let repeated = cas.match_expr(x + x, u + u, {u}) # "u" 对应 x
-let different = cas.match_expr(x + y, u + u, {u}) # null
-let literal = cas.match_expr(y^2, x^2, {})        # null
-let exact = cas.match_expr(x^2, x^2, {})          # 空捕获表
-let whole = cas.match_expr(x^2 + 1, base^exponent, {base, exponent}) # null
+let repeated = cas.match_expr(pair(x, x), pair(u, u), {u})
+let different = cas.match_expr(pair(x, y), pair(u, u), {u})
+let literal = cas.match_expr(y^2, x^2, {})
+let exact = cas.match_expr(x^2, x^2, {})
+let whole = cas.match_expr(x^2 + 1, base^exponent, {base, exponent})
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">powers</span></code> 捕获 <code class="docutils literal notranslate"><span class="pre">&quot;base&quot;</span></code> 为 <code class="docutils literal notranslate"><span class="pre">x</span></code>、<code class="docutils literal notranslate"><span class="pre">&quot;exponent&quot;</span></code> 为 <code class="docutils literal notranslate"><span class="pre">2</span></code>；<code class="docutils literal notranslate"><span class="pre">repeated</span></code> 捕获 <code class="docutils literal notranslate"><span class="pre">&quot;u&quot;</span></code> 为 <code class="docutils literal notranslate"><span class="pre">x</span></code>；<code class="docutils literal notranslate"><span class="pre">different</span></code>、<code class="docutils literal notranslate"><span class="pre">literal</span></code>、<code class="docutils literal notranslate"><span class="pre">whole</span></code> 为 <code class="docutils literal notranslate"><span class="pre">null</span></code>；<code class="docutils literal notranslate"><span class="pre">exact</span></code> 为空捕获表。使用显式符号调用检查重复捕获，避免依赖加法构造是否已合并同类项。</p>
 </section>
-<section id="id23">
-<h4>11.2 捕获值重写<a class="headerlink" href="#id23" title="链接到此标题。">¶</a></h4>
-<p><code class="docutils literal notranslate"><span class="pre">rewrite</span></code> 先求值各实参一次并检查规则及模式变量，再按原表达式节点制定一次左到右、从子节点到父节点的遍历。子节点处理完成后，用处理后的子节点组成当前节点，再尝试匹配规则左侧。</p>
+<section id="id27">
+<h4>11.2 捕获值重写<a class="headerlink" href="#id27" title="链接到此标题。">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">rewrite</span></code> 先求值各实参一次并检查规则及模式变量，再基于原表达式安排一次左到右、子节点先于父节点的遍历。子节点完成后，用处理后的子节点组成当前节点，再匹配规则左侧。</p>
 <ul class="simple">
-<li><p>命中时，使用该次匹配的完整捕获表，同时替换规则右侧对应的模式变量，所得 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 作为当前节点的结果</p></li>
-<li><p>右侧中属于 <code class="docutils literal notranslate"><span class="pre">variables</span></code> 的符号按左侧捕获值替换，其余符号保持普通 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 字面含义</p></li>
-<li><p>替换直接使用规则已保存的右侧 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>；每个捕获值作为整体子树插入并保留自身内部结构</p></li>
-<li><p>匹配失败时保留当前节点及已处理的子节点；命中次数为零时返回原表达式</p></li>
-<li><p>遍历计划覆盖原表达式各节点，每个原节点尝试一次，计划完成即返回结果。插入值作为该节点的最终结果，父节点可匹配包含子节点重写结果的结构</p></li>
-<li><p>输入及规则在调用前后保持原值；操作成功时返回完整结果，错误通过普通调用的错误路径传播</p></li>
+<li><p>命中时，以完整捕获表同时替换右侧的模式变量，所得数学值作为当前节点结果</p></li>
+<li><p>右侧属于 <code class="docutils literal notranslate"><span class="pre">variables</span></code> 的符号使用捕获值，其余符号保持字面数学符号含义</p></li>
+<li><p>使用规则已经保存的右侧；捕获值作为整体子树插入，保留内部结构</p></li>
+<li><p>不再次遍历新插入的右侧或捕获子树；父节点仍可匹配包含子节点重写结果的结构</p></li>
+<li><p>每个原节点只尝试一次，计划完成即返回；匹配失败保留当前节点及已处理子节点，无命中时返回原值</p></li>
+<li><p>输入和规则保持原值；成功时返回完整结果，失败按普通错误路径传播，不返回伪装成成功的部分结果</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
 use std.math.{sin, cos}
 
 sym x, y, u
-let a = cas.rewrite(sin(x), sin(u) =&gt; cos(u), {u}) # cos(x)
-let b = cas.rewrite(sin(x + 1), sin(u) =&gt; u^2, {u}) # (x + 1)^2
-let c = cas.rewrite(sin(x), sin(u) =&gt; u + y, {u}) # x + y，y 是字面符号
-let d = cas.rewrite(sin(sin(x)), sin(u) =&gt; u + 1, {u}) # (x + 1) + 1
-let e = cas.rewrite(sin(x), sin(u) =&gt; sin(sin(u)), {u}) # sin(sin(x))，插入值保持原状
+let a = cas.rewrite(sin(x), sin(u) =&gt; cos(u), {u})
+let b = cas.rewrite(sin(x + 1), sin(u) =&gt; u^2, {u})
+let c = cas.rewrite(sin(x), sin(u) =&gt; u + y, {u})
+let d = cas.rewrite(sin(sin(x)), sin(u) =&gt; u + 1, {u})
+let e = cas.rewrite(sin(x), sin(u) =&gt; sin(sin(u)), {u})
 </pre></div>
 </div>
+<p>输出结构依次为 <code class="docutils literal notranslate"><span class="pre">cos(x)</span></code>、<code class="docutils literal notranslate"><span class="pre">(x</span> <span class="pre">+</span> <span class="pre">1)^2</span></code>、<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></code>、<code class="docutils literal notranslate"><span class="pre">(x</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">+</span> <span class="pre">1</span></code>、<code class="docutils literal notranslate"><span class="pre">sin(sin(x))</span></code>。末例的插入结构不会再次重写。</p>
 </section>
 </section>
-<section id="id24">
-<h3>12. 显式求值与查询<a class="headerlink" href="#id24" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 到 <code class="docutils literal notranslate"><span class="pre">num</span></code>、<code class="docutils literal notranslate"><span class="pre">bool</span></code>、<code class="docutils literal notranslate"><span class="pre">text</span></code> 或普通容器的转换，必须通过声明了目标返回类型的显式接口完成。</p>
-<p>允许的显式入口：</p>
+<section id="id28">
+<h3>12. 显式求值、近似与查询<a class="headerlink" href="#id28" title="链接到此标题。">¶</a></h3>
+<p>求值不再表示从一种符号基本类型降级到数值类型。精确求值、保域化简和近似计算的结果都可以是 <code class="docutils literal notranslate"><span class="pre">num</span></code>，应由所调用接口明确区分行为：</p>
 <ul class="simple">
-<li><p>用 <code class="docutils literal notranslate"><span class="pre">substitute</span></code> 代入后，再调用数值求值函数</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">evalf</span></code> 或等价的显式近似求值函数</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 数学等价判定 <a class="footnote-reference brackets" href="#id32" id="id25" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">match_expr</span></code> 或其他明确声明返回类型的 CAS 查询接口</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">substitute</span></code> 只执行第 10 节的结构代入</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.cas.simplify</span></code> 返回保域化简后的 <code class="docutils literal notranslate"><span class="pre">num</span></code>；<code class="docutils literal notranslate"><span class="pre">std.cas.simplify_formal</span></code> 显式采用声明支持的形式代数域，不承诺逐点保域 <a class="footnote-reference brackets" href="#id38" id="id29" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.math.approximate(value,</span> <span class="pre">precision=100)</span></code> 显式请求目标十进制有效位数的近似值；<code class="docutils literal notranslate"><span class="pre">precision</span> <span class="pre">int</span></code> 必须是可具体求值的正整数 <a class="footnote-reference brackets" href="#id41" id="id30" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">same_structure</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>；<code class="docutils literal notranslate"><span class="pre">match_expr</span></code> 返回捕获表或 <code class="docutils literal notranslate"><span class="pre">null</span></code>；<code class="docutils literal notranslate"><span class="pre">===</span></code> 和 <code class="docutils literal notranslate"><span class="pre">equivalent</span></code> 返回固定三态 <a class="footnote-reference brackets" href="#id38" id="id31" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
+<li><p>文本、具体机器数值或普通容器的提取必须通过声明相应目标返回类型和支持域的接口，不进行隐式真假或容器转换</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
+use std.math.{approximate}
 
 sym x
-let expr = x + 1
-let a = evalf(cas.substitute(expr, x =&gt; 2))
+let expr num = x + 1/3
+let exact num = cas.substitute(expr, x =&gt; 2)
+let value num = approximate(exact, precision=100)
 </pre></div>
 </div>
-<p>普通数学函数直接返回声明类型的结果。求值接口校验所需符号的取值绑定、表达式支持域和结果完整性；校验失败时必须给出诊断，并沿 LSR-018 的错误路径传播 <a class="footnote-reference brackets" href="#id34" id="id26" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。</p>
-<p>求解接口证明解集为空时返回空 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code>；<code class="docutils literal notranslate"><span class="pre">match_expr</span></code> 通过 <code class="docutils literal notranslate"><span class="pre">null</span></code> 表示结构匹配失败；<code class="docutils literal notranslate"><span class="pre">===</span></code> 返回当前规则与预算下的证明结果，其语义遵循 LSR-007。</p>
+<p><code class="docutils literal notranslate"><span class="pre">approximate</span></code> 成功时按请求精度计算，但不保证正确舍入或认证误差界；误差估计和认证均为可选能力。近似操作数触发局部传播时，使用参与近似值的最高工作精度，未知符号部分继续保留；新精度不能恢复原输入信息。</p>
+<p>近似标记和工作精度须保留，不能把显示小数精确化后当作原数学对象。精确与近似比较无损比较各自现有存储数值，不先舍入、不引入容差；结论仅关于表示值 <a class="footnote-reference brackets" href="#id38" id="id32" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。</p>
+<p>具体数值提取接口检查所需符号绑定、支持域和结果完整性，失败按接口契约诊断。普通数学运算不能仅因尚有未知符号而失败。求解接口证明解集为空时返回空 <code class="docutils literal notranslate"><span class="pre">set&lt;num&gt;</span></code>，不得把未决求解伪装为空集；匹配失败的 <code class="docutils literal notranslate"><span class="pre">null</span></code>、证明未决的 <code class="docutils literal notranslate"><span class="pre">cas.Unknown</span></code> 和运行时错误分别具有独立含义。</p>
 </section>
-<section id="id27">
-<h3>13. 错误<a class="headerlink" href="#id27" title="链接到此标题。">¶</a></h3>
+<section id="id33">
+<h3>13. 错误<a class="headerlink" href="#id33" title="链接到此标题。">¶</a></h3>
 <p>实现至少应区分下列错误：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ExprUnboundName</span></code>：非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上下文中调用未绑定函数或变量</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ExprTypeMismatch</span></code>：无法把表达式提升为目标 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 形态</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ExprUnsupportedNode</span></code>：CAS 不支持对应表达式节点</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ExprAmbiguousSyntax</span></code>：调用、索引或其他表达式形态仍无法由语法规则消歧</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ExprImplicitDowngrade</span></code>：试图把 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 隐式用作普通值</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ExprConflictingRules</span></code>：同时代入的规则具有相同左侧和不同右侧</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ExprInvalidPatternVariables</span></code>：成员的节点种类或出现位置违反第 11.1 节的模式变量要求</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExprUnboundName</span></code>：调用未绑定函数或变量，在任何期望类型上下文中均报错</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExprTypeMismatch</span></code>：数学操作收到不兼容基本类型，或试图把普通容器等隐式作为标量数学值</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExprUnsupportedNode</span></code>：显式 CAS 执行接口不支持对应数学节点</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExprAmbiguousSyntax</span></code>：调用、索引等形态不能由语法规则消歧</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExprConflictingRules</span></code>：同时代入具有相同左侧和不同右侧的规则</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExprInvalidPatternVariables</span></code>：模式变量的节点种类或出现位置违反第 11.1 节要求</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DomainError</span></code> / <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>：确定违反数学定义域、参数或值约束</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>：必须判定的条件或必须验证的约束仍未决</p></li>
 </ul>
-<p>类型和语法错误在编译时可确定时必须直接诊断。运行时数学错误使用 LSR-018 的 <code class="docutils literal notranslate"><span class="pre">MathError</span></code> 和 <code class="docutils literal notranslate"><span class="pre">raise</span></code> 传播，虚拟机故障沿同一规范的故障路径传播 <a class="footnote-reference brackets" href="#id34" id="id28" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。错误名称可以映射到统一错误系统，并保留各错误类别的独立语义。</p>
+<p>编译时能够确定的类型和语法错误必须直接诊断。运行时数学错误使用 LSR-018 的 <code class="docutils literal notranslate"><span class="pre">MathError</span></code> 与 <code class="docutils literal notranslate"><span class="pre">raise</span></code>，虚拟机故障沿同一规范的故障路径传播 <a class="footnote-reference brackets" href="#id40" id="id34" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。错误名称可以映射到统一系统，但必须保留错误类别的独立语义；不得借助自动符号化吞掉普通调用错误。</p>
 </section>
-<section id="id29">
-<h3>14. 引用<a class="headerlink" href="#id29" title="链接到此标题。">¶</a></h3>
+<section id="id35">
+<h3>14. 引用<a class="headerlink" href="#id35" title="链接到此标题。">¶</a></h3>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id30" role="doc-footnote">
+<aside class="footnote brackets" id="id36" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id9">2</a>)</span>
-<p><a class="reference internal" href="LSR-014.html"><span class="doc">LSR-014 - 运算符规范</span></a> - 定义运算符 token、优先级、集合、区间和显式乘法</p>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id11">2</a>,<a role="doc-backlink" href="#id22">3</a>)</span>
+<p><a class="reference internal" href="LSR-014.html"><span class="doc">LSR-014 - 运算符规范</span></a> - 定义数学运算、关系、逻辑及普通调用</p>
 </aside>
-<aside class="footnote brackets" id="id31" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id11">1</a>,<a role="doc-backlink" href="#id16">2</a>)</span>
-<p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 定义集合类型、多结果返回和 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 元素提升</p>
+<aside class="footnote brackets" id="id37" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id18">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 定义 set&lt;num&gt;、解集及结构去重</p>
 </aside>
-<aside class="footnote brackets" id="id32" role="doc-footnote">
+<aside class="footnote brackets" id="id38" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id19">1</a>,<a role="doc-backlink" href="#id25">2</a>)</span>
-<p><a class="reference internal" href="LSR-007.html"><span class="doc">LSR-007 - 数学等价判定规范</span></a> - 定义 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上的 <code class="docutils literal notranslate"><span class="pre">===</span></code> 判定语义</p>
+<span class="backrefs">(<a role="doc-backlink" href="#id13">1</a>,<a role="doc-backlink" href="#id23">2</a>,<a role="doc-backlink" href="#id29">3</a>,<a role="doc-backlink" href="#id31">4</a>,<a role="doc-backlink" href="#id32">5</a>)</span>
+<p><a class="reference internal" href="LSR-007.html"><span class="doc">LSR-007 - 数学等价判定规范</span></a> - 定义三态证明、保域和形式代数入口</p>
 </aside>
-<aside class="footnote brackets" id="id33" role="doc-footnote">
+<aside class="footnote brackets" id="id39" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id17">2</a>)</span>
-<p><a class="reference internal" href="LSR-017.html"><span class="doc">LSR-017 - 区间类型规范</span></a> - 定义区间构造函数、类型统一和符号区间边界</p>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id19">2</a>)</span>
+<p><a class="reference internal" href="LSR-017.html"><span class="doc">LSR-017 - 区间类型规范</span></a> - 定义实数区间及符号端点</p>
 </aside>
-<aside class="footnote brackets" id="id34" role="doc-footnote">
+<aside class="footnote brackets" id="id40" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id14">1</a>,<a role="doc-backlink" href="#id26">2</a>,<a role="doc-backlink" href="#id28">3</a>)</span>
-<p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 定义运行时数学错误与虚拟机故障传播</p>
+<span class="backrefs">(<a role="doc-backlink" href="#id16">1</a>,<a role="doc-backlink" href="#id34">2</a>)</span>
+<p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 定义运行时数学错误及虚拟机故障传播</p>
+</aside>
+<aside class="footnote brackets" id="id41" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id30">2</a>)</span>
+<p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 定义 std.math.approximate 与 std.cas 接口</p>
+</aside>
+<aside class="footnote brackets" id="id42" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id9">1</a>,<a role="doc-backlink" href="#id21">2</a>)</span>
+<p><a class="reference internal" href="LSR-010.html"><span class="doc">LSR-010 - 虚数单位与复数规范</span></a> - 定义复标量、主值及顺序限制</p>
 </aside>
 </aside>
 </section>
@@ -411,7 +437,7 @@ let a = evalf(cas.substitute(expr, x =&gt; 2))
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -441,7 +467,7 @@ let a = evalf(cas.substitute(expr, x =&gt; 2))
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

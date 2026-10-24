@@ -51,18 +51,44 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 Lamina 标准常量集合（科学/工程计算）。常量由 <code class="docutils literal notranslate"><span class="pre">std.constants</span></code> <a class="footnote-reference brackets" href="#id10" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 导出，命名使用 <code class="docutils literal notranslate"><span class="pre">UPPER_SNAKE_CASE</span></code>。</p>
+<p>定义 Lamina 标准常量集合（科学/工程计算）。常量由 <code class="docutils literal notranslate"><span class="pre">std.constants</span></code> <a class="footnote-reference brackets" href="#id13" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> 导出，命名使用 <code class="docutils literal notranslate"><span class="pre">UPPER_SNAKE_CASE</span></code>。</p>
 </section>
 <section id="id4">
 <h2>1. 导出规则<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
 <ul class="simple">
 <li><p>常量不可变导出</p></li>
 <li><p>常量名称使用 <code class="docutils literal notranslate"><span class="pre">UPPER_SNAKE_CASE</span></code></p></li>
-<li><p>单位表达必须与 LSR-000 <a class="footnote-reference brackets" href="#id9" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 量纲系统一致</p></li>
+<li><p>单位表达必须与 LSR-000 <a class="footnote-reference brackets" href="#id12" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 量纲系统一致</p></li>
 </ul>
-</section>
 <section id="id6">
-<h2>2. 物理常量<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h2>
+<h3>1.1 精确性与数据来源<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<p>常量按来源区分为定义精确值、测量值和参考值；有限小数的书写形式本身不表示测量精度。</p>
+<ul class="simple">
+<li><p><strong>定义精确值</strong>：<code class="docutils literal notranslate"><span class="pre">EARTH_GRAVITY</span></code>、<code class="docutils literal notranslate"><span class="pre">STANDARD_PRESSURE</span></code>、<code class="docutils literal notranslate"><span class="pre">STANDARD_TEMPERATURE</span></code>、
+<code class="docutils literal notranslate"><span class="pre">C</span></code>、<code class="docutils literal notranslate"><span class="pre">H</span></code>、<code class="docutils literal notranslate"><span class="pre">KB</span></code>、<code class="docutils literal notranslate"><span class="pre">AVOGADRO</span></code>、<code class="docutils literal notranslate"><span class="pre">R</span></code> 和 <code class="docutils literal notranslate"><span class="pre">FARADAY</span></code>。这些值由本规范采用的定义确定，
+按精确 <code class="docutils literal notranslate"><span class="pre">num</span></code> 及其量纲导出。<code class="docutils literal notranslate"><span class="pre">EARTH_GRAVITY</span></code> 是约定的标准重力，不是任意地点的实测重力。</p></li>
+<li><p><strong>测量值</strong>：<code class="docutils literal notranslate"><span class="pre">G</span></code>、<code class="docutils literal notranslate"><span class="pre">EPSILON_0</span></code>、<code class="docutils literal notranslate"><span class="pre">MU_0</span></code> 和 <code class="docutils literal notranslate"><span class="pre">AMU</span></code>。表中仅保存有限位测量数据，
+不宣称是对应物理常量的精确数学值，也不从显示位数推导认证误差界。</p></li>
+<li><p><strong>参考值</strong>：<code class="docutils literal notranslate"><span class="pre">MOON_GRAVITY</span></code>、<code class="docutils literal notranslate"><span class="pre">MARS_GRAVITY</span></code>、<code class="docutils literal notranslate"><span class="pre">WATER_DENSITY</span></code>、<code class="docutils literal notranslate"><span class="pre">AIR_DENSITY</span></code>、
+<code class="docutils literal notranslate"><span class="pre">MOLAR_VOLUME_IDEAL</span></code>、<code class="docutils literal notranslate"><span class="pre">ROOM_PRESSURE</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ROOM_TEMPERATURE</span></code>。
+这些是模型或参考条件下的有限数据，不能用作任意环境下的精确物理定律。</p></li>
+</ul>
+<p>测量数据采用 CODATA 2018 固定版次 <a class="footnote-reference brackets" href="#id14" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>；更新版次须显式修订表列数值及来源。
+测量/参考值以带近似标记的 <code class="docutils literal notranslate"><span class="pre">num</span></code> 导出，初始十进制工作精度采用表列保留位数；
+科学计数法取系数的保留数字，忽略前导零，保留整数末尾零。该位数是计算数据的工作精度，
+不表示物理准确位数或认证误差界。<code class="docutils literal notranslate"><span class="pre">WATER_DENSITY</span></code> 是约定的水密度参考值，不适用于所有温压；
+<code class="docutils literal notranslate"><span class="pre">AIR_DENSITY</span></code> 为标准大气压、288.15 K 下的干空气参考值。月球和火星重力是表面代表值。
+<code class="docutils literal notranslate"><span class="pre">MOLAR_VOLUME_IDEAL</span></code> 对应约 298.15 K、101325 Pa 的理想气体参考值；
+室压与室温是本库选定的参考条件，不是通用的室内环境定义。
+本规范不强制不确定度传播；使用测量误差或认证界的接口必须另行声明其数据和规则。</p>
+<p><code class="docutils literal notranslate"><span class="pre">R</span></code> 定义为 <code class="docutils literal notranslate"><span class="pre">KB</span> <span class="pre">*</span> <span class="pre">AVOGADRO</span></code>，精确值为 <code class="docutils literal notranslate"><span class="pre">8.31446261815324&lt;J/(mol*K)&gt;</span></code>。
+<code class="docutils literal notranslate"><span class="pre">FARADAY</span></code> 定义为 <code class="docutils literal notranslate"><span class="pre">AVOGADRO</span> <span class="pre">*</span> <span class="pre">1.602176634e-19&lt;C&gt;</span></code>，其中元电荷由 SI 精确定义；
+其精确值为 <code class="docutils literal notranslate"><span class="pre">96485.3321233100184&lt;C/mol&gt;</span></code> <a class="footnote-reference brackets" href="#id14" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。派生精确常量按定义关系求值，
+不能用显示截断或机器浮点乘法代替。</p>
+</section>
+</section>
+<section id="id9">
+<h2>2. 物理常量<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>名称</p></th>
@@ -140,8 +166,8 @@
 </tbody>
 </table>
 </section>
-<section id="id7">
-<h2>3. 化学常量<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h2>
+<section id="id10">
+<h2>3. 化学常量<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>名称</p></th>
@@ -158,12 +184,12 @@
 </tr>
 <tr class="row-odd"><td><p>R</p></td>
 <td><p>理想气体常数</p></td>
-<td><p>8.314462618</p></td>
+<td><p>8.31446261815324</p></td>
 <td><p>J*mol^-1*K^-1</p></td>
 </tr>
 <tr class="row-even"><td><p>FARADAY</p></td>
 <td><p>法拉第常数</p></td>
-<td><p>9.648533212*10^4</p></td>
+<td><p>96485.3321233100184</p></td>
 <td><p>C*mol^-1</p></td>
 </tr>
 <tr class="row-odd"><td><p>AMU</p></td>
@@ -189,16 +215,21 @@
 </tbody>
 </table>
 </section>
-<section id="id8">
-<h2>4. 引用<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h2>
+<section id="id11">
+<h2>4. 引用<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h2>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id9" role="doc-footnote">
+<aside class="footnote brackets" id="id12" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 量纲与类型系统</p>
 </aside>
-<aside class="footnote brackets" id="id10" role="doc-footnote">
+<aside class="footnote brackets" id="id13" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 通过 <code class="docutils literal notranslate"><span class="pre">std.constants</span></code> 对外导出</p>
+</aside>
+<aside class="footnote brackets" id="id14" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id8">2</a>)</span>
+<p><a class="reference external" href="https://physics.nist.gov/cuu/pdf/wall_2018.pdf">CODATA 2018，NIST SP 961（2019年5月）</a> - 测量数据版次、SI 精确定义及派生常量关系</p>
 </aside>
 </aside>
 </section>
@@ -248,7 +279,7 @@
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -278,7 +309,7 @@
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

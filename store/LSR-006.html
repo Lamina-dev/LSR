@@ -96,6 +96,12 @@
 <li><p>可显式标注：<code class="docutils literal notranslate"><span class="pre">|x</span> <span class="pre">num|</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
 <li><p>可省略标注：<code class="docutils literal notranslate"><span class="pre">|x|</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
 <li><p>省略时依赖上下文约束推导参数类型</p></li>
+<li><p>数学参数和返回值的基本静态类型统一为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；精确数、符号表达式、关系和近似值不产生不同的基本签名</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">|x</span> <span class="pre">int|</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">1</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">int</span></code> 是 <code class="docutils literal notranslate"><span class="pre">num</span></code> 上的整数值约束；<code class="docutils literal notranslate"><span class="pre">frac</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 同样是值约束，不是独立基本数学类型</p></li>
+<li><p>值约束参与调用和返回校验；静态可证时提前检查，其余在运行期验证。确定违反时报 <code class="docutils literal notranslate"><span class="pre">DomainError</span></code> 或 <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>，仍未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code></p></li>
+<li><p>基本签名及参数个数相同的函数不得仅凭值约束静态分派；符号参数可以满足已证明的约束，不要求其具有某种内部数值表示</p></li>
+<li><p>函数值兼容性必须保留参数值约束及静态量纲契约；不能仅因基本类型都是 <code class="docutils literal notranslate"><span class="pre">num</span></code> 就把只接受 <code class="docutils literal notranslate"><span class="pre">int</span></code> 或特定量纲的函数用于更宽的参数上下文</p></li>
+<li><p>普通有副作用函数在参数约束未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>，不自动转为符号调用；只有已声明的数学求值接口可按其契约保留未求值结果</p></li>
 </ul>
 </section>
 <section id="id10">
@@ -139,6 +145,8 @@
   |&gt; map(|x| -&gt; x^2)
 </pre></div>
 </div>
+<p>管道采用首参插入规则：<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">|&gt;</span> <span class="pre">f(a,</span> <span class="pre">b)</span></code> 等价于 <code class="docutils literal notranslate"><span class="pre">f(x,</span> <span class="pre">a,</span> <span class="pre">b)</span></code>，<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">|&gt;</span> <span class="pre">f</span></code> 等价于 <code class="docutils literal notranslate"><span class="pre">f(x)</span></code>。左侧先求值一次，其余实参按源码顺序求值，再按普通调用规则绑定和检查；不要求 <code class="docutils literal notranslate"><span class="pre">f(a,</span> <span class="pre">b)</span></code> 先产生函数，也不自动进行默认实参补全或柯里化。上述示例分别调用 <code class="docutils literal notranslate"><span class="pre">filter</span></code> 和 <code class="docutils literal notranslate"><span class="pre">map</span></code> 的二实参形式。</p>
+<p>谓词 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">%</span> <span class="pre">2</span> <span class="pre">==</span> <span class="pre">0</span></code> 的基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code>，表示数学关系；要求确定判真的谓词接口按核心条件规则处理它，未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>，不把未决关系当成 <code class="docutils literal notranslate"><span class="pre">false</span></code>。</p>
 </section>
 <section id="id13">
 <h4>4.2 歧义与优先级<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h4>
@@ -167,8 +175,9 @@ let add_base = |x| -&gt; x + base
 <h3>6. 与值语义/COW 的关系<a class="headerlink" href="#cow" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>捕获复合类型（<code class="docutils literal notranslate"><span class="pre">vector</span></code>, <code class="docutils literal notranslate"><span class="pre">matrix</span></code>, <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code> ）见 LSR-000 <a class="footnote-reference brackets" href="#id18" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 第 4.6 节</p></li>
-<li><p>只读捕获不触发复制</p></li>
-<li><p>若 Lambda 内部对局部可变副本突变，触发 COW，不回写原对象</p></li>
+<li><p>只读捕获保留捕获时的值，不提供可写子路径；后续通过其他 <code class="docutils literal notranslate"><span class="pre">var</span></code> 根路径修改容器不得改变已捕获的值</p></li>
+<li><p>Lambda 可将捕获值绑定为局部 <code class="docutils literal notranslate"><span class="pre">var</span></code> 后修改；修改只改变该局部值，不回写捕获来源</p></li>
+<li><p>共享、复制、写时复制或唯一所有权优化由实现选择，不规定必须复制的时机，也不提供数学容器的可观察对象身份</p></li>
 </ul>
 </section>
 <section id="id16">
@@ -235,7 +244,7 @@ let add_base = |x| -&gt; x + base
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -265,7 +274,7 @@ let add_base = |x| -&gt; x + base
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

@@ -51,161 +51,197 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 <code class="docutils literal notranslate"><span class="pre">===</span></code> 在 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上的判定语义、化简边界与终止策略 <a class="footnote-reference brackets" href="#id18" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。采用有限规则与预算：可证明返回 <code class="docutils literal notranslate"><span class="pre">true</span></code>，否则 <code class="docutils literal notranslate"><span class="pre">false</span></code>。</p>
+<p>定义 <code class="docutils literal notranslate"><span class="pre">num</span></code> 上 <code class="docutils literal notranslate"><span class="pre">===</span></code> 与 <code class="docutils literal notranslate"><span class="pre">std.cas.equivalent</span></code> 的三态证明语义、保域化简和局部预算 <a class="footnote-reference brackets" href="#id26" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。证明成立、证明不等价和证明未决必须分别返回固定状态，不以布尔假值合并后两者。</p>
 </section>
 <section id="id4">
 <h2>技术规范<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
 <section id="id5">
-<h3>1. 适用范围<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<h3>1. 适用范围与返回状态<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">===</span> <span class="pre">b</span></code> 接受两个 <code class="docutils literal notranslate"><span class="pre">num</span></code> 数学值，等价于采用默认配置的 <code class="docutils literal notranslate"><span class="pre">std.cas.equivalent(a,</span> <span class="pre">b)</span></code>。Lambda 中使用该运算符同样遵循本规范 <a class="footnote-reference brackets" href="#id27" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。</p>
+<p>返回类型为 <code class="docutils literal notranslate"><span class="pre">std.cas.Equivalence</span></code>，具有三个固定状态：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 接受两个 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 操作数，返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code></p></li>
-<li><p>操作数类型校验失败时，在类型检查阶段报错 <code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code>；Lambda 内部使用 <code class="docutils literal notranslate"><span class="pre">===</span></code> 时同样遵循本规范 <a class="footnote-reference brackets" href="#id19" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cas.Equivalent</span></code>：当前假设下已证明两者具有相同定义域，并在该定义域上取相同值</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cas.Different</span></code>：已证明不等价，例如精确常量值不同，或已证明定义域不同</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cas.Unknown</span></code>：当前规则、假设或预算不足以证明上述任一结论</p></li>
 </ul>
-</section>
-<section id="id7">
-<h3>2. 语义定义<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
-<p>对 <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">===</span> <span class="pre">b</span></code> 执行有限证明流程：</p>
-<ol class="arabic simple">
-<li><p>对 <code class="docutils literal notranslate"><span class="pre">a</span></code>、<code class="docutils literal notranslate"><span class="pre">b</span></code> 执行量纲标准化预处理（见第 4.3 节）</p></li>
-<li><p>对预处理后的纯数学核心分别执行受限规范化（见第 4 节）</p></li>
-<li><p>若量纲签名一致且核心结构相同，则返回 <code class="docutils literal notranslate"><span class="pre">true</span></code></p></li>
-<li><p>否则返回 <code class="docutils literal notranslate"><span class="pre">false</span></code></p></li>
-</ol>
-<p>规则：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> 含义为“在当前规则与预算下未能证明等价”，不等价于“数学上必不等价”</p></li>
-<li><p>该定义保证判定过程总能终止</p></li>
-</ul>
+<p>这是标准库固定状态类型，不提供用户定义代数数据类型机制。状态之间的 <code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>。状态不隐式转换为 <code class="docutils literal notranslate"><span class="pre">bool</span></code>，尤其不得把 <code class="docutils literal notranslate"><span class="pre">Unknown</span></code> 当作 <code class="docutils literal notranslate"><span class="pre">Different</span></code>。</p>
+<p>操作数类型不符时诊断 <code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code>。<code class="docutils literal notranslate"><span class="pre">num</span></code> 包含精确数、符号表达式、关系和近似值；比较关系表达式时证明的是关系的数学等价，而不是比较其源码文本 <a class="footnote-reference brackets" href="#id28" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。</p>
 </section>
 <section id="id8">
-<h3>3. 判定边界<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p>根据 Richardson 定理，包含初等函数的恒等式判定采用有限规则集</p></li>
-<li><p>承诺范围限定为可终止性与规则内可靠性（soundness over supported rules）</p></li>
-</ul>
+<h3>2. 证明语义<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<p>证明在当前明确给定的假设下进行：</p>
+<ol class="arabic simple">
+<li><p>检查操作数类型和数学支持域，提取静态量纲签名</p></li>
+<li><p>在同一次查询的共享预算内，对数学核心执行保域规范化</p></li>
+<li><p>若能够证明定义域及取值相同，返回 <code class="docutils literal notranslate"><span class="pre">Equivalent</span></code></p></li>
+<li><p>若能够证明定义域或取值不同，返回 <code class="docutils literal notranslate"><span class="pre">Different</span></code></p></li>
+<li><p>其余情况返回 <code class="docutils literal notranslate"><span class="pre">Unknown</span></code></p></li>
+</ol>
+<p>规范化后结构不同、某条规则未启用、假设缺失或预算耗尽均不能单独作为不等价的证明。根据 Richardson 定理，包含初等函数的恒等式判定不承诺完备；承诺范围为有限预算下的终止性及支持规则的可靠性。</p>
 </section>
 <section id="id9">
-<h3>4. 规范化规则与化简深度<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<h3>3. 结构、关系与等价<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<p>三种操作具有不同用途：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></code> 构造类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的数学等式，不是结构查询</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.cas.same_structure(a,</span> <span class="pre">b)</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>，比较既有数学结构，不执行有限证明 <a class="footnote-reference brackets" href="#id28" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">===</span> <span class="pre">b</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">Equivalence</span></code>，尝试证明数学等价</p></li>
+</ul>
+<p>集合去重、哈希键、规则冲突检测及模式匹配必须递归使用结构相等，不能调用构造关系的 <code class="docutils literal notranslate"><span class="pre">==</span></code>，也不能使用受预算影响的 <code class="docutils literal notranslate"><span class="pre">===</span></code>。证明预算及规则配置不进入结构键。</p>
+</section>
+<section id="id11">
+<h3>4. 规范化规则与定义域<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
 <section id="core">
 <h4>4.1 必选规则集（Core）<a class="headerlink" href="#core" title="链接到此标题。">¶</a></h4>
-<p>1. 常量折叠
-- 有理数与整数的精确化简
-- 代数恒等式：<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">0</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>，<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">1</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>，<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">0</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code>，<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code></p>
-<p>2. 多项式标准形（交换/结合规范化）
-- 对 <code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">*</span></code> 进行交换与结合归一化
-- 同类项合并
-- 有理系数多项式标准化</p>
-<p>3. 分式与幂的基础化简
-- 分式约分（可约分项）
-- 整数幂规则（在安全条件下）</p>
+<p><code class="docutils literal notranslate"><span class="pre">Core</span></code> 包括：</p>
+<ul class="simple">
+<li><p>整数、有理数和支持的精确常量折叠</p></li>
+<li><p>在运算有定义的局部前提下应用 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">0</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>、<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">1</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code> 等恒等式</p></li>
+<li><p>在声明支持的交换代数域中，对加法、乘法进行交换结合规范化、同类项合并和有理系数多项式标准化</p></li>
+<li><p>具有局部可除性、非零及定义性前提的分式约分和整数幂规则</p></li>
+<li><p>虚数单位基础规则 <code class="docutils literal notranslate"><span class="pre">I^2</span> <span class="pre">-&gt;</span> <span class="pre">-1</span></code> <a class="footnote-reference brackets" href="#id29" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></li>
+</ul>
+<p>不得因消去项而丢失定义域限制。例如 <code class="docutils literal notranslate"><span class="pre">x/x</span> <span class="pre">-&gt;</span> <span class="pre">1</span></code> 需要 <code class="docutils literal notranslate"><span class="pre">x</span></code> 非零；<code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">*</span> <span class="pre">(1/x)</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code> 也需要倒数有定义。<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code> 和零乘规则只在被消去子式有定义的局部前提下应用。假设不足时保留原式或返回证明未决，不能以形式约分冒充保域等价。</p>
 </section>
 <section id="extended-profile">
 <h4>4.2 可选规则集（Extended，profile）<a class="headerlink" href="#extended-profile" title="链接到此标题。">¶</a></h4>
-<p>1. Trig-Basic（可选）
-- 基础恒等式：<code class="docutils literal notranslate"><span class="pre">sin(x)^2</span> <span class="pre">+</span> <span class="pre">cos(x)^2</span> <span class="pre">-&gt;</span> <span class="pre">1</span></code>
-- 奇偶性：<code class="docutils literal notranslate"><span class="pre">sin(-x)</span> <span class="pre">-&gt;</span> <span class="pre">-sin(x)</span></code>，<code class="docutils literal notranslate"><span class="pre">cos(-x)</span> <span class="pre">-&gt;</span> <span class="pre">cos(x)</span></code></p>
-<p>2. ExpLog-Basic（可选）
-- 在定义域安全前提下：<code class="docutils literal notranslate"><span class="pre">exp(log(x))</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>
-- 常量级规则：<code class="docutils literal notranslate"><span class="pre">log(1)</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code>，<code class="docutils literal notranslate"><span class="pre">exp(0)</span> <span class="pre">-&gt;</span> <span class="pre">1</span></code></p>
-<p>默认 profile：<code class="docutils literal notranslate"><span class="pre">Core</span></code>。</p>
-</section>
-<section id="canonicalization">
-<h4>4.3 量纲标准化预处理（Canonicalization）<a class="headerlink" href="#canonicalization" title="链接到此标题。">¶</a></h4>
-<p>在进入 <code class="docutils literal notranslate"><span class="pre">===</span></code> 核心化简前，必须执行“量纲提取”步骤：</p>
+<p>可选 profile 在 <code class="docutils literal notranslate"><span class="pre">Core</span></code> 上增加规则：</p>
 <ul class="simple">
-<li><p>将表达式中的量纲标签提取并合并到最外层</p></li>
-<li><p>纯数学核心与量纲签名分离后再进入重写系统</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Trig-Basic</span></code>：适用域内的 <code class="docutils literal notranslate"><span class="pre">sin(x)^2</span> <span class="pre">+</span> <span class="pre">cos(x)^2</span> <span class="pre">-&gt;</span> <span class="pre">1</span></code> 及三角函数奇偶性</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExpLog-Basic</span></code>：适用主值和定义域内的 <code class="docutils literal notranslate"><span class="pre">exp(log(x))</span> <span class="pre">-&gt;</span> <span class="pre">x</span></code>，以及 <code class="docutils literal notranslate"><span class="pre">log(1)</span> <span class="pre">-&gt;</span> <span class="pre">0</span></code>、<code class="docutils literal notranslate"><span class="pre">exp(0)</span> <span class="pre">-&gt;</span> <span class="pre">1</span></code></p></li>
 </ul>
-<p>示意：</p>
-<ul class="simple">
-<li><p>输入：<code class="docutils literal notranslate"><span class="pre">x&lt;m&gt;</span> <span class="pre">*</span> <span class="pre">y&lt;s&gt;</span></code></p></li>
-<li><p>预处理：<code class="docutils literal notranslate"><span class="pre">(x</span> <span class="pre">*</span> <span class="pre">y)&lt;m*s&gt;</span></code></p></li>
-</ul>
-<p>判定规则：</p>
-<ul class="simple">
-<li><p>量纲签名一致时进入核心比较；其他情况结果为 <code class="docutils literal notranslate"><span class="pre">false</span></code></p></li>
-</ul>
-<p>作用：</p>
-<ul class="simple">
-<li><p>降低符号重写图规模</p></li>
-<li><p>减少 <code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code> 发生概率</p></li>
-</ul>
-</section>
-</section>
-<section id="id10">
-<h3>5. 预算与终止策略<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
-<p>为保证终止，<code class="docutils literal notranslate"><span class="pre">===</span></code> 必须设置预算上限：</p>
-<ul class="simple">
-<li><p>最大重写步数：<code class="docutils literal notranslate"><span class="pre">maxRewriteSteps</span> <span class="pre">=</span> <span class="pre">256</span></code></p></li>
-<li><p>最大递归深度：<code class="docutils literal notranslate"><span class="pre">maxRewriteDepth</span> <span class="pre">=</span> <span class="pre">64</span></code></p></li>
-<li><p>最大节点增长倍数：<code class="docutils literal notranslate"><span class="pre">maxNodeGrowthFactor</span> <span class="pre">=</span> <span class="pre">4</span></code></p></li>
-</ul>
-<p>任一预算耗尽即停止化简并返回 <code class="docutils literal notranslate"><span class="pre">false</span></code> （可附带诊断标记 <code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code> ）。</p>
-</section>
-<section id="id11">
-<h3>6. 决策流程<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>eqv(a, b):
-  if type(a) != Expr or type(b) != Expr: type error
-  (ua, ca) = canonicalize_units(a)
-  (ub, cb) = canonicalize_units(b)
-  if ua != ub: return false
-  na = normalize(ca, profile, budget)
-  nb = normalize(cb, profile, budget)
-  if structurally_equal(na, nb): return true
-  else: return false
-</pre></div>
-</div>
-</section>
-<section id="id12">
-<h3>7. 示例<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
-<section id="id13">
-<h4>7.1 Core 下必然成立<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h4>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-x + 0 === x                       # true
-x^2 + 2*x + 1 === (x + 1)^2       # true
-</pre></div>
-</div>
+<p>复对数、平方根和非整数幂遵循 LSR-010 的单值主值约定 <a class="footnote-reference brackets" href="#id29" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>；不得无条件使用跨分支的对数或幂恒等式。默认 profile 为 <code class="docutils literal notranslate"><span class="pre">Core</span></code>。</p>
 </section>
 <section id="id14">
-<h4>7.2 Core 下不保证成立<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h4>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sin(pi/4)^2 + cos(pi/4)^2 === 1   # 在 Core profile 下通常为 false
-</pre></div>
-</div>
-</section>
-<section id="trig-basic">
-<h4>7.3 开启 Trig-Basic 后可成立<a class="headerlink" href="#trig-basic" title="链接到此标题。">¶</a></h4>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># 假设 profile = Trig-Basic
-sin(pi/4)^2 + cos(pi/4)^2 === 1   # true
-</pre></div>
-</div>
-</section>
+<h4>4.3 保域与形式代数入口<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">std.cas.simplify</span></code> 与 <code class="docutils literal notranslate"><span class="pre">std.cas.simplify_formal</span></code> 均接收 <code class="docutils literal notranslate"><span class="pre">num</span></code> 并返回 <code class="docutils literal notranslate"><span class="pre">num</span></code>：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">simplify</span></code> 默认保域，仅在局部成立条件满足时重写</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simplify_formal</span></code> 显式采用其声明支持的形式代数域，例如有理函数域中按形式非零元约分；该接口必须说明支持域，不接受任意数学对象的无条件消去</p></li>
+</ul>
+<p>形式化简的结果不保证保留原表达式每个点上的定义域。调用形式入口不改变 <code class="docutils literal notranslate"><span class="pre">===</span></code> 的保域契约，也不设置全局模式；原表达式不能仅凭形式结果相同就判为 <code class="docutils literal notranslate"><span class="pre">Equivalent</span></code>。</p>
 </section>
 <section id="id15">
-<h3>8. 配置接口<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">set_eqv_profile(&quot;Core&quot;</span> <span class="pre">|</span> <span class="pre">&quot;Trig-Basic&quot;</span> <span class="pre">|</span> <span class="pre">&quot;ExpLog-Basic&quot;)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set_eqv_budget(steps,</span> <span class="pre">depth,</span> <span class="pre">growth)</span></code></p></li>
-</ul>
-<p>未设置时采用默认值：<code class="docutils literal notranslate"><span class="pre">Core</span></code> + 第 5 节预算。</p>
+<h4>4.4 量纲标准化<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h4>
+<p>证明前按核心语言及 LSR-008 的静态量纲规则提取并合并量纲标签，将数学核心与量纲签名分离 <a class="footnote-reference brackets" href="#id26" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id30" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。该处理不得擦除量纲、使非法量纲运算合法，或从运行期裸数恢复已被显式剥离的信息。</p>
+<p>量纲签名一致时继续比较核心；对两个合法数学值，已知量纲不一致可证明不等价。量纲运算本身非法时走类型或数学错误路径，不以 <code class="docutils literal notranslate"><span class="pre">Unknown</span></code> 掩盖。近似工作精度不是量纲的一部分。</p>
 </section>
-<section id="id16">
-<h3>9. 错误与诊断<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code>: <code class="docutils literal notranslate"><span class="pre">===</span></code> 作用于非 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code>: 达到预算上限，停止证明</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">EqvRuleDisabled</span></code>: 依赖的规则集未启用（可选诊断）</p></li>
-</ul>
 </section>
-<section id="id17">
-<h3>10. 引用<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<section id="id18">
+<h3>5. 近似值的比较<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
+<p>精确值和近似值按各自现有存储数值无损比较，不先将精确值舍入到近似值精度，也不引入隐式容差。两个近似值同样按现有表示值比较；所得结论只关于这些表示值，不证明近似前原式的相等或不等。</p>
+<p>精确数值叶的比较不依赖小整数、大整数、有理数等内部表示。近似节点的结构查询还须区分近似类别、目标工作精度等语义结构，并与精确叶区别。结构不同不妨碍在表示值确实相等时证明数值等价。</p>
+<p>提升工作精度不能恢复旧输入已经丢失的精度。证明和化简须保留近似标记与精度信息，不得把打印的小数重新解释为精确数并当作原数学对象。需要容差的应用应使用另行声明的查询，不得改变 <code class="docutils literal notranslate"><span class="pre">===</span></code> 的含义。</p>
+</section>
+<section id="id19">
+<h3>6. 局部预算与终止策略<a class="headerlink" href="#id19" title="链接到此标题。">¶</a></h3>
+<p>每次查询使用独立预算；该次查询内的预处理、规范化和证明子查询共享预算，不得通过递归调用重新获得额度。默认上限为：</p>
+<ul class="simple">
+<li><p>最大重写步数：<code class="docutils literal notranslate"><span class="pre">steps</span> <span class="pre">=</span> <span class="pre">256</span></code></p></li>
+<li><p>最大递归深度：<code class="docutils literal notranslate"><span class="pre">depth</span> <span class="pre">=</span> <span class="pre">64</span></code></p></li>
+<li><p>最大节点增长倍数：<code class="docutils literal notranslate"><span class="pre">growth</span> <span class="pre">=</span> <span class="pre">4</span></code></p></li>
+</ul>
+<p>某项预算耗尽且尚无证明时返回 <code class="docutils literal notranslate"><span class="pre">cas.Unknown</span></code>，可附带 <code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code> 诊断。取消、内存故障及其他运行时错误继续按错误通道传播，不能统称为预算未决。局部预算不影响其他查询，也不改变结构相等关系。</p>
+</section>
+<section id="id20">
+<h3>7. 配置接口<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">std.cas.equivalent</span></code> 提供两种调用形式，均返回 <code class="docutils literal notranslate"><span class="pre">Equivalence</span></code>：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func equivalent(a num, b num) -&gt; Equivalence
+func equivalent(a num, b num, profile text, steps int, depth int, growth int) -&gt; Equivalence
+</pre></div>
+</div>
+<p>二参形式采用以下默认配置；显式配置形式必须提供全部四项配置，不允许任意省略。<code class="docutils literal notranslate"><span class="pre">===</span></code> 使用二参形式的默认配置。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>值约束或类型</p></th>
+<th class="head"><p>二参形式的配置</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">profile</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">text</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;Core&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">steps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code>，正整数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">256</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">depth</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code>，正整数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">64</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">growth</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code>，正整数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">int</span></code> 是 <code class="docutils literal notranslate"><span class="pre">num</span></code> 上的值约束，不是另一基本类型。预算参数还须能够具体求值。显式配置形式可使用普通具名实参，按普通调用规则绑定与校验 <a class="footnote-reference brackets" href="#id26" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>；未知 profile 或非法预算报 <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>，不得静默选用另一配置。配置只作用于本次查询，不使用无作用域的可变全局 setter 改写其他调用的行为。</p>
+</section>
+<section id="id22">
+<h3>8. 示例<a class="headerlink" href="#id22" title="链接到此标题。">¶</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
+
+sym x
+let identity = (x + 0) === x
+let polynomial = (x^2 + 2*x + 1) === (x + 1)^2
+let different = 1 === 2
+let unresolved = (x/x) === 1
+let proved = identity == cas.Equivalent
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">identity</span></code>、<code class="docutils literal notranslate"><span class="pre">polynomial</span></code> 为 <code class="docutils literal notranslate"><span class="pre">cas.Equivalent</span></code>，<code class="docutils literal notranslate"><span class="pre">different</span></code> 为 <code class="docutils literal notranslate"><span class="pre">cas.Different</span></code>。没有 <code class="docutils literal notranslate"><span class="pre">x</span></code> 非零前提时，不得仅凭约分把 <code class="docutils literal notranslate"><span class="pre">unresolved</span></code> 判为 <code class="docutils literal notranslate"><span class="pre">cas.Equivalent</span></code>：若能证明原式与常量的定义域不同，则为 <code class="docutils literal notranslate"><span class="pre">cas.Different</span></code>；否则为 <code class="docutils literal notranslate"><span class="pre">cas.Unknown</span></code>。<code class="docutils literal notranslate"><span class="pre">proved</span></code> 是普通 <code class="docutils literal notranslate"><span class="pre">bool</span></code>。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
+use std.math.{sin, cos}
+
+sym x
+let basic = cas.equivalent(sin(x)^2 + cos(x)^2, 1)
+let trig = cas.equivalent(sin(x)^2 + cos(x)^2, 1,
+    profile="Trig-Basic", steps=256, depth=64, growth=4)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Core</span></code> 不要求证明该三角恒等式；若没有其他适用证明，<code class="docutils literal notranslate"><span class="pre">basic</span></code> 为 <code class="docutils literal notranslate"><span class="pre">cas.Unknown</span></code>，而不是 <code class="docutils literal notranslate"><span class="pre">cas.Different</span></code>。在该规则的支持域内 <code class="docutils literal notranslate"><span class="pre">trig</span></code> 为 <code class="docutils literal notranslate"><span class="pre">cas.Equivalent</span></code>。</p>
+</section>
+<section id="id23">
+<h3>9. 错误与诊断<a class="headerlink" href="#id23" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">EqvTypeMismatch</span></code>：操作数不是受支持的 <code class="docutils literal notranslate"><span class="pre">num</span></code> 数学值</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EqvBudgetExceeded</span></code>：预算耗尽，证明未决的可选诊断，不表示不等价</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EqvRuleDisabled</span></code>：所需规则未启用的可选诊断</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>：查询配置无效</p></li>
+</ul>
+<p>类型、定义域和运行时故障按核心语言及 LSR-018 的错误通道传播 <a class="footnote-reference brackets" href="#id31" id="id24" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>。固定状态只表达正常完成的证明结论，不替代错误处理。</p>
+</section>
+<section id="id25">
+<h3>10. 引用<a class="headerlink" href="#id25" title="链接到此标题。">¶</a></h3>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id18" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">1</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 声明 <code class="docutils literal notranslate"><span class="pre">===</span></code> 存在并引用本规范作为唯一语义来源</p>
+<aside class="footnote brackets" id="id26" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id16">2</a>,<a role="doc-backlink" href="#id21">3</a>)</span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 定义数学基本类型、调用及运算符</p>
 </aside>
-<aside class="footnote brackets" id="id19" role="doc-footnote">
+<aside class="footnote brackets" id="id27" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">2</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-006.html"><span class="doc">LSR-006 - Lambda 表达式与类型推导规范</span></a> - Lambda 中若出现 <code class="docutils literal notranslate"><span class="pre">===</span></code>，同样遵循本规范</p>
+<p><a class="reference internal" href="LSR-006.html"><span class="doc">LSR-006 - Lambda 表达式与类型推导规范</span></a> - Lambda 中使用数学等价查询</p>
+</aside>
+<aside class="footnote brackets" id="id28" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id10">2</a>)</span>
+<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - 数学值与符号操作规范</span></a> - 定义关系、结构相等和符号操作</p>
+</aside>
+<aside class="footnote brackets" id="id29" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id12">1</a>,<a role="doc-backlink" href="#id13">2</a>)</span>
+<p><a class="reference internal" href="LSR-010.html"><span class="doc">LSR-010 - 虚数单位与复数规范</span></a> - 定义虚数单位、复数主值及顺序限制</p>
+</aside>
+<aside class="footnote brackets" id="id30" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id17">5</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-008.html"><span class="doc">LSR-008 - 量纲剥离（Unit Stripping）规范</span></a> - 定义量纲剥离及其显式转换边界</p>
+</aside>
+<aside class="footnote brackets" id="id31" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id24">6</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 定义错误传播</p>
 </aside>
 </aside>
 </section>
@@ -256,7 +292,7 @@ sin(pi/4)^2 + cos(pi/4)^2 === 1   # true
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -286,7 +322,7 @@ sin(pi/4)^2 + cos(pi/4)^2 === 1   # true
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

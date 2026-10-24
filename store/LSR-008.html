@@ -107,7 +107,7 @@ expr as scalar
 <section id="as-scalar">
 <h4>3.3 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> 语义<a class="headerlink" href="#as-scalar" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">expr</span> <span class="pre">as</span> <span class="pre">scalar</span></code> 保留当前显示刻度，仅移除单位标签</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expr</span> <span class="pre">as</span> <span class="pre">scalar</span></code> 保留当前单位刻度，仅移除静态单位签名；刻度不由显示格式决定</p></li>
 <li><p>例：<code class="docutils literal notranslate"><span class="pre">10&lt;km&gt;</span> <span class="pre">as</span> <span class="pre">scalar</span></code> 结果为 <code class="docutils literal notranslate"><span class="pre">10</span></code></p></li>
 <li><p>适用于符号推导或公式整理，保持当前刻度，降低系数膨胀</p></li>
 </ul>
@@ -115,17 +115,22 @@ expr as scalar
 <section id="lsr-000-1">
 <h4>3.4 编译期降级（与 LSR-000 <a class="footnote-reference brackets" href="#id21" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 对齐）<a class="headerlink" href="#lsr-000-1" title="链接到此标题。">¶</a></h4>
 <ul class="simple">
-<li><p>量纲在编译期追踪，运行期普通数值不携带单位标签</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 与 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> 在 Codegen 前应降级为纯数值表达式</p></li>
+<li><p>核心量纲在编译期追踪；运行期裸 <code class="docutils literal notranslate"><span class="pre">num</span></code> 不携带可供恢复量纲的标签</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 与 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> 在代码生成前落实为相应的数值缩放和静态量纲移除；符号系数仍可保留为未求值的 <code class="docutils literal notranslate"><span class="pre">num</span></code> 表达式</p></li>
+<li><p>单位比例默认为精确数学值，剥离本身不调用 <code class="docutils literal notranslate"><span class="pre">approximate</span></code>。已有近似值参与缩放时遵循局部近似传播，保留近似标记和工作精度；量纲与近似精度互不混淆</p></li>
+<li><p>动态单位文本、运行期单位标签和异量纲动态包装属于可选扩展，不是核心剥离语义的前提</p></li>
+<li><p>不同量纲的值可用静态元组组合；剥离后的裸数不能反推出原单位或量纲</p></li>
 </ul>
 </section>
 </section>
 <section id="id13">
 <h3>4. 类型规则<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p>输入必须是带量纲或无量纲的数值类型（<code class="docutils literal notranslate"><span class="pre">num</span></code> 及其子层级）</p></li>
-<li><p>输出类型为无量纲 <code class="docutils literal notranslate"><span class="pre">num</span></code></p></li>
-<li><p>对非数值类型（如 <code class="docutils literal notranslate"><span class="pre">vector</span></code>, <code class="docutils literal notranslate"><span class="pre">matrix</span></code>, <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">bool</span></code> ）使用 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 或 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code>，编译报错 <code class="docutils literal notranslate"><span class="pre">UnitStripTypeMismatch</span></code></p></li>
+<li><p>输入必须是带静态量纲或无量纲的标量数学值，基本静态类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；精确数、符号值与近似值采用同一规则</p></li>
+<li><p>输出为无量纲 <code class="docutils literal notranslate"><span class="pre">num</span></code>；<code class="docutils literal notranslate"><span class="pre">scalar</span></code> 是剥离语法关键字，不是另一基本数学类型</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">frac</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 仅为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的值约束，剥离不会仅因输入满足某个约束而改变基本类型；缩放后的值需重新满足使用位置要求的约束</p></li>
+<li><p>非标量值（包括向量、矩阵、集合和关系）不属于本规范的剥离支持域；容器若需剥离，应按相应接口显式处理元素</p></li>
+<li><p>对 <code class="docutils literal notranslate"><span class="pre">vector</span></code>、<code class="docutils literal notranslate"><span class="pre">matrix</span></code>、<code class="docutils literal notranslate"><span class="pre">table</span></code>、<code class="docutils literal notranslate"><span class="pre">set</span></code>、<code class="docutils literal notranslate"><span class="pre">text</span></code>、<code class="docutils literal notranslate"><span class="pre">bool</span></code> 等不支持的输入使用 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 或 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code>，诊断 <code class="docutils literal notranslate"><span class="pre">UnitStripTypeMismatch</span></code></p></li>
 </ul>
 </section>
 <section id="id14">
@@ -138,10 +143,11 @@ let raw = dist as num
 let r = c_ext_fft(raw)
 </pre></div>
 </div>
+<p>剥离只处理量纲，不选择外部数值表示。FFI 中的 <code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">frac</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 标注还须按扩展接口规范选择固定 C ABI 表示，并在调用前完成具体求值、表示映射和范围检查；未求值符号式不能直接作为 C 数值传入。</p>
 </section>
 <section id="api">
 <h4>5.2 位运算/底层数值 API<a class="headerlink" href="#api" title="链接到此标题。">¶</a></h4>
-<p>位运算和底层原语仅接受无量纲数值；带量纲值必须先 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> ：</p>
+<p>位运算和底层原语要求无量纲数值，并另行检查各自的整数、可具体求值及表示范围约束；带量纲值必须先显式剥离：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let t = 8&lt;s&gt;
 let bits = bit_and((t as num), 3)
 </pre></div>
@@ -153,7 +159,7 @@ let bits = bit_and((t as num), 3)
 <h3>6. 安全约束与错误模型<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">UnitStripTypeMismatch</span></code>: 作用于非数值类型</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">UnitStripOverflow</span></code>: 剥离过程发生表示范围溢出（实现相关）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitStripOverflow</span></code>: 缩放时超出所选数值表示的支持范围；不得仅因精确整数超出机器整数范围而丢失精确性</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">UnitStripInvalid</span></code>: 单位转换阶段失败（例无效目标单位）</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">UnitStripLegacySyntax</span></code>: 使用了废弃语法 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num&lt;_&gt;</span></code></p></li>
 </ul>
@@ -161,6 +167,7 @@ let bits = bit_and((t as num), 3)
 <ul class="simple">
 <li><p>单位维度检查由上游运算与 <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">&lt;unit&gt;</span></code> 阶段完成</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 会按 SI 基准缩放后再剥离，<code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">scalar</span></code> 仅剥离标签</p></li>
+<li><p>单位不相容或操作确定无定义时沿错误路径传播；符号系数尚不能求值时保留合法的缩放表达式，不自动近似或恢复已擦除的信息</p></li>
 </ul>
 </section>
 <section id="id18">
@@ -246,7 +253,7 @@ func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -276,7 +283,7 @@ func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

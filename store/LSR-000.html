@@ -39,10 +39,10 @@
 <h1>LSR 000 - Lamina 核心语言规范（草案）<a class="headerlink" href="#lsr-000-lamina" title="链接到此标题。">¶</a></h1>
 <section id="id1">
 <h2>1. 语言定位<a class="headerlink" href="#id1" title="链接到此标题。">¶</a></h2>
-<p>Lamina 是静态强类型、表达式导向的数学 DSL/脚本语言，支持单位系统、代数表达和局部类型推导。</p>
-<p>Lamina的主要核心为静态、模块化与数学。
-一个 <code class="code docutils literal notranslate"><span class="pre">.lm</span></code> 文件就是一个模块。
-一个模块可以绑定一个动态库 <a class="footnote-reference brackets" href="#id57" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。</p>
+<p>Lamina 是静态强类型、表达式导向的数学 DSL/脚本语言，支持单位系统、符号运算和局部类型推导。</p>
+<p>数学运算采用 Symbolic-First：默认保留精确数值或精确符号表达式，并允许未求值结果。显式调用 <code class="docutils literal notranslate"><span class="pre">approximate</span></code> 才进入近似求值；已有近似值参与运算时，按第 11 节局部传播。</p>
+<p>数学值统一使用基本静态类型 <code class="docutils literal notranslate"><span class="pre">num</span></code>。整数、有理数、复数、符号式和近似数可以采用不同内部表示，编译器可为已知值选择专门化实现。值约束、量纲和容器形状继续承担各自的检查职责。</p>
+<p>一个 <code class="docutils literal notranslate"><span class="pre">.lm</span></code> 文件就是一个模块。模块可绑定动态库 <a class="footnote-reference brackets" href="#id63" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>；普通数学调用遵循本规范的精确语义，原生数值边界按声明显式转换。</p>
 </section>
 <section id="id3">
 <h2>2. 核心关键字<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
@@ -52,7 +52,7 @@
 </section>
 <section id="id4">
 <h2>3. 运算符总览<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h2>
-<p>Lamina 运算符 token、优先级和结合性由 LSR-014 定义 <a class="footnote-reference brackets" href="#id63" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>。本节保留核心语言中常用运算符的总览。</p>
+<p>Lamina 运算符 token、优先级和结合性由 LSR-014 定义 <a class="footnote-reference brackets" href="#id69" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>。本节保留核心语言中常用运算符的总览。</p>
 <section id="id6">
 <h3>3.1 基础算术与优先级<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
@@ -69,42 +69,35 @@
 <section id="id7">
 <h3>3.2 逻辑与比较<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p>标量比较： <code class="code docutils literal notranslate"><span class="pre">==</span></code> , <code class="code docutils literal notranslate"><span class="pre">!=</span></code> , <code class="code docutils literal notranslate"><span class="pre">&lt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">&lt;=</span></code> , <code class="code docutils literal notranslate"><span class="pre">&gt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">&gt;=</span></code></p></li>
-<li><p>广播比较： <code class="code docutils literal notranslate"><span class="pre">.==</span></code> , <code class="code docutils literal notranslate"><span class="pre">.!=</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&lt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&lt;=</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&gt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></li>
-<li><p>逻辑： <code class="code docutils literal notranslate"><span class="pre">and</span></code> , <code class="code docutils literal notranslate"><span class="pre">or</span></code> , <code class="code docutils literal notranslate"><span class="pre">not|!</span></code></p></li>
-<li><p>规则：逻辑运算优先级低于算术运算</p></li>
-<li><p>规则：未加点的比较仅用于标量； <code class="code docutils literal notranslate"><span class="pre">vector</span></code> / <code class="code docutils literal notranslate"><span class="pre">matrix</span></code> 比较必须使用加点算子</p></li>
-<li><p>优先级（高到低， 低于3.1运算符）：</p>
-<ol class="arabic simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">not</span></code> , <code class="code docutils literal notranslate"><span class="pre">!</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">or</span></code> , <code class="code docutils literal notranslate"><span class="pre">and</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">==</span></code> , <code class="code docutils literal notranslate"><span class="pre">!=</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">&gt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">&lt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">&gt;=</span></code> , <code class="code docutils literal notranslate"><span class="pre">&lt;=</span></code></p></li>
-</ol>
-</li>
-</ul>
-</section>
-<section id="id8">
-<h3>3.3 赋值与绑定<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p>赋值： <code class="code docutils literal notranslate"><span class="pre">=</span></code></p></li>
-<li><p>绑定： <code class="code docutils literal notranslate"><span class="pre">let</span></code> （只读）， <code class="code docutils literal notranslate"><span class="pre">var</span></code> （可变）</p></li>
-<li><p>符号声明： <code class="code docutils literal notranslate"><span class="pre">sym</span></code> （类型固定为 <code class="code docutils literal notranslate"><span class="pre">Expr</span></code> ）</p></li>
-<li><p>优先级：最低</p></li>
+<li><p>数学关系：<code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>，构造 <code class="docutils literal notranslate"><span class="pre">num</span></code> 关系值</p></li>
+<li><p>广播关系：<code class="docutils literal notranslate"><span class="pre">.==</span></code>、<code class="docutils literal notranslate"><span class="pre">.!=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">.&gt;=</span></code>，逐元素构造关系</p></li>
+<li><p>普通 <code class="docutils literal notranslate"><span class="pre">bool</span></code> 上的 <code class="docutils literal notranslate"><span class="pre">and</span></code>、<code class="docutils literal notranslate"><span class="pre">or</span></code>、<code class="docutils literal notranslate"><span class="pre">not</span></code>、<code class="docutils literal notranslate"><span class="pre">!</span></code> 执行布尔逻辑；数学关系上的对应运算构造逻辑表达式</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">if</span></code>、<code class="docutils literal notranslate"><span class="pre">while</span></code> 和守卫位置对关系执行判真；未决沿错误路径传播，普通数字不作真假转换</p></li>
+<li><p>数学容器的整体相等与逐元素关系分别使用未加点和加点运算符；一般复数或矩阵不具有默认的实数顺序</p></li>
+<li><p>优先级统一按 LSR-014 <a class="footnote-reference brackets" href="#id69" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a>：幂高于一元运算，比较高于 <code class="docutils literal notranslate"><span class="pre">and</span></code>，<code class="docutils literal notranslate"><span class="pre">and</span></code> 高于 <code class="docutils literal notranslate"><span class="pre">or</span></code>；比较采用非链式二元形式</p></li>
 </ul>
 </section>
 <section id="id9">
-<h3>3.4 矩阵与向量运算符<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<h3>3.3 赋值与绑定<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p>赋值： <code class="code docutils literal notranslate"><span class="pre">=</span></code></p></li>
+<li><p>绑定： <code class="code docutils literal notranslate"><span class="pre">let</span></code> （只读）， <code class="code docutils literal notranslate"><span class="pre">var</span></code> （可变）</p></li>
+<li><p>符号声明：<code class="docutils literal notranslate"><span class="pre">sym</span></code>，基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code>，默认表示复数标量</p></li>
+<li><p>优先级：最低</p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>3.4 矩阵与向量运算符<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>线性代数： <code class="code docutils literal notranslate"><span class="pre">*</span></code> , <code class="code docutils literal notranslate"><span class="pre">\</span></code> , <code class="code docutils literal notranslate"><span class="pre">/</span></code> , <code class="code docutils literal notranslate"><span class="pre">^</span></code></p></li>
 <li><p>元素广播： <code class="code docutils literal notranslate"><span class="pre">.*</span></code> , <code class="code docutils literal notranslate"><span class="pre">./</span></code> , <code class="code docutils literal notranslate"><span class="pre">.+</span></code> , <code class="code docutils literal notranslate"><span class="pre">.-</span></code> , <code class="code docutils literal notranslate"><span class="pre">.^</span></code></p></li>
 <li><p>关系广播： <code class="code docutils literal notranslate"><span class="pre">.==</span></code> , <code class="code docutils literal notranslate"><span class="pre">.!=</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&lt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&lt;=</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&gt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></li>
 <li><p>转置： <code class="code docutils literal notranslate"><span class="pre">'</span></code> （共轭转置）， <code class="code docutils literal notranslate"><span class="pre">.'</span></code> （非共轭转置）</p></li>
-<li><p>优先级： 线性代数暂定，元素广播同3.1,关系广播同3.2</p></li>
+<li><p>优先级和结合性统一由 LSR-014 <a class="footnote-reference brackets" href="#id69" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></a> 定义；矩阵幂仍须满足方阵和整数指数条件</p></li>
 </ul>
 </section>
-<section id="id10">
-<h3>3.5 集合相关运算符<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<section id="id12">
+<h3>3.5 集合相关运算符<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>从属： <code class="code docutils literal notranslate"><span class="pre">in</span></code> , <code class="code docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code></p></li>
 <li><p>子集： <code class="code docutils literal notranslate"><span class="pre">subset</span></code></p></li>
@@ -112,23 +105,22 @@
 <li><p>对称差： <code class="code docutils literal notranslate"><span class="pre">xor</span></code></p></li>
 </ul>
 </section>
-<section id="id11">
-<h3>3.6 函数与流程运算符<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<section id="id13">
+<h3>3.6 函数与流程运算符<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>Lambda 箭头： <code class="code docutils literal notranslate"><span class="pre">-&gt;</span></code></p></li>
-<li><p>CAS 替换规则： <code class="code docutils literal notranslate"><span class="pre">=&gt;</span></code> （由 LSR-016 <a class="footnote-reference brackets" href="#id64" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> 定义）</p></li>
+<li><p>CAS 替换规则： <code class="code docutils literal notranslate"><span class="pre">=&gt;</span></code> （由 LSR-016 <a class="footnote-reference brackets" href="#id70" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> 定义）</p></li>
 <li><p>管道： <code class="code docutils literal notranslate"><span class="pre">|&gt;</span></code></p></li>
 <li><p>成员访问： <code class="code docutils literal notranslate"><span class="pre">.</span></code></p></li>
 </ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># 管道符是语法糖
-let a = b |&gt; foo; # let a = foo(b);
-# `.` 左边不是mod, 且右边为方法调用时,也是语法糖
-let a = b.m1(); # let a = (typeof b).m1(b);
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let first = value |&gt; transform
+let second = value |&gt; combine(extra)
 </pre></div>
 </div>
+<p>管道分别降级为 <code class="docutils literal notranslate"><span class="pre">transform(value)</span></code> 与 <code class="docutils literal notranslate"><span class="pre">combine(value,</span> <span class="pre">extra)</span></code>。左操作数先求值一次，其余实参按源码顺序求值。普通方法调用沿用声明的成员解析规则。</p>
 </section>
-<section id="id13">
-<h3>3.7 运算符分派与歧义约束<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<section id="id15">
+<h3>3.7 运算符分派与歧义约束<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>运算符</p></th>
@@ -154,7 +146,7 @@ let a = b.m1(); # let a = (typeof b).m1(b);
 <td><p>左值必须是矩阵，右值可用于右除，否则报错</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">^</span></code></p></td>
-<td><p><code class="code docutils literal notranslate"><span class="pre">num</span></code> / <code class="code docutils literal notranslate"><span class="pre">Expr</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">num</span></code> 标量</p></td>
 <td><p>幂运算</p></td>
 <td><p>集合对称差使用 <code class="code docutils literal notranslate"><span class="pre">xor</span></code></p></td>
 </tr>
@@ -168,50 +160,56 @@ let a = b.m1(); # let a = (typeof b).m1(b);
 <td><p>集合对称差</p></td>
 <td><p>集合对称差统一使用 <code class="code docutils literal notranslate"><span class="pre">xor</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">&lt;</span></code> <code class="code docutils literal notranslate"><span class="pre">&lt;=</span></code> <code class="code docutils literal notranslate"><span class="pre">&gt;</span></code> <code class="code docutils literal notranslate"><span class="pre">&gt;=</span></code> <code class="code docutils literal notranslate"><span class="pre">==</span></code> <code class="code docutils literal notranslate"><span class="pre">!=</span></code></p></td>
-<td><p>标量（ <code class="code docutils literal notranslate"><span class="pre">num</span></code> / <code class="code docutils literal notranslate"><span class="pre">complex</span></code> / <code class="code docutils literal notranslate"><span class="pre">text</span></code> / <code class="code docutils literal notranslate"><span class="pre">bool</span></code> ）</p></td>
-<td><p>标量关系比较</p></td>
-<td><p>操作数为 <code class="code docutils literal notranslate"><span class="pre">vector</span></code> / <code class="code docutils literal notranslate"><span class="pre">matrix</span></code> 时编译报错，要求使用加点比较</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">num</span></code> 及数学容器</p></td>
+<td><p>构造整体相等或不等关系</p></td>
+<td><p>结构比较使用 <code class="docutils literal notranslate"><span class="pre">std.cas.same_structure</span></code>；普通布尔、文本、元组等按各自契约比较</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">.*</span></code> <code class="code docutils literal notranslate"><span class="pre">./</span></code> <code class="code docutils literal notranslate"><span class="pre">.+</span></code> <code class="code docutils literal notranslate"><span class="pre">.-</span></code> <code class="code docutils literal notranslate"><span class="pre">.^</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></td>
+<td><p>满足相应顺序支持域的标量</p></td>
+<td><p>构造顺序关系</p></td>
+<td><p>实数顺序须满足实性；矩阵和向量的逐元素顺序使用加点算子</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">.*</span></code> <code class="code docutils literal notranslate"><span class="pre">./</span></code> <code class="code docutils literal notranslate"><span class="pre">.+</span></code> <code class="code docutils literal notranslate"><span class="pre">.-</span></code> <code class="code docutils literal notranslate"><span class="pre">.^</span></code></p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">vector</span></code> / <code class="code docutils literal notranslate"><span class="pre">matrix</span></code> 与标量或同形状容器</p></td>
 <td><p>元素级广播 / 哈达玛运算</p></td>
 <td><p>维度不兼容报错</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">.==</span></code> <code class="code docutils literal notranslate"><span class="pre">.!=</span></code> <code class="code docutils literal notranslate"><span class="pre">.&lt;</span></code> <code class="code docutils literal notranslate"><span class="pre">.&lt;=</span></code> <code class="code docutils literal notranslate"><span class="pre">.&gt;</span></code> <code class="code docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">.==</span></code> <code class="code docutils literal notranslate"><span class="pre">.!=</span></code> <code class="code docutils literal notranslate"><span class="pre">.&lt;</span></code> <code class="code docutils literal notranslate"><span class="pre">.&lt;=</span></code> <code class="code docutils literal notranslate"><span class="pre">.&gt;</span></code> <code class="code docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">vector</span></code> / <code class="code docutils literal notranslate"><span class="pre">matrix</span></code> 与标量或同形状容器</p></td>
 <td><p>元素级关系广播</p></td>
-<td><p>返回同形状 <code class="code docutils literal notranslate"><span class="pre">vector&lt;bool&gt;</span></code> / <code class="code docutils literal notranslate"><span class="pre">matrix&lt;bool&gt;</span></code> ，维度不兼容报错</p></td>
+<td><p>返回同形状 <code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code> / <code class="docutils literal notranslate"><span class="pre">matrix&lt;num&gt;</span></code> 关系容器，维度不兼容报错</p></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="id14">
-<h3>3.8 一元运算符<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
-</section>
-</section>
-<section id="id15">
-<h2>4. 变量、类型与推导<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h2>
 <section id="id16">
-<h3>4.1 类型系统<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
-<p>具备自底向上类型推导，多数情况推荐手动标注类型</p>
+<h3>3.8 一元运算符<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<p>一元 <code class="docutils literal notranslate"><span class="pre">+</span></code>、<code class="docutils literal notranslate"><span class="pre">-</span></code> 保持数学值的基本类型 <code class="docutils literal notranslate"><span class="pre">num</span></code>。幂先于一元负号结合，因此 <code class="docutils literal notranslate"><span class="pre">-2^2</span></code> 表示 <code class="docutils literal notranslate"><span class="pre">-(2^2)</span></code>，<code class="docutils literal notranslate"><span class="pre">(-2)^2</span></code> 以负数为底数。逻辑非对数学关系构造否定，对普通 <code class="docutils literal notranslate"><span class="pre">bool</span></code> 取布尔反。</p>
+</section>
 </section>
 <section id="id17">
-<h3>4.2 局部类型推导规则<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<h2>4. 变量、类型与推导<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h2>
+<section id="id18">
+<h3>4.1 类型系统<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
+<p>局部表达式采用自底向上的基本类型推导；声明、调用和 Lambda 可向下提供参数类型、值约束及静态量纲。数学值的内部表示变化不改变基本类型 <code class="docutils literal notranslate"><span class="pre">num</span></code>。</p>
+</section>
+<section id="id19">
+<h3>4.2 局部类型推导规则<a class="headerlink" href="#id19" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>允许推导：局部 <code class="code docutils literal notranslate"><span class="pre">let/var</span></code> 绑定、for 推导式局部变量</p></li>
 <li><p>必须显式：函数参数类型、函数返回类型、模块导出符号类型</p></li>
-<li><p>Lambda 的推导规则由 LSR-006 <a class="footnote-reference brackets" href="#id60" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 定义；元组解构绑定的推导规则由 LSR-012 <a class="footnote-reference brackets" href="#id59" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 定义</p></li>
-<li><p>推导结果必须为确定类型；约束不足时编译报错</p></li>
+<li><p>Lambda 的推导规则由 LSR-006 <a class="footnote-reference brackets" href="#id66" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 定义；元组解构绑定的推导规则由 LSR-012 <a class="footnote-reference brackets" href="#id65" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 定义</p></li>
+<li><p>基本类型必须确定；值约束和量纲另行校验，不能因暂时无法数值求出数学结果而拒绝合法的未求值表达式</p></li>
 </ul>
 </section>
-<section id="id20">
-<h3>4.3 声明语法<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h3>
+<section id="id22">
+<h3>4.3 声明语法<a class="headerlink" href="#id22" title="链接到此标题。">¶</a></h3>
 <p>变量声明统一 <code class="code docutils literal notranslate"><span class="pre">let|var|const</span> <span class="pre">name</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">expr</span></code> 或者 <code class="code docutils literal notranslate"><span class="pre">let|var|const</span> <span class="pre">name</span> <span class="pre">=</span> <span class="pre">expr</span></code> 。</p>
 <ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">let</span></code> ：只读绑定, 当绑定为对象类型时，仅代表不可再次绑定另一个对象|值，而不是对象本身不可变</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">var</span></code> ：可变绑定</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">const</span></code> ：编译期常量声明（只读，要求初始化表达式可在编译期求值）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">let</span></code>：只读绑定；值语义容器经该绑定及其子路径只读</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">var</span></code>：可重新绑定，并可经可写根路径修改值语义容器；其他既有值保持原状</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">const</span></code>：编译期只读常量；初始化可以得到精确数值，也可以得到编译期已构造的未求值数学表达式</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = 10
 let pi_val real = 3.1415
@@ -228,8 +226,8 @@ a = 20   # 编译报错
 </pre></div>
 </div>
 </section>
-<section id="id21">
-<h3>4.4 核心数据类型<a class="headerlink" href="#id21" title="链接到此标题。">¶</a></h3>
+<section id="id23">
+<h3>4.4 核心数据类型<a class="headerlink" href="#id23" title="链接到此标题。">¶</a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>类型</p></th>
@@ -238,168 +236,156 @@ a = 20   # 编译报错
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">num</span></code></p></td>
-<td><p>数值超集（ <code class="code docutils literal notranslate"><span class="pre">int</span></code> , <code class="code docutils literal notranslate"><span class="pre">real</span></code> , <code class="code docutils literal notranslate"><span class="pre">frac</span></code> ）</p></td>
-<td><p><code class="code docutils literal notranslate"><span class="pre">42</span></code> , <code class="code docutils literal notranslate"><span class="pre">114.514</span></code> , <code class="code docutils literal notranslate"><span class="pre">1/2</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num</span></code></p></td>
+<td><p>精确数、符号式、数学关系和近似值的统一基本数学类型</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">42</span></code>、<code class="docutils literal notranslate"><span class="pre">114.514</span></code>、<code class="docutils literal notranslate"><span class="pre">1/2</span></code>、<code class="docutils literal notranslate"><span class="pre">sqrt(2)</span></code>、<code class="docutils literal notranslate"><span class="pre">x^2</span> <span class="pre">+</span> <span class="pre">1</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">array</span></code></p></td>
 <td><p>编程式数组类型</p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">[2,5,3]</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">complex</span></code></p></td>
-<td><p>复数</p></td>
-<td><p><code class="code docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4I</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">text</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">text</span></code></p></td>
 <td><p>文本</p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">&quot;i</span> <span class="pre">love</span> <span class="pre">lamina&quot;</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">bool</span></code></p></td>
 <td><p>布尔逻辑</p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">true</span></code> , <code class="code docutils literal notranslate"><span class="pre">false</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">set</span></code></p></td>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">set</span></code></p></td>
 <td><p>无序去重集合</p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">{1,2,3}</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">(T1,</span> <span class="pre">T2)</span></code></p></td>
-<td><p>固定长度、有序的元组 <a class="footnote-reference brackets" href="#id59" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">(T1,</span> <span class="pre">T2)</span></code></p></td>
+<td><p>固定长度、有序的元组 <a class="footnote-reference brackets" href="#id65" id="id24" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">&quot;a&quot;)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">vector</span></code></p></td>
-<td><p>一维同构数值数组（1 索引）</p></td>
-<td><p><code class="code docutils literal notranslate"><span class="pre">vec[1,2,3]</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vector</span></code></p></td>
+<td><p>一维数学值容器（1 索引）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vec[1,2,3]</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">table</span></code></p></td>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">table</span></code></p></td>
 <td><p>哈希表（任意可哈希键）</p></td>
-<td><p>见 4.5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">table{&quot;x&quot;</span> <span class="pre">=&gt;</span> <span class="pre">1}</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">matrix</span></code></p></td>
-<td><p>二维同构数值网络（1 索引）</p></td>
-<td><p><code class="code docutils literal notranslate"><span class="pre">mat[1,2;3,4]</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">Expr</span></code></p></td>
-<td><p>CAS 符号表达式</p></td>
-<td><p><code class="code docutils literal notranslate"><span class="pre">x^2</span> <span class="pre">+</span> <span class="pre">1</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matrix</span></code></p></td>
+<td><p>二维数学值容器（1 索引）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mat[1,2;3,4]</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">rule</span></code></p></td>
-<td><p>CAS 替换规则 <a class="footnote-reference brackets" href="#id64" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a></p></td>
+<td><p>CAS 替换规则 <a class="footnote-reference brackets" href="#id70" id="id25" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a></p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">x</span> <span class="pre">=&gt;</span> <span class="pre">2</span></code></p></td>
 </tr>
 </tbody>
 </table>
-<ul class="simple">
-<li><p>在当前定义中， <code class="code docutils literal notranslate"><span class="pre">int</span></code> , <code class="code docutils literal notranslate"><span class="pre">bool</span></code> , <code class="code docutils literal notranslate"><span class="pre">frac</span></code> 为值类型，其他为对象引用类型</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">num</span></code> 为代数表达式的类型，但其下 <code class="code docutils literal notranslate"><span class="pre">int</span></code> , <code class="code docutils literal notranslate"><span class="pre">real</span></code> , <code class="code docutils literal notranslate"><span class="pre">frac</span></code> 均为实际类型，也是核心数据类型成员</p></li>
-<li><p>Lamina没有浮点数，浮点数只存在于FFI操作中，解释器使用分数模拟有理数运算，无精度损失</p></li>
-</ul>
+<p><code class="docutils literal notranslate"><span class="pre">num</span></code> 的源代码标注可以附带下列值约束：</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>标注</p></th>
+<th class="head"><p>基本类型</p></th>
+<th class="head"><p>值约束</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">num</span></code></p></td>
+<td><p>整数标量</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frac</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">num</span></code></p></td>
+<td><p>有理数标量</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">real</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">num</span></code></p></td>
+<td><p>实数标量</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">complex</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">num</span></code></p></td>
+<td><p>复数标量</p></td>
+</tr>
+</tbody>
+</table>
+<p>约束描述数学性质，不指定机器位宽或存储布局。<code class="docutils literal notranslate"><span class="pre">let</span> <span class="pre">count</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">3</span></code>、<code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">f(x</span> <span class="pre">real)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code> 和 <code class="docutils literal notranslate"><span class="pre">vector&lt;int&gt;</span></code> 分别约束绑定值、参数和容器元素，其基本类型仍为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 或 <code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code>。整数、有理数、实数和复数的包含关系用于证明值约束。</p>
+<p>静态可确定的违反须提前诊断；其余在绑定、调用、返回或容器操作要求该约束时校验。确定违反报 <code class="docutils literal notranslate"><span class="pre">DomainError</span></code> 或 <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>，仍未决报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>。已证明为整数的符号式可以满足 <code class="docutils literal notranslate"><span class="pre">int</span></code>，但循环、索引或 FFI 取值还要求得到具体值。</p>
+<p>函数契约保留参数和返回值的约束及量纲；基本类型相同不免除这些检查。静态重载根据基本类型和参数数量解析，不通过猜测运行期值来选择仅约束不同的重载。函数值兼容性必须满足相应约束契约。</p>
+<p>普通有限小数和科学计数法字面量表示其十进制文本的精确值。精确算术、符号构造和显式近似均使用 <code class="docutils literal notranslate"><span class="pre">num</span></code>；类型语法不再提供独立的 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 类型。原生声明中的表示选择及范围规则由 LSR-003 <a class="footnote-reference brackets" href="#id63" id="id26" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 定义。</p>
 </section>
-<section id="id24">
-<h3>4.5 可空类型<a class="headerlink" href="#id24" title="链接到此标题。">¶</a></h3>
-<p>写法： <code class="code docutils literal notranslate"><span class="pre">T?</span></code> ，表示可能为null, 用于判断价值是否为null
-必须处理空情况才能正常使用</p>
+<section id="id27">
+<h3>4.5 可空类型<a class="headerlink" href="#id27" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">T?</span></code> 表示普通值或 <code class="docutils literal notranslate"><span class="pre">null</span></code>。空值检查使用布尔结果；在 <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">!=</span> <span class="pre">null</span></code> 的真分支或 <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">==</span> <span class="pre">null</span></code> 的假分支中，绑定收窄为 <code class="docutils literal notranslate"><span class="pre">T</span></code>，其他路径继续保留可空约束。该规则也适用于 <code class="docutils literal notranslate"><span class="pre">num?</span></code>，与数学关系构造区分。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>var s text? = null
 
 if s != null {
-  #s在此作用域内部，自动变为text类型
-}
-
-if s == null {
-
+    let value text = s
 } else {
-  #s在此作用域内部，也自动变为text类型
+    s = "ready"
 }
-</pre></div>
-</div>
-</section>
-<section id="id25">
-<h3>4.6 复合类型的值语义与引用语义<a class="headerlink" href="#id25" title="链接到此标题。">¶</a></h3>
-<section id="id26">
-<h4>4.6.1 总规则<a class="headerlink" href="#id26" title="链接到此标题。">¶</a></h4>
-<ul class="simple">
-<li><p>复合类型实现采用共享引用，降低拷贝成本</p></li>
-<li><p>只读操作（读取、遍历、计算）不触发复制</p></li>
-<li><p>一旦发生可变写入（ <code class="code docutils literal notranslate"><span class="pre">var</span></code> 绑定上的突变），若对象被共享，必须先分离副本再写入</p></li>
-</ul>
-</section>
-<section id="id27">
-<h4>4.6.2 赋值语义<a class="headerlink" href="#id27" title="链接到此标题。">¶</a></h4>
-<ul class="simple">
-<li><p>赋值后两个变量指向同一底层对象（ <code class="code docutils literal notranslate"><span class="pre">is</span></code> 可能为 <code class="code docutils literal notranslate"><span class="pre">true</span></code> ）</p></li>
-<li><p>对其中一个变量做可变写入时，触发 COW，另一个变量保持原值</p></li>
-</ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>var t1 = table{"x" =&gt; 1}
-var t2 = t1
-
-t2["x"] = 9
-
-# t1["x"] == 1
-# t2["x"] == 9
 </pre></div>
 </div>
 </section>
 <section id="id28">
-<h4>4.6.3 函数传参语义<a class="headerlink" href="#id28" title="链接到此标题。">¶</a></h4>
-<ul class="simple">
-<li><p>非值类型参数采用引用传递</p></li>
-<li><p>修改结果通过 <code class="code docutils literal notranslate"><span class="pre">return</span></code> 新对象交付调用方</p></li>
-</ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func bump(src table[text, int]) -&gt; table {
-    var t = src
-    let v = t["n"] # 返回类型为int?可空类型
-    # 若为值类型则产生复制，否则为引用
-    if v != null {
-        t["n"] = v + 1
-    }
-    t
-}
-
-var a = table{"n" =&gt; 0}
-var b = a |&gt; bump
-
-# a["n"] == 0
-# b["n"] == 1
-</pre></div>
-</div>
-</section>
-<section id="let-var">
-<h4>4.6.4 与 let/var 的关系<a class="headerlink" href="#let-var" title="链接到此标题。">¶</a></h4>
-<ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">let</span></code> ：只读绑定，COW 写路径仅由 <code class="code docutils literal notranslate"><span class="pre">var</span></code> 触发</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">var</span></code> ：可变绑定，触发 COW 规则</p></li>
-<li><p>本规则统一适用于 <code class="code docutils literal notranslate"><span class="pre">vector</span></code> 、 <code class="code docutils literal notranslate"><span class="pre">matrix</span></code> 、 <code class="code docutils literal notranslate"><span class="pre">table</span></code> 、 <code class="code docutils literal notranslate"><span class="pre">set</span></code></p></li>
-</ul>
-</section>
-</section>
+<h3>4.6 复合值与修改<a class="headerlink" href="#id28" title="链接到此标题。">¶</a></h3>
 <section id="id29">
-<h3>4.7 容器齐次性约束<a class="headerlink" href="#id29" title="链接到此标题。">¶</a></h3>
-<blockquote>
-<div><p><code class="code docutils literal notranslate"><span class="pre">vector</span></code> 与 <code class="code docutils literal notranslate"><span class="pre">matrix</span></code> 强齐次，保证类型稳定与 BLAS 友好。</p>
-</div></blockquote>
-<ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">vector&lt;T&gt;</span></code> 要求所有元素类型一致</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">matrix&lt;T&gt;</span></code> 要求所有元素类型一致</p></li>
-<li><p>对数值容器，元素量纲签名也必须一致</p></li>
-</ul>
-<p>示例：</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let ok_v = vec[1&lt;m&gt;, 2&lt;m&gt;, 3&lt;m&gt;]          # 合法：同类型同量纲
-# let bad_v = vec[1&lt;m&gt;, 2&lt;s&gt;]             # 非法：量纲不一致
-</pre></div>
-</div>
-<p>异构数据建议：</p>
-<ul class="simple">
-<li><p>需要混合不同量纲（如 <code class="code docutils literal notranslate"><span class="pre">[pos,</span> <span class="pre">vel]</span></code> ）时，使用 <code class="code docutils literal notranslate"><span class="pre">table</span></code></p></li>
-<li><p>或使用具名复合类型规范</p></li>
-</ul>
-</section>
+<h4>4.6.1 值语义<a class="headerlink" href="#id29" title="链接到此标题。">¶</a></h4>
+<p>数组、元组和数学容器按值语义使用。赋值、传参、返回和闭包捕获保留既有值；修改一个绑定不改变其他绑定、嵌套成员或捕获中保存的值。数学表达式本身不可变。</p>
+<p>实现可采用复制、共享存储、写时分离或唯一所有权原地更新。规范只约束可观察结果；数学容器不承诺共享地址或对象身份，<code class="docutils literal notranslate"><span class="pre">is</span></code> 仅用于明确具有引用身份的对象。</p>
 </section>
 <section id="id30">
-<h2>5. 量纲系统<a class="headerlink" href="#id30" title="链接到此标题。">¶</a></h2>
+<h4>4.6.2 赋值与修改<a class="headerlink" href="#id30" title="链接到此标题。">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>var original = table{"x" =&gt; 1}
+var changed = original
+changed["x"] = 9
+</pre></div>
+</div>
+<p>修改后 <code class="docutils literal notranslate"><span class="pre">original[&quot;x&quot;]</span></code> 保持 <code class="docutils literal notranslate"><span class="pre">1</span></code>，<code class="docutils literal notranslate"><span class="pre">changed[&quot;x&quot;]</span></code> 为 <code class="docutils literal notranslate"><span class="pre">9</span></code>。共享存储属于实现优化，不改变上述结果。</p>
+</section>
 <section id="id31">
-<h3>5.1 声明与运算<a class="headerlink" href="#id31" title="链接到此标题。">¶</a></h3>
-<p>单位通过尖括号 <code class="code docutils literal notranslate"><span class="pre">&lt;&gt;</span></code> 附加于数值后形成复合类型。编译器执行量纲代数（约分、乘除）与加减一致性检查。</p>
-<p>单位只能标注在 <code class="code docutils literal notranslate"><span class="pre">num</span></code> 类型中，量纲属于类型系统。
-量纲只能标在字面量后面，或在声明类型时使用例如 <code class="code docutils literal notranslate"><span class="pre">num&lt;m&gt;</span></code> 的形式</p>
+<h4>4.6.3 参数与返回<a class="headerlink" href="#id31" title="链接到此标题。">¶</a></h4>
+<p>参数默认只读。函数可创建局部可写值，通过返回值交付修改结果。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func bump(src table[text, int]) -&gt; table[text, int] {
+    var result = src
+    let value = result["n"]
+    if value != null {
+        result["n"] = value + 1
+    }
+    result
+}
+
+var original = table{"n" =&gt; 0}
+let changed = original |&gt; bump
+</pre></div>
+</div>
+<p>调用后 <code class="docutils literal notranslate"><span class="pre">original</span></code> 保持原值，<code class="docutils literal notranslate"><span class="pre">changed</span></code> 保存增加后的值。输入参数、返回值及嵌套容器都遵循同一值语义。</p>
+</section>
+<section id="id32">
+<h4>4.6.4 可写路径<a class="headerlink" href="#id32" title="链接到此标题。">¶</a></h4>
+<p>修改路径须以可写 <code class="docutils literal notranslate"><span class="pre">var</span></code> 绑定为根，并经可写容器位置到达目标。<code class="docutils literal notranslate"><span class="pre">let</span></code>、只读参数、只读闭包捕获及元组位置不提供可写子路径。可先将其中的值绑定到局部 <code class="docutils literal notranslate"><span class="pre">var</span></code>，再修改该局部值。</p>
+<p>本规则适用于 <code class="docutils literal notranslate"><span class="pre">array</span></code>、<code class="docutils literal notranslate"><span class="pre">vector</span></code>、<code class="docutils literal notranslate"><span class="pre">matrix</span></code>、<code class="docutils literal notranslate"><span class="pre">table</span></code> 和 <code class="docutils literal notranslate"><span class="pre">set</span></code>。原生边界默认只读借用；需要修改时须按 LSR-003 <a class="footnote-reference brackets" href="#id63" id="id33" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 取得显式独占访问或返回新值，维持其他值不变。</p>
+</section>
+</section>
+<section id="id34">
+<h3>4.7 容器齐次性约束<a class="headerlink" href="#id34" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">vector</span></code> 与 <code class="docutils literal notranslate"><span class="pre">matrix</span></code> 的数学元素基本类型统一为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；元素采用不同精确或近似表示不使容器产生不同基本类型。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">vector&lt;int&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">matrix&lt;real&gt;</span></code> 等写法对每个元素施加值约束</p></li>
+<li><p>数值容器的元素须具有相同静态量纲和刻度；不同刻度先通过 <code class="docutils literal notranslate"><span class="pre">as</span></code> 显式转换</p></li>
+<li><p>线性代数或数值后端还须检查标量支持域、形状及具体数值可用性</p></li>
+</ul>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.math.{sqrt}
+
+let lengths = vec[1&lt;m&gt;, 2&lt;m&gt;, 3&lt;m&gt;]
+let exact_values = vec[1, 1/2, sqrt(2)]
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lengths</span></code> 的元素同量纲，<code class="docutils literal notranslate"><span class="pre">exact_values</span></code> 的元素均为 <code class="docutils literal notranslate"><span class="pre">num</span></code>。混合长度和速度等异量纲数据时，使用量纲静态可知的元组；动态异量纲表或包装由可选扩展定义。</p>
+</section>
+</section>
+<section id="id35">
+<h2>5. 量纲系统<a class="headerlink" href="#id35" title="链接到此标题。">¶</a></h2>
+<section id="id36">
+<h3>5.1 声明与运算<a class="headerlink" href="#id36" title="链接到此标题。">¶</a></h3>
+<p>单位通过尖括号 <code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code> 附加于数学值的字面量，或写在 <code class="docutils literal notranslate"><span class="pre">num&lt;m&gt;</span></code> 等声明中。量纲是数学基本类型上的静态约束；编译器检查量纲代数和加减的一致性，保持数值表示独立。</p>
+<p><code class="docutils literal notranslate"><span class="pre">int&lt;m&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">real&lt;m&gt;</span></code> 等标注同时施加数域和量纲约束，其基本数学类型仍为 <code class="docutils literal notranslate"><span class="pre">num</span></code>。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let dist = 10&lt;m&gt;
 let time = 2&lt;s&gt;
 let spd = dist / time
@@ -408,16 +394,16 @@ let spd = dist / time
 </pre></div>
 </div>
 </section>
-<section id="id32">
-<h3>5.2 显式单位转换<a class="headerlink" href="#id32" title="链接到此标题。">¶</a></h3>
+<section id="id37">
+<h3>5.2 显式单位转换<a class="headerlink" href="#id37" title="链接到此标题。">¶</a></h3>
 <p>单位转换必须使用 <code class="code docutils literal notranslate"><span class="pre">as</span></code> ：</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let v = 20&lt;m/s&gt;
 let v_kmh = v as &lt;km/h&gt;
 </pre></div>
 </div>
 </section>
-<section id="id33">
-<h3>5.2.1 用户自定义单位<a class="headerlink" href="#id33" title="链接到此标题。">¶</a></h3>
+<section id="id38">
+<h3>5.2.1 用户自定义单位<a class="headerlink" href="#id38" title="链接到此标题。">¶</a></h3>
 <p>用户可使用 <code class="code docutils literal notranslate"><span class="pre">unit</span></code> 声明新单位，支持两种形式：</p>
 <ul class="simple">
 <li><p>抽象基单位： <code class="code docutils literal notranslate"><span class="pre">unit</span> <span class="pre">U</span></code></p></li>
@@ -441,27 +427,23 @@ unit level = 100&lt;score&gt;
 <li><p>定义成功后可参与 <code class="code docutils literal notranslate"><span class="pre">as</span> <span class="pre">&lt;...&gt;</span></code> 转换（仅限同量纲）</p></li>
 </ul>
 </section>
-<section id="id34">
-<h3>5.3 底层表示<a class="headerlink" href="#id34" title="链接到此标题。">¶</a></h3>
+<section id="id39">
+<h3>5.3 底层表示<a class="headerlink" href="#id39" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p>量纲签名在**编译期类型检查阶段**表示为“SI 七维 + 用户基单位”的稀疏指数映射</p></li>
-<li><p>无量纲纯数字对应零向量</p></li>
-<li><p>乘除运算对应向量加减</p></li>
-<li><p>相同量纲不同缩放单位仅允许通过 <code class="code docutils literal notranslate"><span class="pre">as</span></code> 显式转换</p></li>
-</ul>
-<p>实现约束：</p>
-<ul class="simple">
-<li><p>运行期普通数值不携带量纲元数据</p></li>
-<li><p>以便复用 BLAS/LAPACK 等高性能线代后端</p></li>
-<li><p>仅 <code class="code docutils literal notranslate"><span class="pre">Expr</span></code> （CAS）允许保留量纲符号，用于符号推导中的一致性验证</p></li>
+<li><p>编译期追踪 SI 基维度及用户基单位的量纲指数，并保留转换所需的刻度</p></li>
+<li><p>无量纲值具有零量纲，乘除分别合并或抵消指数</p></li>
+<li><p>相同量纲不同刻度通过 <code class="docutils literal notranslate"><span class="pre">as</span></code> 显式转换；数学关系与等价查询的内部比较按规范尺度无损处理</p></li>
+<li><p>单位转换和剥离在数值代码生成前降级为数值操作；运行期普通数值无需携带单位标签</p></li>
+<li><p>未求值数学表达式可保留符号量纲信息，以维护定义性和后续推导；这不要求所有具体数值共享同一种表示</p></li>
+<li><p>运行期单位字符串和动态物理量包装由可选扩展提供，扩展须明确静态值与动态值的转换，不能从已擦除的裸数值恢复单位</p></li>
 </ul>
 </section>
 <section id="to-scalar">
 <h3>5.4 量纲剥离（to scalar）<a class="headerlink" href="#to-scalar" title="链接到此标题。">¶</a></h3>
-<p>带量纲值剥离为纯数值的语法与边界由 LSR-008 <a class="footnote-reference brackets" href="#id62" id="id35" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a> 定义。</p>
+<p>带量纲值剥离为纯数值的语法与边界由 LSR-008 <a class="footnote-reference brackets" href="#id68" id="id40" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a> 定义。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let dist = 10&lt;m&gt;
-let raw = dist as num              # SI 基准转换后剥离
-let raw_keep = dist as scalar      # 仅剥离标签，保持当前刻度
+let raw = dist as num
+let raw_keep = dist as scalar
 
 let speed = 20&lt;m/s&gt;
 let raw_kmh = (speed as &lt;km/h&gt;) as scalar
@@ -476,11 +458,11 @@ let raw_kmh = (speed as &lt;km/h&gt;) as scalar
 </ul>
 </section>
 </section>
-<section id="id36">
-<h2>6. 函数<a class="headerlink" href="#id36" title="链接到此标题。">¶</a></h2>
-<section id="id37">
-<h3>6.1 函数签名<a class="headerlink" href="#id37" title="链接到此标题。">¶</a></h3>
-<p>函数签名语法： <code class="code docutils literal notranslate"><span class="pre">func</span> <span class="pre">name(param</span> <span class="pre">Type,</span> <span class="pre">...)</span> <span class="pre">-&gt;</span> <span class="pre">ReturnType</span></code></p>
+<section id="id41">
+<h2>6. 函数<a class="headerlink" href="#id41" title="链接到此标题。">¶</a></h2>
+<section id="id42">
+<h3>6.1 函数签名<a class="headerlink" href="#id42" title="链接到此标题。">¶</a></h3>
+<p>函数签名语法为 <code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">name(param</span> <span class="pre">Type,</span> <span class="pre">...)</span> <span class="pre">-&gt;</span> <span class="pre">ReturnType</span></code>。数学形参和返回标注的基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；<code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code> 等标注保留其值约束。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func kinetic_energy(m num&lt;kg&gt;, v num&lt;m/s&gt;) -&gt; num&lt;J&gt; {
     return 1/2 * m * v^2
 }
@@ -490,27 +472,36 @@ func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
 }
 </pre></div>
 </div>
+<p>普通函数按声明检查并执行；约束或控制流未决时给出诊断。已声明的数学求值接口可以返回未求值数学结果，不把任意副作用函数隐式转成符号调用。</p>
+</section>
+<section id="id43">
+<h3>6.2 实参绑定与具名实参<a class="headerlink" href="#id43" title="链接到此标题。">¶</a></h3>
+<p>调用支持位置实参和 <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">expr</span></code> 具名实参。位置实参依声明顺序绑定，具名实参依参数名绑定；位置实参须位于具名实参之前。未知参数名、重复绑定、数量错误和遗漏必需参数均产生诊断。</p>
+<p>调用目标和全部实参按源码从左到右各求值一次，再将已得值绑定到参数并检查基本类型、值约束及量纲。参数名是允许具名调用的接口的一部分；通过函数值调用时须保留声明的参数绑定信息。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.math.{approximate, sqrt}
+
+let exact = sqrt(2)
+let rounded = approximate(exact, precision = 100)
+</pre></div>
+</div>
+<p>具名实参只选择参数位置，不创建赋值表达式或自动偏应用。标准库存在多个调用形式时，分别按已声明的参数数量解析。</p>
 </section>
 <section id="lambda">
-<h3>6.2 Lambda 的规范边界<a class="headerlink" href="#lambda" title="链接到此标题。">¶</a></h3>
-<ul class="simple">
-<li><p>Lambda 的语法、类型推导、与管道交互由 LSR-006 <a class="footnote-reference brackets" href="#id60" id="id38" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 单独定义</p></li>
-</ul>
+<h3>6.3 Lambda 的规范边界<a class="headerlink" href="#lambda" title="链接到此标题。">¶</a></h3>
+<p>Lambda 的语法、类型推导、捕获和管道交互由 LSR-006 <a class="footnote-reference brackets" href="#id66" id="id44" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 定义。</p>
 </section>
 </section>
-<section id="id39">
-<h2>7. 控制流与推导式<a class="headerlink" href="#id39" title="链接到此标题。">¶</a></h2>
+<section id="id45">
+<h2>7. 控制流与推导式<a class="headerlink" href="#id45" title="链接到此标题。">¶</a></h2>
 <section id="if">
 <h3>7.1 条件执行与 if 表达式<a class="headerlink" href="#if" title="链接到此标题。">¶</a></h3>
-<blockquote>
-<div><p><code class="code docutils literal notranslate"><span class="pre">if</span></code> 的条件必须为 <code class="code docutils literal notranslate"><span class="pre">bool</span></code> 。语句位置的 <code class="code docutils literal notranslate"><span class="pre">if</span></code> 用于条件执行，可以省略 <code class="code docutils literal notranslate"><span class="pre">else</span></code> ；条件为 <code class="code docutils literal notranslate"><span class="pre">false</span></code> 时继续执行后续语句。</p>
-</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">if</span></code> 条件接受普通 <code class="docutils literal notranslate"><span class="pre">bool</span></code> 或 <code class="docutils literal notranslate"><span class="pre">num</span></code> 数学关系。条件位置对关系执行判真，结论为真或假时选择对应路径，仍未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>。普通数字不作真假转换。语句位置可以省略 <code class="docutils literal notranslate"><span class="pre">else</span></code>；条件为假时继续后续语句。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>if residual &gt; tolerance {
     raise("残差超过容差")
 }
 </pre></div>
 </div>
-<p>在赋值、函数实参、返回值或函数尾表达式位置， <code class="code docutils literal notranslate"><span class="pre">if</span></code> 用于产生值，必须包含 <code class="code docutils literal notranslate"><span class="pre">else</span></code> 。正常返回分支提供类型相同或可按数值塔统一的值；终止分支按 LSR-018 <a class="footnote-reference brackets" href="#id65" id="id40" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a> 的底类型规则参与统一。</p>
+<p>在赋值、函数实参、返回值或函数尾表达式位置，<code class="docutils literal notranslate"><span class="pre">if</span></code> 用于产生值，必须包含 <code class="docutils literal notranslate"><span class="pre">else</span></code>。正常返回分支须具有可统一的基本类型；数学分支统一为 <code class="docutils literal notranslate"><span class="pre">num</span></code>，并校验目标值约束及量纲。终止分支按 LSR-018 <a class="footnote-reference brackets" href="#id71" id="id46" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a> 的底类型规则参与统一。分支只执行一次，不把未决条件或分支副作用隐式转为符号分段式。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let abs_val = if x &lt; 0 {
     -x
 } else {
@@ -521,36 +512,26 @@ func second2hour(s num&lt;s&gt;) -&gt; num&lt;h&gt; {
 </section>
 <section id="loop">
 <h3>7.2 loop 定次循环<a class="headerlink" href="#loop" title="链接到此标题。">¶</a></h3>
-<dl class="simple">
-<dt>lamina只有一种循环，就是无限loop循环，其他循环结构均为其语法糖</dt><dd><p><code class="code docutils literal notranslate"><span class="pre">loop</span> <span class="pre">x</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> 表示循环体执行 <code class="code docutils literal notranslate"><span class="pre">x</span></code> 次。 <code class="code docutils literal notranslate"><span class="pre">x</span></code> 必须是可确定为非负整数的表达式。</p>
-</dd>
-</dl>
+<p><code class="docutils literal notranslate"><span class="pre">loop</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> 是无界循环；<code class="docutils literal notranslate"><span class="pre">loop</span> <span class="pre">count</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">}</span></code> 是定次循环。次数须能求值为非负整数。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std
 
-loop {
-  if true {
-    break
-  }
-}
-
-
-loop 5 {
-    std.println("tick")
-}
-#####
-
-
-let n = 3
-loop n {
+var counter = 0
+loop 3 {
     counter = counter + 1
+}
+
+loop {
+    std.println(counter)
+    break
 }
 </pre></div>
 </div>
 <p>规则：</p>
 <ul class="simple">
-<li><p>循环次数在进入循环前求值一次</p></li>
-<li><p>若 <code class="code docutils literal notranslate"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">0</span></code> ，循环体不执行</p></li>
-<li><p>若 <code class="code docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> 或不是整数，编译报错</p></li>
+<li><p>次数在进入循环前求值一次，零次不执行循环体</p></li>
+<li><p>静态已知的负数或非整数次数须提前报错；动态值进入循环前校验，次数仍未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">continue</span></code> 完成本次迭代并进入下一次计数，不能跳过计数推进</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">break</span></code> 立即结束当前循环；正常定次循环的循环体最多进入指定次数</p></li>
 </ul>
 </section>
 <section id="while">
@@ -567,33 +548,19 @@ while i &lt; 5 {
 <p>规则：</p>
 <ul class="simple">
 <li><p>每轮迭代前重新计算 <code class="code docutils literal notranslate"><span class="pre">cond</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">cond</span></code> 必须是 <code class="code docutils literal notranslate"><span class="pre">bool</span></code> 类型，否则编译报错</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cond</span></code> 接受普通 <code class="docutils literal notranslate"><span class="pre">bool</span></code> 或可判真的数学关系；未决和非条件值按第 7.1 节诊断</p></li>
 <li><p>支持 <code class="code docutils literal notranslate"><span class="pre">break</span></code> 与 <code class="code docutils literal notranslate"><span class="pre">continue</span></code></p></li>
 </ul>
 </section>
 <section id="for">
 <h3>7.4 for 迭代与推导式<a class="headerlink" href="#for" title="链接到此标题。">¶</a></h3>
 <p>迭代： <code class="code docutils literal notranslate"><span class="pre">for</span> <span class="pre">名字</span> <span class="pre">in</span> <span class="pre">可迭代对象</span> <span class="pre">{...}</span></code></p>
-<p>不论迭代还是推导式，其可迭代对象必须包含 <code class="code docutils literal notranslate"><span class="pre">begin()</span></code> <code class="code docutils literal notranslate"><span class="pre">next(last</span> <span class="pre">iterator)</span></code> 和 <code class="code docutils literal notranslate"><span class="pre">end()</span></code> 子方法</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let person = vec[2,4,32,5,6]
-for num in person {
-  print(num)
-}
+<p>可迭代对象提供 <code class="docutils literal notranslate"><span class="pre">begin()</span></code>、<code class="docutils literal notranslate"><span class="pre">next(iterator)</span></code> 和 <code class="docutils literal notranslate"><span class="pre">end()</span></code> 协议。遍历对象在进入循环时求值一次，游标与结束位置先比较，再读取当前元素；空序列不读取元素。<code class="docutils literal notranslate"><span class="pre">continue</span></code> 须推进到下一元素，<code class="docutils literal notranslate"><span class="pre">break</span></code> 立即结束。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std
 
-# 等价写法：
-
-let person = vec[2,4,32,5,6]
-{
-  let end = person.end()
-  var iter = person.begin()
-  var num = iter.get()
-  while iter != end {
-
-      print(num)
-
-      iter = person.next(iter)
-      num = iter.get()
-  }
+let values = vec[2, 4, 32, 5, 6]
+for value in values {
+    std.println(value)
 }
 </pre></div>
 </div>
@@ -611,57 +578,58 @@ let M = mat[i * j for i in range(1,3); for j in range(1,3)]
 <p>规则：</p>
 <ul class="simple">
 <li><p>推导式内部为独立词法作用域</p></li>
-<li><p>外部变量访问范围：读取外部 <code class="code docutils literal notranslate"><span class="pre">let</span></code> ；外部 <code class="code docutils literal notranslate"><span class="pre">var</span></code> 通过显式返回更新</p></li>
-<li><p>迭代器单次求值</p></li>
+<li><p>外部变量只读捕获，局部可写副本的修改不回写外部值</p></li>
+<li><p>遍历对象单次求值；守卫按第 7.1 节判真，未决不能当作假</p></li>
 </ul>
 </section>
 </section>
-<section id="id41">
-<h2>8. 向量与矩阵计算<a class="headerlink" href="#id41" title="链接到此标题。">¶</a></h2>
-<section id="id42">
-<h3>8.1 定义、拼接与索引<a class="headerlink" href="#id42" title="链接到此标题。">¶</a></h3>
+<section id="id47">
+<h2>8. 向量与矩阵计算<a class="headerlink" href="#id47" title="链接到此标题。">¶</a></h2>
+<section id="id48">
+<h3>8.1 定义、拼接与索引<a class="headerlink" href="#id48" title="链接到此标题。">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let A = mat[1,2,3;4,5,6;7,8,9]
 let v = vec[1,2,3]
 
-let A_double = [A, A]
-let A_stack = [A; A]
+let horizontal = mat[A, A]
+let vertical = mat[A; A]
 let element = A[2,3]
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">mat</span></code> 构造中的块按逗号横向、分号纵向拼接，须满足对应维度。普通 <code class="docutils literal notranslate"><span class="pre">[A,</span> <span class="pre">A]</span></code> 保持数组语义。向量和矩阵的索引从 1 开始，索引须为具体可求值整数并在有效范围内。</p>
 </section>
-<section id="id43">
-<h3>8.2 切片<a class="headerlink" href="#id43" title="链接到此标题。">¶</a></h3>
+<section id="id49">
+<h3>8.2 切片<a class="headerlink" href="#id49" title="链接到此标题。">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let row2 = A[2,*]
 let col3 = A[*,3]
 let submat = A[1..2,2..3]
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">*</span></code> 在切片位置选择整轴，<code class="docutils literal notranslate"><span class="pre">..</span></code> 在下标中表示包含两个端点的索引范围；相关端点须能求值为有效整数索引。切片保留容器类型和量纲，并遵循值语义。</p>
 </section>
-<section id="id44">
-<h3>8.3 算术与关系广播定义<a class="headerlink" href="#id44" title="链接到此标题。">¶</a></h3>
+<section id="id50">
+<h3>8.3 算术与关系广播定义<a class="headerlink" href="#id50" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
 <li><p>标准线性代数算子： <code class="code docutils literal notranslate"><span class="pre">*</span></code> , <code class="code docutils literal notranslate"><span class="pre">\</span></code> , <code class="code docutils literal notranslate"><span class="pre">/</span></code> , <code class="code docutils literal notranslate"><span class="pre">^</span></code></p></li>
 <li><p>元素广播算子： <code class="code docutils literal notranslate"><span class="pre">.*</span></code> , <code class="code docutils literal notranslate"><span class="pre">./</span></code> , <code class="code docutils literal notranslate"><span class="pre">.+</span></code> , <code class="code docutils literal notranslate"><span class="pre">.-</span></code> , <code class="code docutils literal notranslate"><span class="pre">.^</span></code></p></li>
 <li><p>关系广播算子： <code class="code docutils literal notranslate"><span class="pre">.==</span></code> , <code class="code docutils literal notranslate"><span class="pre">.!=</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&lt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&lt;=</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&gt;</span></code> , <code class="code docutils literal notranslate"><span class="pre">.&gt;=</span></code></p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">\</span></code> 与 <code class="code docutils literal notranslate"><span class="pre">/</span></code> 分别定义为左除与右除： <code class="code docutils literal notranslate"><span class="pre">A</span> <span class="pre">\</span> <span class="pre">B</span></code> 解 <code class="code docutils literal notranslate"><span class="pre">A</span> <span class="pre">X</span> <span class="pre">=</span> <span class="pre">B</span></code> ， <code class="code docutils literal notranslate"><span class="pre">B</span> <span class="pre">/</span> <span class="pre">A</span></code> 解 <code class="code docutils literal notranslate"><span class="pre">X</span> <span class="pre">A</span> <span class="pre">=</span> <span class="pre">B</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">\</span></code> 、 <code class="code docutils literal notranslate"><span class="pre">/</span></code> 与 <code class="code docutils literal notranslate"><span class="pre">^</span></code> 采用按类型分派；无法唯一分派时编译报错</p></li>
-<li><p>未加点的关系比较仅用于标量；容器比较必须使用加点算子</p></li>
+<li><p>矩阵与标量分派依据容器结构和运算支持域；未知数学值可保留未求值运算，实际数值操作仍须检查形状和数域</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code> 构造数学容器的整体关系；顺序比较只支持声明的标量顺序，逐元素关系使用加点算子</p></li>
 </ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let X = A \\ B      # 线性系统 A X = B
-let Y = B / A       # 线性系统 Y A = B
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let X = A \ B
+let Y = B / A
 </pre></div>
 </div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let B = A .+ 10
-let C = A .* A
-let D = A * A   # A 必须为方阵
-
-let flags = vec[1,2,3] .&gt; 1      # vec[false, true, true]
-# vec[1,2,3] &gt; 1                 # 编译报错（容器比较需使用 .&gt;）
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let shifted = A .+ 10
+let elementwise = A .* A
+let product = A * A
+let flags = vec[1,2,3] .&gt; 1
 </pre></div>
 </div>
+<p>矩阵乘法检查内维度；<code class="docutils literal notranslate"><span class="pre">flags</span></code> 是逐元素数学关系组成的 <code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code>，每项可在条件位置判真。</p>
 </section>
-<section id="id45">
-<h3>8.4 常用操作<a class="headerlink" href="#id45" title="链接到此标题。">¶</a></h3>
+<section id="id51">
+<h3>8.4 常用操作<a class="headerlink" href="#id51" title="链接到此标题。">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>dot(v1, v2)      # 点积
 cross(v1, v2)    # 叉积（3维）
 norm(v)          # 范数
@@ -675,8 +643,8 @@ det(A)           # 行列式
 </div>
 </section>
 </section>
-<section id="id46">
-<h2>9. 集合与逻辑<a class="headerlink" href="#id46" title="链接到此标题。">¶</a></h2>
+<section id="id52">
+<h2>9. 集合与逻辑<a class="headerlink" href="#id52" title="链接到此标题。">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>运算符</p></th>
@@ -699,100 +667,84 @@ det(A)           # 行列式
 </tr>
 </tbody>
 </table>
+<p>有限 <code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code> 的成员查找与子集查询按 LSR-013 的结构元素身份返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>，去重不调用有限数学证明。实区间的成员判断构造 <code class="docutils literal notranslate"><span class="pre">num</span></code> 关系，按 LSR-017 在条件位置判真；两类容器不混用成员契约。</p>
 <p>预定义数学常量： <code class="code docutils literal notranslate"><span class="pre">pi</span></code> , <code class="code docutils literal notranslate"><span class="pre">e</span></code> , <code class="code docutils literal notranslate"><span class="pre">phi</span></code></p>
-<p>预定义集合： <code class="code docutils literal notranslate"><span class="pre">{R}</span></code> , <code class="code docutils literal notranslate"><span class="pre">{Z}</span></code> , <code class="code docutils literal notranslate"><span class="pre">{Q}</span></code> , <code class="code docutils literal notranslate"><span class="pre">{C}</span></code></p>
+<p>整数、有理数、实数和复数的全集使用显式的 CAS 集合表示；<code class="docutils literal notranslate"><span class="pre">Z</span></code>、<code class="docutils literal notranslate"><span class="pre">Q</span></code>、<code class="docutils literal notranslate"><span class="pre">R</span></code>、<code class="docutils literal notranslate"><span class="pre">C</span></code> 在数域说明中作为数学记号。普通花括号仍构造有限集合，不以特殊元素名隐式改为全集。</p>
 </section>
-<section id="id47">
-<h2>10. 数值塔与提升规则<a class="headerlink" href="#id47" title="链接到此标题。">¶</a></h2>
-<p>层级： <code class="code docutils literal notranslate"><span class="pre">Z</span> <span class="pre">&lt;</span> <span class="pre">Q</span> <span class="pre">&lt;</span> <span class="pre">R</span> <span class="pre">&lt;</span> <span class="pre">C</span> <span class="pre">&lt;</span> <span class="pre">Expr</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的构造、提升和降级边界由 LSR-016 定义 <a class="footnote-reference brackets" href="#id64" id="id48" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>。</p>
-<ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">Int</span> <span class="pre">(Z)</span></code> ：大整数，与 <code class="code docutils literal notranslate"><span class="pre">int</span></code> 区别在于其为无限精度</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">Fraction</span> <span class="pre">(Q)</span></code> ：分数（分子分母均为 <code class="code docutils literal notranslate"><span class="pre">Int</span></code> ）, 与 <code class="code docutils literal notranslate"><span class="pre">frac</span></code> 区别在于 <code class="code docutils literal notranslate"><span class="pre">frac</span></code> 分子分母均为 <code class="code docutils literal notranslate"><span class="pre">int</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">Real</span> <span class="pre">(R)</span></code> ：实数</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">Complex</span> <span class="pre">(C)</span></code> ：复数</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">Expr</span></code> ：符号表达式</p></li>
-</ul>
-<p>提升规则：</p>
-<ol class="arabic simple">
-<li><p>二元运算中，低层级自动提升到高层级</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">Expr</span></code> 降级需显式转换</p></li>
-<li><p>除法只有在显式涉及 <code class="code docutils literal notranslate"><span class="pre">Real</span></code> 时返回 <code class="code docutils literal notranslate"><span class="pre">Real</span></code></p></li>
-<li><p>数值提升与单位推导互不干涉</p></li>
-</ol>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = 2 + 1/2
-let b = 1/2 + 0.5
-let c = 2.0 + 3I
+<section id="id53">
+<h2>10. 数域与值约束<a class="headerlink" href="#id53" title="链接到此标题。">¶</a></h2>
+<p>整数、有理数、实数和复数的数学包含关系为 <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">⊂</span> <span class="pre">Q</span> <span class="pre">⊂</span> <span class="pre">R</span> <span class="pre">⊂</span> <span class="pre">C</span></code>。这些数域用于值约束和假设，不构成不同基本静态类型。</p>
+<p>默认数学运算保持精确，<code class="docutils literal notranslate"><span class="pre">1/2</span></code> 是有理数，<code class="docutils literal notranslate"><span class="pre">0.5</span></code> 是同一精确数值的十进制写法。超出已实现精确求值能力时保留数学调用或表达式；确定无定义时沿数学错误路径传播。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.math.{sqrt}
+
+let rational = 2 + 1/2
+let decimal = 1/2 + 0.5
+let radical = sqrt(2)
+let imaginary = 2.0 + 3I
 
 sym x
-let d = 5/2 + x
+let polynomial = 5/2 + x
 </pre></div>
 </div>
+<p>以上数学结果的基本类型均为 <code class="docutils literal notranslate"><span class="pre">num</span></code>。编译器可分别采用整数、有理数、代数数或符号结构表示；容器同样不按这些表示差别拆分数学元素类型。</p>
+<p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 默认复数标量；实性、正性、整数性须来自已知值、约束或显式假设。复数主值约定由 LSR-010 定义；一般复数不使用实数顺序。</p>
 </section>
-<section id="expr">
-<h2>11. Expr 边界与求值<a class="headerlink" href="#expr" title="链接到此标题。">¶</a></h2>
-<blockquote>
-<div><p><code class="code docutils literal notranslate"><span class="pre">Expr</span></code> 为延迟求值 AST；参与数值运算时是否提升为 <code class="code docutils literal notranslate"><span class="pre">Expr</span></code> 由 LSR-016 <a class="footnote-reference brackets" href="#id64" id="id49" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> 定义。</p>
-</div></blockquote>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  let c = 5
-  sym x
-  let res = c * x
-
-
-:code:`Expr` 降级必须显式：
-</pre></div>
-</div>
-<ol class="arabic simple">
-<li><p>代入后求值： <code class="code docutils literal notranslate"><span class="pre">evalf(substitute(expr,</span> <span class="pre">symbol</span> <span class="pre">=&gt;</span> <span class="pre">value))</span></code></p></li>
-<li><p>数值近似： <code class="code docutils literal notranslate"><span class="pre">evalf(expr)</span></code></p></li>
-</ol>
+<section id="id54">
+<h2>11. 数学值与显式近似<a class="headerlink" href="#id54" title="链接到此标题。">¶</a></h2>
+<p>数学值的构造、结构操作和求值由 LSR-016 <a class="footnote-reference brackets" href="#id70" id="id55" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> 定义。精确数和符号式共享基本类型 <code class="docutils literal notranslate"><span class="pre">num</span></code>，未解释函数须显式声明或构造，名称拼写错误按普通解析规则诊断。</p>
+<p>默认求值保留原定义域。<code class="docutils literal notranslate"><span class="pre">x/x</span></code>、<code class="docutils literal notranslate"><span class="pre">0*(1/x)</span></code> 等变换需要相关非零性和定义性前提；显式形式代数操作按其声明的数学支持域执行。</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.cas.{substitute}
+use std.math.{approximate, sqrt}
 
-sym x, y
-let equation = x^2 + 1 + y*2
-let val1 = evalf(substitute(equation, {x =&gt; 3, y =&gt; 4}))
-
-let exact = sin(pi / 4)
-let approx = evalf(exact)
+sym x
+let polynomial = x^2 + 1
+let value = substitute(polynomial, x =&gt; 3)
+let exact = sqrt(2)
+let rounded = approximate(exact, precision = 100)
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">precision</span></code> 是目标十进制有效位数，须为正整数。成功近似按请求精度计算，误差估计、认证误差界和正确舍入保证均为可选扩展；核心不把目标工作精度等同于结果已证明正确的位数。</p>
+<p>近似操作数触发局部近似传播，采用参与近似值的最高工作精度，精确子项按需要数值化；尚未绑定的符号部分可以保留。提高工作精度只影响后续计算，不能恢复既有输入已丢失的信息。表示值、近似类别和工作精度须按数学值语义保留，不能仅凭格式化文本把结果冒充为原式的精确值。</p>
+<p>关系判真和等价查询均比较现有表示值。精确与近似混合比较须无损进行，不先舍入到共同精度；容差比较使用独立接口。结论描述现有值，不追溯到近似前的原表达式。</p>
 </section>
-<section id="id50">
-<h2>12. 相等性语义<a class="headerlink" href="#id50" title="链接到此标题。">¶</a></h2>
+<section id="id56">
+<h2>12. 相等性语义<a class="headerlink" href="#id56" title="链接到此标题。">¶</a></h2>
 <ul class="simple">
-<li><p>结构相等： <code class="code docutils literal notranslate"><span class="pre">==</span></code></p></li>
-<li><p>数学等价（仅 <code class="code docutils literal notranslate"><span class="pre">Expr</span></code> ）： <code class="code docutils literal notranslate"><span class="pre">===</span></code> （由 LSR-007 <a class="footnote-reference brackets" href="#id61" id="id51" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> 单独定义）</p></li>
+<li><p>数学值及数学容器的 <code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code> 构造整体关系，结果的基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.cas.same_structure</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code>，按语义结构递归比较；精确数叶按数值，近似节点保留其近似类别、表示值和工作精度区别，内部存储布局不参与比较</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 和 <code class="docutils literal notranslate"><span class="pre">std.cas.equivalent</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">std.cas.Equivalence</span></code> 的 <code class="docutils literal notranslate"><span class="pre">Equivalent</span></code>、<code class="docutils literal notranslate"><span class="pre">Different</span></code> 或 <code class="docutils literal notranslate"><span class="pre">Unknown</span></code>，按 LSR-007 <a class="footnote-reference brackets" href="#id67" id="id57" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> 执行有限证明</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bool</span></code>、<code class="docutils literal notranslate"><span class="pre">text</span></code>、规则、固定状态及普通元组等按自身契约提供布尔相等；元组中的数学值递归使用结构比较</p></li>
+<li><p>集合去重、哈希和模式匹配使用稳定的内部结构相等；<code class="docutils literal notranslate"><span class="pre">Unknown</span></code> 不是不等价结论，证明预算不影响结构键</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is</span></code> 只观察具有明确引用身份的对象；数学值与值语义容器不依赖共享地址</p></li>
 </ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let a = vec[1,2,3]
-let b = a
-b is a   # true
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
 
-let c = vec[1,2,3]
-c is a   # false
-
-vec[1,2,3] == vec[1,2,3]   # true
-[1,2;3,4] == [1,2;3,4]     # true
+sym x
+let relation = x + x == 2*x
+let structural = cas.same_structure(x + x, 2*x)
+let proof = (x + x) === 2*x
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">relation</span></code> 是数学关系，<code class="docutils literal notranslate"><span class="pre">structural</span></code> 是布尔结构查询，<code class="docutils literal notranslate"><span class="pre">proof</span></code> 是三态证明结果。条件位置可对关系判真；证明状态须按固定状态值显式处理。</p>
 </section>
-<section id="id52">
-<h2>13. 序列与模块系统<a class="headerlink" href="#id52" title="链接到此标题。">¶</a></h2>
-<section id="id53">
-<h3>13.1 序列生成<a class="headerlink" href="#id53" title="链接到此标题。">¶</a></h3>
+<section id="id58">
+<h2>13. 序列与模块系统<a class="headerlink" href="#id58" title="链接到此标题。">¶</a></h2>
+<section id="id59">
+<h3>13.1 序列生成<a class="headerlink" href="#id59" title="链接到此标题。">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func square(x num) -&gt; num {
     return x^2
 }
 
-let nums = range(1,10)
-let squares = nums |&gt; map(square)
-range(start int, end int) -&gt; vector
+let values = range(1,10)
+let squares = values |&gt; map(square)
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">range</span></code> 是独立的整数序列接口，参数和元素具有整数值约束；数学区间始终表示实数集合。管道把左侧插入第一个实参，不要求 <code class="docutils literal notranslate"><span class="pre">map(square)</span></code> 自身先产生偏应用闭包。</p>
 </section>
-<section id="id54">
-<h3>13.2 命名空间与模块<a class="headerlink" href="#id54" title="链接到此标题。">¶</a></h3>
+<section id="id60">
+<h3>13.2 命名空间与模块<a class="headerlink" href="#id60" title="链接到此标题。">¶</a></h3>
 <blockquote>
-<div><p><code class="code docutils literal notranslate"><span class="pre">import</span></code> ：加载模块并绑定模块对象；标准库模块导入见 <a class="footnote-reference brackets" href="#id58" id="id55" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。
+<div><p><code class="code docutils literal notranslate"><span class="pre">import</span></code> ：加载模块并绑定模块对象；标准库模块导入见 <a class="footnote-reference brackets" href="#id64" id="id61" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。
 <code class="code docutils literal notranslate"><span class="pre">use</span></code> ：从模块导入符号到当前作用域（冲突时报错）。</p>
 </div></blockquote>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.math
@@ -811,46 +763,48 @@ use std.constants.{G as GRAVITY}
 </div>
 </section>
 </section>
-<section id="id56">
-<h2>14. 引用<a class="headerlink" href="#id56" title="链接到此标题。">¶</a></h2>
+<section id="id62">
+<h2>14. 引用<a class="headerlink" href="#id62" title="链接到此标题。">¶</a></h2>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id57" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id63" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id26">2</a>,<a role="doc-backlink" href="#id33">3</a>)</span>
 <p><a class="reference internal" href="LSR-003.html"><span class="doc">LSR-003 - Lamina C 扩展与插件规范</span></a> - Lamina C 扩展与插件规范</p>
 </aside>
-<aside class="footnote brackets" id="id58" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id55">2</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id64" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id61">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库规范</span></a> - 标准库规范（模块结构、数学系统、库调用约定）</p>
 </aside>
-<aside class="footnote brackets" id="id59" role="doc-footnote">
+<aside class="footnote brackets" id="id65" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id19">1</a>,<a role="doc-backlink" href="#id22">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id21">1</a>,<a role="doc-backlink" href="#id24">2</a>)</span>
 <p><a class="reference internal" href="LSR-012.html"><span class="doc">LSR-012 - 元组类型规范</span></a> - 元组类型、位置结果与直接解构</p>
 </aside>
-<aside class="footnote brackets" id="id60" role="doc-footnote">
+<aside class="footnote brackets" id="id66" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id18">1</a>,<a role="doc-backlink" href="#id38">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id20">1</a>,<a role="doc-backlink" href="#id44">2</a>)</span>
 <p><a class="reference internal" href="LSR-006.html"><span class="doc">LSR-006 - Lambda 规范</span></a> - Lambda 规范（语法、类型推导、管道交互）</p>
 </aside>
-<aside class="footnote brackets" id="id61" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id51">5</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id67" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id57">5</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-007.html"><span class="doc">LSR-007 - 数学等价判定规范</span></a> - <code class="code docutils literal notranslate"><span class="pre">===</span></code> 数学等价规范（判定边界与化简策略）</p>
 </aside>
-<aside class="footnote brackets" id="id62" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id35">6</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id68" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id40">6</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-008.html"><span class="doc">LSR-008 - 量纲剥离规范</span></a> - 量纲剥离规范（ <code class="code docutils literal notranslate"><span class="pre">as</span> <span class="pre">num</span></code> 语义、边界与错误模型）</p>
 </aside>
-<aside class="footnote brackets" id="id63" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">7</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id69" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id8">2</a>,<a role="doc-backlink" href="#id11">3</a>)</span>
 <p><a class="reference internal" href="LSR-014.html"><span class="doc">LSR-014 - 运算符规范</span></a> - 运算符 token、优先级和结合性</p>
 </aside>
-<aside class="footnote brackets" id="id64" role="doc-footnote">
+<aside class="footnote brackets" id="id70" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id12">1</a>,<a role="doc-backlink" href="#id23">2</a>,<a role="doc-backlink" href="#id48">3</a>,<a role="doc-backlink" href="#id49">4</a>)</span>
-<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - Expr 构造与提升规范</span></a> - <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 构造、提升、代入及数学模式操作</p>
+<span class="backrefs">(<a role="doc-backlink" href="#id14">1</a>,<a role="doc-backlink" href="#id25">2</a>,<a role="doc-backlink" href="#id55">3</a>)</span>
+<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - 数学值与符号操作规范</span></a> - <code class="docutils literal notranslate"><span class="pre">num</span></code> 构造、符号调用、代入及数学模式操作</p>
 </aside>
-<aside class="footnote brackets" id="id65" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id40">9</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id71" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id46">9</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 终止分支的类型统一与错误传播</p>
 </aside>
 </aside>
@@ -901,7 +855,7 @@ use std.constants.{G as GRAVITY}
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -931,7 +885,7 @@ use std.constants.{G as GRAVITY}
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

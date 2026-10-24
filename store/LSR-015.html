@@ -16,7 +16,7 @@
     <link rel="icon" href="../_static/favicon.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="LSR 016 - Expr 构造与提升规范" href="LSR-016.html" />
+    <link rel="next" title="LSR 016 - 数学值与符号操作规范" href="LSR-016.html" />
     <link rel="prev" title="LSR 014 - 运算符规范" href="LSR-014.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -49,386 +49,289 @@
 <li><p>归属项目：LMMP</p></li>
 <li><p>适用范围：LMMP 库所有标准与非标准 API、数据类型、内存模型、兼容约束等</p></li>
 <li><p>替代文档：无</p></li>
-<li><p>相关文档：无</p></li>
+<li><p>相关文档：LSR-003、LSR-004、LSR-018</p></li>
 </ul>
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>本规范定义 <strong>LMMP</strong> 的所有公共接口，包含**数据类型、上下文系统、函数命名、内存管理、运算规则、错误处理、兼容性约束**。
-接口设计目标：
-1. <strong>高效性</strong>：最小化调用开销；
-2. <strong>简洁性</strong>：接口语义清晰，无冗余设计；
-3. <strong>灵活性</strong>：支持无限精度/有限精度双类型体系；
-4. <strong>可扩展性</strong>：预留新类型、新运算、新上下文参数扩展空间；
-5. <strong>安全性</strong>：上下文隔离、内存安全、类型安全。</p>
-<p>本规范**不限制底层实现机制**，仅约束对外暴露的 API 行为与契约。</p>
+<p>本规范定义 LMMP 基础数值接口的数据域、工作精度、生命周期和可观测错误协议。
+任意精度整数和有理数按资源允许的大小精确计算；浮点数始终使用有限工作精度，
+不承诺以有限内存表示任意实数。幅值、认证区间和多项式是独立扩展，不是基础接口的先决条件。
+本规范不限制内部存储、内核调用或分配策略。</p>
 </section>
 <section id="id3">
-<h2>1. 上下文系统<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
+<h2>1. 基础数值语义<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
 <section id="id4">
-<h3>1.1 核心设计目标<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
-<p>实现**类型安全的泛型设计**，隔离不同精度/位宽/舍入模式的计算环境，避免未定义行为。</p>
-</section>
-<section id="id5">
-<h3>1.2 上下文约束规则<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h3>
-<ol class="arabic simple">
-<li><p><strong>不透明结构体指针</strong>
-所有上下文类型对外均为不透明指针，禁止直接访问或修改内部成员。</p></li>
-<li><p><strong>参数不可变约束</strong>
-精度、位宽、舍入模式等核心参数**仅在初始化时设置**，初始化后不可修改。</p></li>
-<li><p><strong>传递规则</strong>
-所有运算、初始化、销毁函数必须**显式传递上下文**作为参数。</p></li>
-<li><p><strong>多实例隔离</strong>
-同一作用域可创建多个上下文实例，<strong>类型隔离，不可混用</strong>。</p></li>
-<li><p><strong>生命周期约束</strong>
-- 上下文必须在所有关联对象销毁后才能销毁
-- 上下文销毁后，关联对象禁止任何操作
-- 未销毁关联对象直接销毁上下文 → 内存泄漏/未定义行为</p></li>
-</ol>
-</section>
-<section id="api">
-<h3>1.3 上下文标准 API 模板<a class="headerlink" href="#api" title="链接到此标题。">¶</a></h3>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// 上下文初始化：指定精度/位宽，返回上下文句柄</span>
-<span class="n">XXX_ctx_t</span><span class="w"> </span><span class="nf">XXX_ctx_init</span><span class="p">(</span><span class="n">xxxxxx</span><span class="p">);</span>
-
-<span class="c1">// 上下文销毁：必须在所有关联对象销毁后调用</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">XXX_ctx_clear</span><span class="p">(</span><span class="n">XXX_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-
-<span class="c1">// 上下文获取配置（可选扩展）</span>
-<span class="kt">size_t</span><span class="w"> </span><span class="nf">XXX_ctx_get_precision</span><span class="p">(</span><span class="n">XXX_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="n">round_mode_t</span><span class="w"> </span><span class="nf">XXX_ctx_get_rounding</span><span class="p">(</span><span class="n">XXX_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-</pre></div>
-</div>
-</section>
-<section id="id6">
-<h3>1.4 合法/非法示例<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// 合法流程</span>
-<span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nint_ctx_init</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
-<span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nint_ctx_init</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-
-<span class="n">nint_t</span><span class="w"> </span><span class="n">val1</span><span class="p">,</span><span class="w"> </span><span class="n">val2</span><span class="p">;</span>
-<span class="n">nint_init</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span><span class="w"> </span><span class="n">ctx1</span><span class="p">);</span>
-<span class="n">nint_init</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span><span class="w"> </span><span class="n">ctx2</span><span class="p">);</span>
-
-<span class="c1">// 运算必须使用同一上下文</span>
-<span class="n">nint_t</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
-<span class="n">nint_init</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">ctx1</span><span class="p">);</span>
-<span class="n">nint_add</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">val1</span><span class="p">,</span><span class="w"> </span><span class="n">val1</span><span class="p">,</span><span class="w"> </span><span class="n">ctx1</span><span class="p">);</span><span class="w">  </span><span class="c1">// 合法</span>
-
-<span class="c1">// 销毁顺序：对象 → 上下文</span>
-<span class="n">nint_clear</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span><span class="w"> </span><span class="n">ctx1</span><span class="p">);</span>
-<span class="n">nint_clear</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span><span class="w"> </span><span class="n">ctx2</span><span class="p">);</span>
-<span class="n">nint_clear</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">ctx1</span><span class="p">);</span>
-<span class="n">nint_ctx_clear</span><span class="p">(</span><span class="n">ctx1</span><span class="p">);</span>
-<span class="n">nint_ctx_clear</span><span class="p">(</span><span class="n">ctx2</span><span class="p">);</span>
-</pre></div>
-</div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// 非法示例（禁止行为）</span>
-<span class="n">nint_add</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">val1</span><span class="p">,</span><span class="w"> </span><span class="n">val2</span><span class="p">,</span><span class="w"> </span><span class="n">ctx2</span><span class="p">);</span><span class="w"> </span><span class="c1">// 上下文混用</span>
-<span class="n">nint_ctx_clear</span><span class="p">(</span><span class="n">ctx1</span><span class="p">);</span><span class="w">            </span><span class="c1">// 先销毁上下文，后销毁对象 → UB</span>
-</pre></div>
-</div>
-<p>不建议在同一个作用域内创建多个同一类型的上下文，以避免可能的未定义行为。</p>
-</section>
-</section>
-<section id="id7">
-<h2>2. 数据类型规范<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h2>
-<p>LMMP 类型分为两大体系：
-- <strong>无限精度类型</strong>：使用指针存储，自动扩容；
-- <strong>有限精度类型</strong>：具体精度/位宽取决于设置或依赖上下文。</p>
-<section id="id8">
-<h3>2.1 有符号整数类型<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<h3>1.1 类型与数域<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>类型名</p></th>
-<th class="head"><p>精度属性</p></th>
-<th class="head"><p>上下文</p></th>
-<th class="head"><p>用途</p></th>
+<tr class="row-odd"><th class="head"><p>类型</p></th>
+<th class="head"><p>数域与精度</p></th>
+<th class="head"><p>配置归属</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmpz_t</span></code></p></td>
-<td><p>无限精度</p></td>
-<td><p>无</p></td>
-<td><p>通用任意精度有符号整数</p></td>
+<td><p>任意精度有符号整数，精确；大小受可用资源限制</p></td>
+<td><p>无上下文</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nint_t</span></code></p></td>
-<td><p>有限精度</p></td>
-<td><p>有</p></td>
-<td><p>固定位宽有符号整数（高性能批量计算场景）</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lmpq_t</span></code></p></td>
+<td><p>精确有理数，分母非零；规范化为正分母及互素分子/分母</p></td>
+<td><p>无上下文</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nint_t</span></code></p></td>
+<td><p>固定 <code class="docutils literal notranslate"><span class="pre">bits</span></code> 位有符号整数，范围 <code class="docutils literal notranslate"><span class="pre">[-2^(bits-1),</span> <span class="pre">2^(bits-1)-1]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nint_ctx_t</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lmpf_t</span></code></p></td>
+<td><p>每个对象具有有限二进制有效位数、舍入模式和指数范围的近似实数</p></td>
+<td><p>对象初始化时显式配置，无强制上下文</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nfloat_t</span></code></p></td>
+<td><p>共享固定工作精度与指数范围的近似实数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nfloat_ctx_t</span></code></p></td>
 </tr>
 </tbody>
 </table>
+<p>这些是 C 数值表示，不是 Lamina 的独立基本数学静态类型。
+语言层基本数学类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code>，<code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">frac</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 是值约束 <a class="footnote-reference brackets" href="#id19" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。
+LMMP 基础接口不处理任意符号式、关系或一般复数；上层仅在取值和数域已确定时调用。
+证明为整数但尚不能具体求值的符号式，不能直接转换成 <code class="docutils literal notranslate"><span class="pre">lmpz_t</span></code> 或机器整数。</p>
+<p>整数加、减、乘不舍入；有理数运算保持精确。整数除法接口必须区分整除、商余数和有理数结果，
+不得用同一未说明的 <code class="docutils literal notranslate"><span class="pre">div</span></code> 隐藏截断。基础 <code class="docutils literal notranslate"><span class="pre">lmpz_divexact</span></code> 要求除数非零且可整除；
+<code class="docutils literal notranslate"><span class="pre">lmpz_divrem</span></code> 使用向零截断的商，满足 <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">q*b</span> <span class="pre">+</span> <span class="pre">r</span></code>、<code class="docutils literal notranslate"><span class="pre">abs(r)</span> <span class="pre">&lt;</span> <span class="pre">abs(b)</span></code>，
+非零余数与被除数同号。<code class="docutils literal notranslate"><span class="pre">lmpq_div</span></code> 返回精确有理数。零除和非整除违反前提分别报告数域错误。
+<code class="docutils literal notranslate"><span class="pre">nint</span></code> 溢出报告范围错误，不环绕、不饱和，也不自动变为另一种类型。</p>
 </section>
-<section id="id9">
-<h3>2.2 有理数类型<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>类型名</p></th>
-<th class="head"><p>精度属性</p></th>
-<th class="head"><p>上下文</p></th>
-<th class="head"><p>用途</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmpq_t</span></code></p></td>
-<td><p>无限精度</p></td>
-<td><p>无</p></td>
-<td><p>精确分数/有理数运算</p></td>
-</tr>
-</tbody>
-</table>
+<section id="id6">
+<h3>1.2 工作精度、舍入与范围<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
+<p>浮点 <code class="docutils literal notranslate"><span class="pre">precision</span></code> 是二进制有效位数，至少为 2；不是十进制显示位数、内存容量或无限位承诺。
+<code class="docutils literal notranslate"><span class="pre">lmpf</span></code> 的配置在对象初始化时给定，<code class="docutils literal notranslate"><span class="pre">nfloat</span></code> 的配置在上下文初始化时给定，初始化后不可变。
+改变配置须显式创建目标对象并转换，不能修改共享上下文使旧值获得新语义。</p>
+<p>支持的舍入模式为最近值同距取偶、向零、向负无穷、向正无穷。
+基础浮点加、减、乘、除按所选模式将数学运算结果舍入至目标对象的工作精度；
+成功的舍入不等于保留原式全部信息。其他算法必须另行声明其精度契约，
+不能借此承诺所有超越函数正确舍入或提供认证误差界。</p>
+<p>非零浮点值表示为 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">2^e</span></code>，其中 <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">&lt;=</span> <span class="pre">abs(m)</span> <span class="pre">&lt;</span> <span class="pre">2</span></code>，
+<code class="docutils literal notranslate"><span class="pre">e</span></code> 必须处于初始化时给定的闭区间 <code class="docutils literal notranslate"><span class="pre">[emin,</span> <span class="pre">emax]</span></code>，要求 <code class="docutils literal notranslate"><span class="pre">emin</span> <span class="pre">&lt;=</span> <span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">emax</span></code>。
+基础接口另支持精确零，不公开 NaN、无穷和次正规数。舍入后溢出或非零结果下溢报告范围错误，
+不得静默返回无穷或零。实现须公布支持的精度和指数配置范围，超出范围的配置失败，
+不得悄悄截成机器精度。浮点对象即使当前表示整数或有限小数，仍是近似表示。</p>
+<p>混合精度 <code class="docutils literal notranslate"><span class="pre">lmpf</span></code> 运算先读取输入各自已有表示值，再以目标对象配置计算；
+不先把输入降为目标精度。<code class="docutils literal notranslate"><span class="pre">nfloat</span></code> 运算要求所有对象使用同一上下文，
+跨上下文须显式转换。提高目标工作精度不会恢复输入已丢失的信息。
+语言层 <code class="docutils literal notranslate"><span class="pre">approximate(value,</span> <span class="pre">precision=100)</span></code> 的精度是十进制有效位数 <a class="footnote-reference brackets" href="#id20" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>，
+适配层须按该目标选择足够的二进制工作精度，保留近似标记，不能把本接口的二进制位数直接当作十进制位数。
+普通精确数学调用不能仅因内部选择 LMMP 浮点内核而隐式进入近似计算。</p>
+</section>
+</section>
+<section id="c">
+<h2>2. 公共 C 类型与错误通道<a class="headerlink" href="#c" title="链接到此标题。">¶</a></h2>
+<section id="c11">
+<h3>2.1 C11 声明<a class="headerlink" href="#c11" title="链接到此标题。">¶</a></h3>
+<p>公共头可由 C11 直接包含；C++ 包装不得要求 C 调用者使用异常。
+统一状态返回适用于所有可能失败的初始化、赋值、转换、查询和运算。
+以下声明给出基础类型、状态和代表性接口；同类函数遵循相同契约：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stddef.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">lmmp_status</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">LMMP_OK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_INVALID_ARGUMENT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_DOMAIN_ERROR</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_RANGE_ERROR</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_ALLOCATION_FAILURE</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_RESOURCE_EXHAUSTED</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_CANCELLED</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_INTERNAL_ERROR</span>
+<span class="p">}</span><span class="w"> </span><span class="n">lmmp_status</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">lmmp_round</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">LMMP_NEAREST_EVEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_TOWARD_ZERO</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_DOWNWARD</span><span class="p">,</span>
+<span class="w">    </span><span class="n">LMMP_UPWARD</span>
+<span class="p">}</span><span class="w"> </span><span class="n">lmmp_round</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">lmpz_struct</span><span class="w"> </span><span class="o">*</span><span class="n">lmpz_t</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">lmpz_struct</span><span class="w"> </span><span class="o">*</span><span class="n">lmpz_srcptr</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">lmpq_struct</span><span class="w"> </span><span class="o">*</span><span class="n">lmpq_t</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">lmpq_struct</span><span class="w"> </span><span class="o">*</span><span class="n">lmpq_srcptr</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">lmpf_struct</span><span class="w"> </span><span class="o">*</span><span class="n">lmpf_t</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">lmpf_struct</span><span class="w"> </span><span class="o">*</span><span class="n">lmpf_srcptr</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">nint_struct</span><span class="w"> </span><span class="o">*</span><span class="n">nint_t</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">nint_struct</span><span class="w"> </span><span class="o">*</span><span class="n">nint_srcptr</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">nfloat_struct</span><span class="w"> </span><span class="o">*</span><span class="n">nfloat_t</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">nfloat_struct</span><span class="w"> </span><span class="o">*</span><span class="n">nfloat_srcptr</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">nint_ctx_struct</span><span class="w"> </span><span class="o">*</span><span class="n">nint_ctx_t</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">nfloat_ctx_struct</span><span class="w"> </span><span class="o">*</span><span class="n">nfloat_ctx_t</span><span class="p">;</span>
+
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpz_init</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpz_clear</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpz_set_ui</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpz_add</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">lmpz_srcptr</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">lmpz_srcptr</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpz_copy</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">lmpz_srcptr</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpz_move</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="o">*</span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">lmpz_t</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpz_cmp</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">lmpz_srcptr</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">lmpz_srcptr</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpq_init</span><span class="p">(</span><span class="n">lmpq_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpq_clear</span><span class="p">(</span><span class="n">lmpq_t</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpq_div</span><span class="p">(</span><span class="n">lmpq_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">lmpq_srcptr</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">lmpq_srcptr</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpf_init</span><span class="p">(</span><span class="n">lmpf_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">precision</span><span class="p">,</span>
+<span class="w">                     </span><span class="n">lmmp_round</span><span class="w"> </span><span class="n">rounding</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">emin</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">emax</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpf_clear</span><span class="p">(</span><span class="n">lmpf_t</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpf_set_q</span><span class="p">(</span><span class="n">lmpf_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">lmpq_srcptr</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">lmpf_add</span><span class="p">(</span><span class="n">lmpf_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">lmpf_srcptr</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">lmpf_srcptr</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nint_ctx_init</span><span class="p">(</span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">bits</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nint_ctx_clear</span><span class="p">(</span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="o">*</span><span class="n">ctx</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nint_init</span><span class="p">(</span><span class="n">nint_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nint_clear</span><span class="p">(</span><span class="n">nint_t</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nint_add</span><span class="p">(</span><span class="n">nint_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">nint_srcptr</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">nint_srcptr</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
+
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nfloat_ctx_init</span><span class="p">(</span><span class="n">nfloat_ctx_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">precision</span><span class="p">,</span>
+<span class="w">                           </span><span class="n">lmmp_round</span><span class="w"> </span><span class="n">rounding</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">emin</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">emax</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nfloat_ctx_clear</span><span class="p">(</span><span class="n">nfloat_ctx_t</span><span class="w"> </span><span class="o">*</span><span class="n">ctx</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nfloat_init</span><span class="p">(</span><span class="n">nfloat_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">nfloat_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nfloat_clear</span><span class="p">(</span><span class="n">nfloat_t</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">);</span>
+<span class="n">lmmp_status</span><span class="w"> </span><span class="nf">nfloat_add</span><span class="p">(</span><span class="n">nfloat_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">nfloat_srcptr</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">nfloat_srcptr</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
+<span class="w">                      </span><span class="n">nfloat_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>不透明对象的布局不属于 ABI。<code class="docutils literal notranslate"><span class="pre">srcptr</span></code> 指向只读对象，而不是仅将句柄变量本身设为 <code class="docutils literal notranslate"><span class="pre">const</span></code>。
+<code class="docutils literal notranslate"><span class="pre">nint</span></code> 的 <code class="docutils literal notranslate"><span class="pre">bits</span></code> 至少为 2，单位是位，不是 limb 数；不支持的宽度必须明确失败。
+配置查询也采用 <code class="docutils literal notranslate"><span class="pre">lmmp_status</span></code> 返回、输出参数承载配置值的形式。
+比较查询在成功时将输出设为 <code class="docutils literal notranslate"><span class="pre">-1</span></code>、<code class="docutils literal notranslate"><span class="pre">0</span></code> 或 <code class="docutils literal notranslate"><span class="pre">1</span></code>，只比较现有数值，不调用符号证明。
+所有成功初始化的数值对象初始为零；<code class="docutils literal notranslate"><span class="pre">lmpq</span></code> 的规范分母为 1。
+除 <code class="docutils literal notranslate"><span class="pre">init</span></code> 的空输出槽和 <code class="docutils literal notranslate"><span class="pre">clear</span></code> 的空句柄外，运算须使用有效、已初始化的对象；
+可检查的空指针或空句柄返回 <code class="docutils literal notranslate"><span class="pre">LMMP_INVALID_ARGUMENT</span></code>。</p>
+</section>
+<section id="id8">
+<h3>2.2 状态与失败输出<a class="headerlink" href="#id8" title="链接到此标题。">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LMMP_OK</span></code> 表示全部输出有效；非成功状态不得同时表示部分成功。</p></li>
+<li><p>非法参数或上下文不匹配返回 <code class="docutils literal notranslate"><span class="pre">LMMP_INVALID_ARGUMENT</span></code>；零除、非整除和定义域违反返回
+<code class="docutils literal notranslate"><span class="pre">LMMP_DOMAIN_ERROR</span></code>；机器整数、浮点指数或转换超范围返回 <code class="docutils literal notranslate"><span class="pre">LMMP_RANGE_ERROR</span></code>。</p></li>
+<li><p>分配失败、资源限制、取消和内部错误分别返回对应状态，不得编译为仅 Debug 有效的检查，
+也不得用 <code class="docutils literal notranslate"><span class="pre">abort</span></code>、C++ 异常、NaN 或默认结果代替公共错误协议。</p></li>
+<li><p>失败的赋值、转换和运算保持所有已初始化输出的旧值及配置；标量查询输出也保持原值。
+多输出运算须全部提交或全部保持不变。</p></li>
+<li><p>初始化要求输出句柄起始为 <code class="docutils literal notranslate"><span class="pre">NULL</span></code>；失败时仍为 <code class="docutils literal notranslate"><span class="pre">NULL</span></code>，不产生待释放的半初始化对象。
+清理成功后句柄为 <code class="docutils literal notranslate"><span class="pre">NULL</span></code>；清理空句柄成功。有效对象的销毁不得因临时分配失败而遗失所有权。</p></li>
+<li><p>已有对象仍引用上下文时，<code class="docutils literal notranslate"><span class="pre">ctx_clear</span></code> 返回 <code class="docutils literal notranslate"><span class="pre">LMMP_INVALID_ARGUMENT</span></code> 并保持上下文有效。
+调用者须先销毁对象；不得把这种可检查的生命周期冲突规定成正常使用下的未定义行为。</p></li>
+<li><p>状态不依赖进程全局或线程局部的“最后错误”变量。可附加诊断，但状态本身足以判断成功及类别。
+悬空指针、伪造句柄和越界缓冲区仍违反 C 调用前提，不要求运行时识别任意内存破坏。</p></li>
+</ul>
+<p>内部可保留不返回状态的 <code class="docutils literal notranslate"><span class="pre">void</span></code> 数值内核。公共入口必须在其调用前后按实际失败来源完成检查，
+将失败转换为上述状态，保证输出契约；<code class="docutils literal notranslate"><span class="pre">void</span></code> 不意味着分配和运算不可能失败。
+通过 Lamina FFI 调用时，适配层将状态映射为 LSR-018 <a class="footnote-reference brackets" href="#id21" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 的错误载荷：
+参数/数域错误保持其类别，范围错误映射为 <code class="docutils literal notranslate"><span class="pre">NumericalFailure</span></code>，分配或资源失败映射为
+<code class="docutils literal notranslate"><span class="pre">ResourceLimit</span></code>，取消映射为 <code class="docutils literal notranslate"><span class="pre">Cancelled</span></code>，内部错误映射为内部运行时故障。
+任何非成功状态均不得吞掉后继续返回数学结果。</p>
+</section>
 </section>
 <section id="id10">
-<h3>2.3 浮点数类型<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>类型名</p></th>
-<th class="head"><p>精度属性</p></th>
-<th class="head"><p>上下文</p></th>
-<th class="head"><p>用途</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmpf_t</span></code></p></td>
-<td><p>无限精度</p></td>
-<td><p>无</p></td>
-<td><p>通用任意精度浮点数</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nfloat_t</span></code></p></td>
-<td><p>有限精度</p></td>
-<td><p>有</p></td>
-<td><p>固定精度高性能浮点数（高性能批量计算场景）</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmag_t</span></code></p></td>
-<td><p>无限精度</p></td>
-<td><p>无</p></td>
-<td><p>无符号浮点数（幅值/误差运算）</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">liar_t</span></code></p></td>
-<td><p>无限精度</p></td>
-<td><p>（待定）</p></td>
-<td><p>区间算术浮点数（绝对误差限计算）</p></td>
-</tr>
-</tbody>
-</table>
-</section>
+<h2>3. 生命周期、上下文与别名<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h2>
 <section id="id11">
-<h3>2.4 多项式类型<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>类型名</p></th>
-<th class="head"><p>系数</p></th>
-<th class="head"><p>上下文</p></th>
-<th class="head"><p>用途</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmpz_poly_t</span></code></p></td>
-<td><p>整系数</p></td>
-<td><p>无</p></td>
-<td><p>无限精度整系数</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lmpq_poly_t</span></code></p></td>
-<td><p>有理数</p></td>
-<td><p>无</p></td>
-<td><p>无限精度有理数多项式</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmpf_poly_t</span></code></p></td>
-<td><p>浮点系数</p></td>
-<td><p>无</p></td>
-<td><p>无限精度浮点系数多项式</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">modn_poly_t</span></code></p></td>
-<td><p>n的剩余类</p></td>
-<td><p>有</p></td>
-<td><p>有限精度浮点系数多项式</p></td>
-</tr>
-</tbody>
-</table>
-<p>其他数据类型待定。</p>
-</section>
+<h3>3.1 生命周期与所有权<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<p>初始化取得一个对象的所有权，持有者负责清理。普通句柄赋值只复制 C 指针，
+不复制数学对象，也不创建第二个可独立销毁的所有权。复制对象使用 <code class="docutils literal notranslate"><span class="pre">copy</span></code>；
+<code class="docutils literal notranslate"><span class="pre">move</span></code> 只转移所有权，成功后目标取得对象、源为 <code class="docutils literal notranslate"><span class="pre">NULL</span></code>，失败时两者不变。
+移动要求目标为空、源有效且两句柄槽不同，不执行隐式复制。
+公共 API 不要求预先调用进程级全局初始化或维护强制内存池。</p>
+<p>输入默认只读借用，仅在调用期间有效。输出对象由调用者所有，不能把结果指针指向临时存储。
+运算允许 <code class="docutils literal notranslate"><span class="pre">rop</span></code> 与一个或两个输入为同一对象，语义等同先读取全部输入再写入输出；
+不同输出不得相互别名。若某专用函数确实不支持别名，必须在其接口契约中明确限制，
+不能把基础运算的别名行为留给底层实现猜测。
+同一对象的并发写入需要调用方同步；互不关联的对象和上下文不得共享可观察的可变全局配置。</p>
 </section>
 <section id="id12">
-<h2>3. 标准函数接口规范<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h2>
-<section id="id13">
-<h3>3.1 命名规范<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
-<p>标准接口函数命名基本范式：
-.. code-block:: text</p>
-<blockquote>
-<div><p>[前缀]_[动作]_[对象]</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>前缀：<code class="docutils literal notranslate"><span class="pre">lmpz</span></code>/<code class="docutils literal notranslate"><span class="pre">lmpq</span></code>/<code class="docutils literal notranslate"><span class="pre">lmpf</span></code>/<code class="docutils literal notranslate"><span class="pre">nint</span></code>/<code class="docutils literal notranslate"><span class="pre">nfloat</span></code>/<code class="docutils literal notranslate"><span class="pre">liar</span></code>...</p></li>
-<li><p>动作：<code class="docutils literal notranslate"><span class="pre">init</span></code>/<code class="docutils literal notranslate"><span class="pre">clear</span></code>/<code class="docutils literal notranslate"><span class="pre">add</span></code>/<code class="docutils literal notranslate"><span class="pre">sub</span></code>/<code class="docutils literal notranslate"><span class="pre">mul</span></code>/<code class="docutils literal notranslate"><span class="pre">div</span></code>/<code class="docutils literal notranslate"><span class="pre">set</span></code>/<code class="docutils literal notranslate"><span class="pre">to</span></code>/<code class="docutils literal notranslate"><span class="pre">cmp</span></code>...</p></li>
-<li><p>对象：<code class="docutils literal notranslate"><span class="pre">lmpz</span></code>/<code class="docutils literal notranslate"><span class="pre">lmpq</span></code>/<code class="docutils literal notranslate"><span class="pre">lmpf</span></code>/<code class="docutils literal notranslate"><span class="pre">nint</span></code>/<code class="docutils literal notranslate"><span class="pre">nfloat</span></code>/<code class="docutils literal notranslate"><span class="pre">liar</span></code>/<code class="docutils literal notranslate"><span class="pre">ui</span></code>/<code class="docutils literal notranslate"><span class="pre">si</span></code>/<code class="docutils literal notranslate"><span class="pre">str</span></code>...
-- <code class="docutils literal notranslate"><span class="pre">ui</span></code> ：无符号整数
-- <code class="docutils literal notranslate"><span class="pre">str</span></code> ：字符串（用于赋值）
-- ...（其他类型）</p></li>
-</ul>
-<dl class="simple">
-<dt>示例：</dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">lmpz_add</span></code> ：无限整数加法</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nfloat_mul</span></code> ：有限浮点数乘法</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nint_set_ui</span></code> ：有限整数赋值</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nint_to_lmpz</span></code> ：有限整数转换为无限整数</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nint_to_lmpf</span></code> ：有限整数转换为无限浮点数</p></li>
-</ul>
-</dd>
-</dl>
-<p>对于复杂的函数，可以自行考虑合理的命名方式，但应基本遵循上述命名规范。</p>
+<h3>3.2 仅对需要的类型使用上下文<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">nint</span></code> 和 <code class="docutils literal notranslate"><span class="pre">nfloat</span></code> 使用不透明上下文。配置初始化后只读，多实例可以共存，
+同类多个实例本身不是错误。初始化绑定对象与上下文，运算时检查绑定是否匹配；
+销毁对象从自身绑定获得清理所需信息，不强制再次传入冗余上下文。
+上下文存活至所有关联对象销毁，不能跨上下文混用对象；显式转换除外。
+无上下文的 <code class="docutils literal notranslate"><span class="pre">lmpz</span></code>、<code class="docutils literal notranslate"><span class="pre">lmpq</span></code>、<code class="docutils literal notranslate"><span class="pre">lmpf</span></code> 不添加无意义的 <code class="docutils literal notranslate"><span class="pre">ctx</span></code> 参数。
+内存池、缓存、共享存储和复用临时空间都是内部可选优化，不改变所有权、别名或失败输出规则。</p>
 </section>
-<section id="id14">
-<h3>3.2 生命周期函数<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h3>
-<p>四类基本生命周期函数：
-- 初始化：<code class="docutils literal notranslate"><span class="pre">init</span></code>
-- 销毁：<code class="docutils literal notranslate"><span class="pre">clear</span></code>
-- 移动：<code class="docutils literal notranslate"><span class="pre">move</span></code> （源对象相当于被clear）
-- 拷贝：<code class="docutils literal notranslate"><span class="pre">copy</span></code></p>
-<p>生命周期函数的实现不强制要求可重入，即实现时，无需保证可重复初始化或重复销毁。<strong>调用方应自行保证不重复调用生命周期函数</strong>。</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// 初始化对象（绑定上下文）</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">lmpz_init</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">op</span><span class="p">);</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">nint_init</span><span class="p">(</span><span class="n">nint_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-
-<span class="c1">// 重置/清空对象</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">lmpz_clear</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">op</span><span class="p">);</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">nint_clear</span><span class="p">(</span><span class="n">nint_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-
-<span class="c1">// 拷贝对象</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">lmpz_copy</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">op</span><span class="p">);</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">nint_copy</span><span class="p">(</span><span class="n">nint_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">nint_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-
-<span class="c1">// 移动对象（源对象相当于被clear）</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">lmpz_move</span><span class="p">(</span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">op</span><span class="p">);</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">nint_move</span><span class="p">(</span><span class="n">nint_t</span><span class="w"> </span><span class="n">rop</span><span class="p">,</span><span class="w"> </span><span class="n">nint_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-</pre></div>
-</div>
+<section id="id13">
+<h3>3.3 转换与精确/近似边界<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<p>精确整数、有理数间的转换须无损；有理数转整数要求分母为 1，不能自动截断。
+向固定宽度整数转换须检查完整范围。浮点转整数要求当前表示值为整数且范围满足要求；
+需要截断或其他舍入的调用者应使用命名明确的舍入接口。
+精确值转浮点是显式数值转换，遵循目标配置并保留近似属性。
+已有浮点值转换为精确有理数时只能表示当前存储数值，不代表恢复近似前数学对象；
+语言适配层不得藉此消除来源值的近似身份。
+对外部 <code class="docutils literal notranslate"><span class="pre">double</span></code> 的转换还须满足 LSR-003 <a class="footnote-reference brackets" href="#id19" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 的 ABI 范围和工作精度契约。</p>
+</section>
 </section>
 <section id="id15">
-<h3>3.3 运算函数规范<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
-<ol class="arabic simple">
-<li><p><strong>输出参数在前</strong>
-`` 函数(输出, 输入1, 输入2, 上下文（如需要）)``</p></li>
-<li><p><strong>const 修饰输入参数</strong></p></li>
-<li><p><strong>无返回值</strong>，禁止直接返回指针。</p></li>
-<li><p><strong>上下文为最后一个参数</strong></p></li>
-</ol>
-<p>标准格式：
-.. code-block:: c</p>
-<blockquote>
-<div><p>// 无限精度
-void lmpz_add(lmpz_t rop, const lmpz_t op1, const lmpz_t op2);</p>
-<p>// 有限精度
-void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</p>
-</div></blockquote>
-</section>
-</section>
-<section id="id16">
-<h2>4. 内存管理规范<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h2>
-<section id="id17">
-<h3>4.1 基本原则<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
-<ol class="arabic simple">
-<li><p><strong>谁初始化，谁销毁</strong></p></li>
-<li><p><strong>无限精度类型</strong>：自动管理内存，无需手动扩容</p></li>
-<li><p><strong>有限精度类型</strong>：上下文统一管理内存池/缓存</p></li>
-</ol>
-</section>
-<section id="id18">
-<h3>4.2 生命周期顺序<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
-<ol class="arabic simple">
-<li><p><strong>有上下文对象</strong>：
-1. 创建上下文
-2. 初始化对象（绑定上下文）
-3. 执行运算
-4. 清空对象
-5. 销毁上下文</p></li>
-<li><p><strong>无上下文对象</strong>：
-1. 初始化对象
-2. 执行运算
-3. 清空对象</p></li>
-</ol>
-<p>违反顺序将导致未定义行为（UB）。</p>
-</section>
-</section>
-<section id="id19">
-<h2>5. 错误与异常处理规范<a class="headerlink" href="#id19" title="链接到此标题。">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">LMMP</span></code> 仅保留最低限度的错误检查，绝大多数错误处理机制都应在 <code class="docutils literal notranslate"><span class="pre">Release</span></code> 模式下不发生，这是为了追求绝对的效率。同时，错误或异常只抛出，不处理。错误处理机制应由调用方自行实现。</p>
-</section>
-<section id="id20">
-<h2>6. 编码示例<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h2>
-<p>仅作为参考，实际代码应根据具体实现进行调整。</p>
+<h2>4. 调用示例<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h2>
+<p>以下 C11 示例使用公共头提供的类型和声明；每一步检查状态，出错后只清理已取得的对象。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"lmmp/lmpz.h"</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// 初始化全局环境建议在进程或线程创建时调用</span>
-<span class="w">    </span><span class="n">lmmp_global_init</span><span class="p">();</span><span class="w">  </span><span class="c1">// 初始化全局环境</span>
-
-<span class="w">    </span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
-<span class="w">    </span><span class="c1">// 初始化</span>
-<span class="w">    </span><span class="n">lmpz_init</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
-<span class="w">    </span><span class="n">lmpz_init</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-<span class="w">    </span><span class="n">lmpz_init</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// 赋值</span>
-<span class="w">    </span><span class="n">lmpz_set_ui</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">);</span>
-<span class="w">    </span><span class="n">lmpz_set_ui</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="mi">2000</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// 运算</span>
-<span class="w">    </span><span class="n">lmpz_add</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w">  </span><span class="c1">// c = a + b</span>
-
-<span class="w">    </span><span class="c1">// 输出/使用</span>
-<span class="w">    </span><span class="c1">// ...</span>
-
-<span class="w">    </span><span class="c1">// 销毁</span>
-<span class="w">    </span><span class="n">lmpz_clear</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
-<span class="w">    </span><span class="n">lmpz_clear</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-<span class="w">    </span><span class="n">lmpz_clear</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-
-<span class="w">    </span><span class="n">lmmp_global_clear</span><span class="p">();</span><span class="w">  </span><span class="c1">// 清理全局环境</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"lmmp/nint.h"</span>
-
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// 初始化全局环境建议在进程或线程创建时调用</span>
-<span class="w">    </span><span class="n">lmmp_global_init</span><span class="p">();</span><span class="w">  </span><span class="c1">// 初始化全局环境</span>
-
-<span class="w">    </span><span class="c1">// 创建上下文</span>
-<span class="w">    </span><span class="n">nint_ctx_t</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nint_ctx_init</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span><span class="w"> </span><span class="c1">// 32 limb 精度</span>
-<span class="w">    </span><span class="n">nint_t</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
-
-<span class="w">    </span><span class="c1">// 初始化对象</span>
-<span class="w">    </span><span class="n">nint_init</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="w">    </span><span class="n">nint_init</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="w">    </span><span class="n">nint_init</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// 赋值与运算</span>
-<span class="w">    </span><span class="n">nint_set_ui</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">12345</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="w">    </span><span class="n">nint_set_ui</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="mi">67890</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="w">    </span><span class="n">nint_add</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-
-<span class="w">    </span><span class="c1">// 销毁</span>
-<span class="w">    </span><span class="n">nint_clear</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="w">    </span><span class="n">nint_clear</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="w">    </span><span class="n">nint_clear</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">);</span>
-<span class="w">    </span><span class="n">nint_ctx_clear</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
-
-<span class="w">    </span><span class="n">lmmp_global_clear</span><span class="p">();</span><span class="w">  </span><span class="c1">// 清理全局环境</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">lmpz_t</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">lmmp_status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lmpz_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">LMMP_OK</span><span class="p">)</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">done</span><span class="p">;</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lmpz_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">LMMP_OK</span><span class="p">)</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">done</span><span class="p">;</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lmpz_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">LMMP_OK</span><span class="p">)</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">done</span><span class="p">;</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lmpz_set_ui</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">LMMP_OK</span><span class="p">)</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">done</span><span class="p">;</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lmpz_set_ui</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="mi">2000</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">LMMP_OK</span><span class="p">)</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">done</span><span class="p">;</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lmpz_add</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="nl">done</span><span class="p">:</span>
+<span class="w">    </span><span class="n">lmpz_clear</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lmpz_clear</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lmpz_clear</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">LMMP_OK</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </section>
-<section id="id21">
-<h2>7. 接口兼容性约束<a class="headerlink" href="#id21" title="链接到此标题。">¶</a></h2>
-<p>LMMP 暴露的接口有**标准接口**和**非标准接口**，标准接口应尽可能保持兼容性，但不作为强制约束。非标准接口通常以 <code class="docutils literal notranslate"><span class="pre">XXX_</span></code> 命名（<strong>结尾以下划线收尾</strong>），标准接口则需满足标准接口函数的命名规范。</p>
-<p>其他要求如下：
-1. 应尽可能避免删除标准接口；
-2. 为提高可拓展性和开发自由度，应尽可能暴露非标准接口；
-3. 非标准接口可以更加灵活，以运行效率作为第一优先级，而非兼容性；
-4. 所有接口应至少兼容C11标准，同时可以兼容C++11标准。</p>
+<section id="id16">
+<h2>5. 独立数值扩展<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">lmag_t</span></code> 幅值、<code class="docutils literal notranslate"><span class="pre">liar_t</span></code> 认证区间及 <code class="docutils literal notranslate"><span class="pre">lmpz_poly_t</span></code>、<code class="docutils literal notranslate"><span class="pre">lmpq_poly_t</span></code>、
+<code class="docutils literal notranslate"><span class="pre">lmpf_poly_t</span></code>、<code class="docutils literal notranslate"><span class="pre">modn_poly_t</span></code> 多项式分别属于独立扩展。
+幅值扩展须声明非负性、上下界方向与范围；区间扩展须声明端点舍入、包含保证及空区间语义。
+认证区间不等于 LSR-017 的符号实数集合区间，也不由普通近似值自动获得认证。
+多项式扩展须声明系数域、零多项式、次数、除法条件及失败输出；
+<code class="docutils literal notranslate"><span class="pre">modn_poly_t</span></code> 的系数域是模 <code class="docutils literal notranslate"><span class="pre">n</span></code> 剩余类，不是浮点数。
+各扩展仅在实际需要精度、模数等配置时引入上下文，并沿用公共状态、生命周期和别名契约。
+基础算术不依赖这些扩展，也不要求通用插件或注册框架。</p>
+</section>
+<section id="id17">
+<h2>6. 接口兼容性约束<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h2>
+<p>标准接口的公开名称、C 原型、状态含义和数值契约属于兼容性范围，破坏性改变必须明确标识版本。
+实现内部内核不因采用特定命名后缀而自动成为公共接口；非标准接口须明确其适用范围，
+不得通过不检查错误的替代公开入口削弱基础契约。
+所有公共头至少兼容 C11，可同时兼容 C++11；C++ 包含时提供 C 链接声明。</p>
+</section>
+<section id="id18">
+<h2>7. 引用<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id19" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id14">2</a>)</span>
+<p><a class="reference internal" href="LSR-003.html"><span class="doc">LSR-003 - Lamina C 扩展与插件规范</span></a> - 值约束、机器 ABI、借用与错误边界</p>
+</aside>
+<aside class="footnote brackets" id="id20" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 显式近似入口及十进制目标精度</p>
+</aside>
+<aside class="footnote brackets" id="id21" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 数学错误与清理/回调传播</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -476,7 +379,7 @@ void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -486,7 +389,7 @@ void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="LSR-014.html" title="上一章">LSR 014 - 运算符规范</a></li>
-      <li>Next: <a href="LSR-016.html" title="下一章">LSR 016 - Expr 构造与提升规范</a></li>
+      <li>Next: <a href="LSR-016.html" title="下一章">LSR 016 - 数学值与符号操作规范</a></li>
   </ul></li>
 </ul>
 </div>
@@ -506,7 +409,7 @@ void nint_add(nint_t rop, const nint_t op1, const nint_t op2, nint_ctx_t ctx);</
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

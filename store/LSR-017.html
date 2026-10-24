@@ -17,7 +17,7 @@
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="LSR 018 - Never 底类型与 raise 终止效应规范" href="LSR-018.html" />
-    <link rel="prev" title="LSR 016 - Expr 构造与提升规范" href="LSR-016.html" />
+    <link rel="prev" title="LSR 016 - 数学值与符号操作规范" href="LSR-016.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -51,23 +51,24 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义 Lamina 的 <code class="docutils literal notranslate"><span class="pre">interval&lt;T&gt;</span></code> 类型、四个标准库构造函数、端点开闭性、类型统一、成员判断和符号表达式语义。区间通过普通函数调用构造，元组和数组继续使用各自的字面量语法。</p>
+<p>定义 Lamina 的实区间类型 <code class="docutils literal notranslate"><span class="pre">interval&lt;num&gt;</span></code>、四个标准库构造函数、端点开闭性、成员判断和符号端点语义。区间通过普通函数调用构造，元组和数组继续使用各自的字面量语法。</p>
 </section>
 <section id="id3">
 <h2>技术规范<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
 <section id="id4">
 <h3>1. 区间类型<a class="headerlink" href="#id4" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">interval&lt;T&gt;</span></code> 表示由下界、上界和两个端点的开闭标志组成的有界区间。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let unit interval&lt;int&gt; = std.interval_closed(0, 1)
-let domain interval&lt;real&gt; = std.interval_open_closed(0.0, 1.0)
+<p><code class="docutils literal notranslate"><span class="pre">interval&lt;num&gt;</span></code> 表示由下界、上界和两个端点的开闭标志组成的有界实数集合。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let closed_domain interval&lt;num&gt; = std.interval_closed(0, 1)
+let domain interval&lt;num&gt; = std.interval_open_closed(0, 1)
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code> 提供区间成员判断所需的顺序比较</p></li>
-<li><p>两个端点的类型统一为同一 <code class="docutils literal notranslate"><span class="pre">T</span></code></p></li>
-<li><p>数值端点按核心数值塔规则统一</p></li>
-<li><p>带量纲端点具有相同维度，并在比较前换算到统一尺度</p></li>
-<li><p>区间值创建后保持端点值和开闭标志不变</p></li>
+<li><p>端点的基本静态类型统一为 <code class="docutils literal notranslate"><span class="pre">num</span></code>，并须满足实标量值约束；小整数、大整数、有理数、近似值和符号表达式是内部表示差别，不决定成员域</p></li>
+<li><p>区间默认包含边界之间的实数，而不是仅包含与端点表示相同的值；整数端点不会产生 <code class="docutils literal notranslate"><span class="pre">interval&lt;int&gt;</span></code>，例如 <code class="docutils literal notranslate"><span class="pre">1/2</span></code> 属于 <code class="docutils literal notranslate"><span class="pre">closed_domain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">frac</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 是值约束，不是不同的基本数学类型；不由端点的这些约束或底层表示推断整数成员域</p></li>
+<li><p>带量纲端点须具有相同的静态维度，并在比较前换算到统一尺度；区间保留该静态量纲要求，运行期裸数不能恢复已擦除的量纲</p></li>
+<li><p>复数不具有无条件实数顺序；确定非实或不属于标量支持域的端点不能用于构造本区间</p></li>
+<li><p>区间遵循值语义，保留构造时的端点值和开闭标志；后续修改端点来源绑定不改变既有区间，不规定可观察的共享存储身份</p></li>
 </ul>
 </section>
 <section id="id5">
@@ -94,18 +95,19 @@ let domain interval&lt;real&gt; = std.interval_open_closed(0.0, 1.0)
 </tr>
 </tbody>
 </table>
-<p>四个构造函数具有下列泛型签名：</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func interval_closed&lt;T&gt;(lower T, upper T) -&gt; interval&lt;T&gt;
-func interval_open&lt;T&gt;(lower T, upper T) -&gt; interval&lt;T&gt;
-func interval_closed_open&lt;T&gt;(lower T, upper T) -&gt; interval&lt;T&gt;
-func interval_open_closed&lt;T&gt;(lower T, upper T) -&gt; interval&lt;T&gt;
+<p>无量纲端点的四个构造函数具有下列签名：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func interval_closed(lower real, upper real) -&gt; interval&lt;num&gt;
+func interval_open(lower real, upper real) -&gt; interval&lt;num&gt;
+func interval_closed_open(lower real, upper real) -&gt; interval&lt;num&gt;
+func interval_open_closed(lower real, upper real) -&gt; interval&lt;num&gt;
 </pre></div>
 </div>
-<p>两个端点表达式按源码从左到右各求值一次。</p>
+<p><code class="docutils literal notranslate"><span class="pre">real</span></code> 是 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的实标量值约束，参数基本类型均为 <code class="docutils literal notranslate"><span class="pre">num</span></code>。带量纲形式使用同维度实标量端点，按相同规则构造区间，不因量纲产生数值表示类型或按值重载。</p>
+<p>两个端点表达式按源码从左到右各求值一次，先按普通调用规则绑定再检查。实性和量纲静态可证时提前检查，其余运行期验证；确定违反约束时报 <code class="docutils literal notranslate"><span class="pre">DomainError</span></code> 或 <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>，实性仍未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>。实端点之间的未知顺序则按第 4 节保留，不等同于实性校验失败。</p>
 </section>
 <section id="id6">
 <h3>3. 表面语法<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
-<p>区间构造采用普通的限定名函数调用语法 <a class="footnote-reference brackets" href="#id19" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。</p>
+<p>区间构造采用普通的限定名函数调用语法 <a class="footnote-reference brackets" href="#id20" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>源码</p></th>
@@ -114,7 +116,7 @@ func interval_open_closed&lt;T&gt;(lower T, upper T) -&gt; interval&lt;T&gt;
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code></p></td>
-<td><p>二元素元组 <a class="footnote-reference brackets" href="#id20" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+<td><p>二元素元组 <a class="footnote-reference brackets" href="#id21" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[a,</span> <span class="pre">b]</span></code></p></td>
 <td><p>二元素数组</p></td>
@@ -135,32 +137,37 @@ func interval_open_closed&lt;T&gt;(lower T, upper T) -&gt; interval&lt;T&gt;
 <li><p>下界小于上界时，区间按构造函数指定的开闭性确定成员</p></li>
 <li><p>下界等于上界且由 <code class="docutils literal notranslate"><span class="pre">interval_closed</span></code> 构造时，区间只包含该端点</p></li>
 <li><p>下界等于上界且至少一端开放时，区间为空</p></li>
-<li><p>下界大于上界时产生 <code class="docutils literal notranslate"><span class="pre">IntervalBoundsReversed</span></code></p></li>
+<li><p>下界大于上界时，区间为空，不报倒置边界错误，也不自动交换端点</p></li>
+<li><p>上下界顺序或相等性未决时，保留端点及开闭标志形成符号区间；代入或假设补充后继续按同一规则判断，不能把未决当成倒置或空集</p></li>
 </ul>
-<p>空区间保留构造时推导出的 <code class="docutils literal notranslate"><span class="pre">interval&lt;T&gt;</span></code> 类型。</p>
+<p>空区间保留 <code class="docutils literal notranslate"><span class="pre">interval&lt;num&gt;</span></code> 类型和相应静态量纲。边界判定比较各数值当前的数学表示值；精确与近似混合时不先舍入、不引入容差，结论不追溯到近似之前的原式。</p>
 </section>
 <section id="id10">
 <h3>5. 成员判断<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">in</span></code> 和 <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code> 判断值是否位于区间内。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>0 in std.interval_closed(0, 1)          # true
-0 in std.interval_open_closed(0, 1)     # false
-1 not in std.interval_closed_open(0, 1) # true
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>let half = (1/2) in std.interval_closed(0, 1)
+let excluded = 0 in std.interval_open_closed(0, 1)
+let reversed = std.interval_closed(1, 0)
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>左操作数类型可赋给区间的元素类型 <code class="docutils literal notranslate"><span class="pre">T</span></code></p></li>
-<li><p>闭端点使用包含相等的比较</p></li>
-<li><p>开端点使用严格比较</p></li>
-<li><p>普通值的成员判断返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code></p></li>
+<li><p>左操作数须为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 标量并满足区间的实性和静态量纲要求；确定不相容时沿错误路径传播</p></li>
+<li><p>闭端点使用包含相等的比较，开端点使用严格比较；实数成员域不受端点或待判断值的内部表示影响</p></li>
+<li><p>普通端点和符号端点采用同一数学值语义，<code class="docutils literal notranslate"><span class="pre">in</span></code> 和 <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">in</span></code> 构造基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的成员关系；示例中 <code class="docutils literal notranslate"><span class="pre">half</span></code> 可判为真，<code class="docutils literal notranslate"><span class="pre">excluded</span></code> 可判为假，<code class="docutils literal notranslate"><span class="pre">reversed</span></code> 为空</p></li>
+<li><p>已确定为空的区间不包含任何满足成员输入约束的值；未知端点顺序或未知比较保留在关系中</p></li>
+<li><p>条件位置按核心规则自动判真；结论仍未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>，不能将未知关系转成 <code class="docutils literal notranslate"><span class="pre">false</span></code>，也不能将普通数字作真假转换</p></li>
 </ul>
 </section>
 <section id="id11">
 <h3>6. 相等性与哈希<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
-<p>区间相等采用结构语义。</p>
+<p>区间是数学集合，整体 <code class="docutils literal notranslate"><span class="pre">==</span></code> 和 <code class="docutils literal notranslate"><span class="pre">!=</span></code> 构造基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 的数学关系；<code class="docutils literal notranslate"><span class="pre">std.cas.same_structure</span></code> 的区间重载才是返回 <code class="docutils literal notranslate"><span class="pre">bool</span></code> 的显式结构查询。</p>
 <ul class="simple">
-<li><p>元素类型、下界、上界和两个开闭标志均相同时，两个区间相等</p></li>
-<li><p>端点均可相等比较时，区间支持 <code class="docutils literal notranslate"><span class="pre">==</span></code></p></li>
-<li><p>端点均可哈希时，区间支持哈希</p></li>
+<li><p>数学相等比较区间表示的实数集合；确定为空的两个区间表示同一集合，不要求其原始端点结构相同。关系在条件位置自动判真，仍未决时报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code></p></li>
+<li><p>静态量纲、端点值结构和两个开闭标志均相同时，两个区间结构相同；类型兼容性仍须先校验</p></li>
+<li><p>结构查询和内部哈希匹配对端点直接使用与 <code class="docutils literal notranslate"><span class="pre">std.cas.same_structure</span></code> 一致的递归比较，不调用会构造关系的相等运算，也不进行有限预算等价证明</p></li>
+<li><p>精确数字叶按数值比较，不依赖内部表示；近似端点保留表示值、近似类别和工作精度等结构区别，并与精确叶区别</p></li>
+<li><p>哈希须与结构比较一致；全局证明预算不参与键，存储地址不能作为数学端点或区间的身份</p></li>
+<li><p>结构不同的区间仍可能表示同一实数集合，例如不同倒置边界产生的空区间；不能把结构不相同误当成已证明集合不同</p></li>
 </ul>
 </section>
 <section id="id12">
@@ -172,47 +179,49 @@ func interval_open_closed&lt;T&gt;(lower T, upper T) -&gt; interval&lt;T&gt;
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">interval&lt;T&gt;</span></code></p></td>
-<td><p>由两个端点限定的范围</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">interval&lt;num&gt;</span></code></p></td>
+<td><p>由实数端点限定的实数集合，不隐含整数步进</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">range(start,</span> <span class="pre">end)</span></code> <a class="footnote-reference brackets" href="#id21" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
-<td><p>按标准库规则生成的序列</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">range(start,</span> <span class="pre">end)</span></code> <a class="footnote-reference brackets" href="#id22" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p></td>
+<td><p>独立的整数步进序列，按接口检查整数约束及具体可求值性</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code> <a class="footnote-reference brackets" href="#id22" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">set&lt;T&gt;</span></code> <a class="footnote-reference brackets" href="#id23" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a></p></td>
 <td><p>有限、已枚举、无序且去重的值集合</p></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="expr">
-<h3>8. <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 与符号区间<a class="headerlink" href="#expr" title="链接到此标题。">¶</a></h3>
-<p>任一端点为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，或上下文显式期望 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 时，区间构造函数产生符号区间表达式 <a class="footnote-reference brackets" href="#id23" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-let numeric = std.interval_closed(0, 1)       # interval&lt;int&gt;
-let symbolic = std.interval_closed_open(0, x) # Expr
-let forced Expr = std.interval_open(0, 1)     # Expr
+<section id="id15">
+<h3>8. 符号端点<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
+<p>含符号端点的区间仍为 <code class="docutils literal notranslate"><span class="pre">interval&lt;num&gt;</span></code>，不提升为另一符号类型 <a class="footnote-reference brackets" href="#id24" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>。构造函数只接收明确绑定的值，期望数学参数不会使未绑定的名字自动成为符号。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>func segment(x real) -&gt; interval&lt;num&gt; {
+    return std.interval_closed_open(0, x)
+}
+
+let numeric = std.interval_closed(0, 1)
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>可提升端点逐个提升为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-<li><p>符号区间成员判断产生关系表达式</p></li>
-<li><p>符号端点的顺序由 CAS 判定</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">segment</span></code> 的参数基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；已证明为实数的符号式可以满足 <code class="docutils literal notranslate"><span class="pre">real</span></code> 约束，无需先具体求值</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 默认声明复数标量；用于实区间端点前须通过假设或约束满足实性，不能仅因写在端点位置就隐式变为实数</p></li>
+<li><p>未知顺序保留在同一类型的区间值中；代入后若下界大于上界即为空，同端点依开闭性判断</p></li>
+<li><p>符号区间成员关系与数字区间成员关系具有同一基本类型 <code class="docutils literal notranslate"><span class="pre">num</span></code>；只有具体使用位置要求确定真值时才必须判定</p></li>
 </ul>
 </section>
-<section id="id16">
-<h3>9. 诊断<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<section id="id17">
+<h3>9. 诊断<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
 <p>实现至少区分下列错误：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">IntervalArityMismatch</span></code>：构造函数的端点数量错误</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">IntervalBoundTypeMismatch</span></code>：端点类型无法统一</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">IntervalBoundNotOrdered</span></code>：端点类型缺少所需顺序比较</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">IntervalBoundsReversed</span></code>：可判定的下界大于上界</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">IntervalMembershipTypeMismatch</span></code>：待判断值与端点类型不兼容</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IntervalBoundNotOrdered</span></code>：端点确定不满足实标量支持域或所需量纲条件</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>：端点实性或需要确定真值的成员判断仍未决；仅边界顺序未决不使构造失败</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IntervalMembershipTypeMismatch</span></code>：待判断值与区间的标量或量纲要求不兼容</p></li>
 </ul>
 <p>错误名称可以映射到实现的统一诊断系统。</p>
 </section>
-<section id="id17">
-<h3>10. 语法迁移<a class="headerlink" href="#id17" title="链接到此标题。">¶</a></h3>
+<section id="id18">
+<h3>10. 语法迁移<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>原区间写法</p></th>
@@ -235,28 +244,28 @@ let forced Expr = std.interval_open(0, 1)     # Expr
 </tbody>
 </table>
 </section>
-<section id="id18">
-<h3>11. 引用<a class="headerlink" href="#id18" title="链接到此标题。">¶</a></h3>
+<section id="id19">
+<h3>11. 引用<a class="headerlink" href="#id19" title="链接到此标题。">¶</a></h3>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id19" role="doc-footnote">
+<aside class="footnote brackets" id="id20" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">1</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-014.html"><span class="doc">LSR-014 - 运算符规范</span></a> - 定义普通调用、元组、数组和保留 token</p>
 </aside>
-<aside class="footnote brackets" id="id20" role="doc-footnote">
+<aside class="footnote brackets" id="id21" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-012.html"><span class="doc">LSR-012 - 元组类型规范</span></a> - 定义元组类型、字面量和位置访问</p>
 </aside>
-<aside class="footnote brackets" id="id21" role="doc-footnote">
+<aside class="footnote brackets" id="id22" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">3</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 定义序列生成及其他标准库入口</p>
 </aside>
-<aside class="footnote brackets" id="id22" role="doc-footnote">
+<aside class="footnote brackets" id="id23" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">4</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 定义有限集合类型</p>
 </aside>
-<aside class="footnote brackets" id="id23" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">5</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - Expr 构造与提升规范</span></a> - 定义区间端点提升和符号表达式边界</p>
+<aside class="footnote brackets" id="id24" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">5</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - 数学值与符号操作规范</span></a> - 定义数学值、符号构造和支持域边界</p>
 </aside>
 </aside>
 </section>
@@ -307,7 +316,7 @@ let forced Expr = std.interval_open(0, 1)     # Expr
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -316,7 +325,7 @@ let forced Expr = std.interval_open(0, 1)     # Expr
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="LSR-016.html" title="上一章">LSR 016 - Expr 构造与提升规范</a></li>
+      <li>Previous: <a href="LSR-016.html" title="上一章">LSR 016 - 数学值与符号操作规范</a></li>
       <li>Next: <a href="LSR-018.html" title="下一章">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
   </ul></li>
 </ul>
@@ -337,7 +346,7 @@ let forced Expr = std.interval_open(0, 1)     # Expr
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

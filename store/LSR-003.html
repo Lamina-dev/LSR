@@ -60,7 +60,7 @@
 <p>最小交付：</p>
 <ul class="simple">
 <li><p>动态库（编译生成的 <code class="code docutils literal notranslate"><span class="pre">.dll/.so/.dylib</span></code> ，符号建议按C ABI导出）</p></li>
-<li><p>Lamina 模块声明文件（默认文件名为module.lm） <a class="footnote-reference brackets" href="#id12" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
+<li><p>Lamina 模块声明文件（默认文件名为module.lm） <a class="footnote-reference brackets" href="#id16" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p></li>
 </ul>
 <p>推荐目录（非强制）：</p>
 <ul class="simple">
@@ -71,36 +71,131 @@
 </section>
 <section id="id6">
 <h3>2. 接口映射语法（必需）<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
-<p>在 <code class="code docutils literal notranslate"><span class="pre">module.lm</span></code> 中使用 <code class="code docutils literal notranslate"><span class="pre">static</span></code> 绑定动态库 <a class="footnote-reference brackets" href="#id12" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id13" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>
-编写动态库代码，需要包含Lamina的核心头文件&quot;lmx.h&quot;，内部具有lamina的一些api与类型定义；无量纲实参剥离按 LSR-008 <a class="footnote-reference brackets" href="#id14" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 处理。</p>
-<section id="id10">
-<h4>3 接口示例<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h4>
-<p>假设有动态库 libadd.so，内有
-LmInt add(LmInt a, LmInt b);函数</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>static "add"
-
-func so_add(a int, b int) -&gt; int = "add"
-
-# 等于号后面为动态库的导出符号
-</pre></div>
-</div>
-</section>
+<p>在 <code class="code docutils literal notranslate"><span class="pre">module.lm</span></code> 中使用 <code class="code docutils literal notranslate"><span class="pre">static</span></code> 绑定动态库 <a class="footnote-reference brackets" href="#id16" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id17" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。
+动态库包含 <code class="docutils literal notranslate"><span class="pre">lmx.h</span></code>，声明文件中的导出符号、调用约定和实际 C 原型必须一致。
+量纲剥离按 LSR-008 <a class="footnote-reference brackets" href="#id18" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> 处理；剥离量纲不执行数值近似，也不恢复已擦除的量纲。</p>
+<section id="abi">
+<h4>2.1 数学值、值约束与 ABI<a class="headerlink" href="#abi" title="链接到此标题。">¶</a></h4>
+<p>普通源码的基本数学静态类型统一为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；<code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">frac</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code>
+分别约束整数、有理数、实标量和复标量，不是四种独立基本类型。
+<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">-&gt;</span> <span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">vector&lt;int&gt;</span></code> 分别保留对应位置或元素的值约束，
+基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 或 <code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code>，不使用 <code class="docutils literal notranslate"><span class="pre">num&lt;int&gt;</span></code> 语法。
+约束参与参数和返回校验，不能让基本签名及参数个数相同的函数仅按约束静态分派。
+静态可证明时提前检查；其余在运行时检查。确定违反约束报告 <code class="docutils literal notranslate"><span class="pre">DomainError</span></code> 或
+<code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>，无法判定报告 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>。已证为整数的符号式可满足 <code class="docutils literal notranslate"><span class="pre">int</span></code>，
+但索引、循环计数及原生整数取值仍须得到具体整数。
+函数值的兼容检查保留参数值约束和量纲契约，不能只比较底层 <code class="docutils literal notranslate"><span class="pre">num</span></code>。
+原生实参不能具体物化时报告 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>；确定违反数域或机器范围时报告相应错误。
+普通副作用函数的约束未决不得自动变成符号调用。</p>
+<p>外部函数声明中的标注同时选择固定 C ABI 表示，不改变上述普通数学类型：</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>标注</p></th>
+<th class="head"><p>C ABI 表示</p></th>
+<th class="head"><p>边界校验</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LmInt</span></code>，即 <code class="docutils literal notranslate"><span class="pre">int64_t</span></code></p></td>
+<td><p>可具体求值的整数，范围为 <code class="docutils literal notranslate"><span class="pre">[-2^63,</span> <span class="pre">2^63-1]</span></code>；禁止截断、环绕或先转浮点</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frac</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LmValue</span> <span class="pre">*</span></code>，引用运行时有理数值</p></td>
+<td><p>可具体求值的精确有理数，分母非零；不得降为两个机器整数或 <code class="docutils literal notranslate"><span class="pre">double</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">real</span></code></p></td>
+<td><p>C <code class="docutils literal notranslate"><span class="pre">double</span></code>，要求 IEEE 754 binary64</p></td>
+<td><p>可具体求值的有限实标量；范围和转换规则见下文</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">complex</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LmValue</span> <span class="pre">*</span></code>，引用运行时复标量值</p></td>
+<td><p>实部与虚部均可具体求值；保留各分量的精确/近似属性</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LmValue</span> <span class="pre">*</span></code>，引用运行时数学值</p></td>
+<td><p>保留数值、符号式、关系和近似属性；原生函数须明确支持的数学值域</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">LmValue</span></code> 是不透明运行时值，扩展只能经 <code class="docutils literal notranslate"><span class="pre">lmx.h</span></code> 的公共操作访问；
+指针宽度取决于目标平台，不得复制内部布局或把指针强转为机器数。
+<code class="docutils literal notranslate"><span class="pre">vector</span></code>、<code class="docutils literal notranslate"><span class="pre">matrix</span></code>、<code class="docutils literal notranslate"><span class="pre">set</span></code>、普通容器及元组也使用运行时值接口；
+<code class="docutils literal notranslate"><span class="pre">vector&lt;int&gt;</span></code> 不等于连续 <code class="docutils literal notranslate"><span class="pre">int64_t</span></code> 数组。裸数组接口必须单独约定元素表示、
+长度、布局和借用期间，不得按内部存储猜测。</p>
+<p>外部 <code class="docutils literal notranslate"><span class="pre">real</span></code> 声明选择 <code class="docutils literal notranslate"><span class="pre">double</span></code>，本身就是用户显式指定的数值 ABI 边界：
+精确或近似实数均须先能具体求值，再按 binary64 最近值、同距取偶转换，
+检查溢出和非零下溢；不能表示为有限非零数时报告 <code class="docutils literal notranslate"><span class="pre">NumericalFailure</span></code>。
+该边界允许精确输入发生已声明的数值舍入，但不承诺保留超出 binary64 的精度，
+也不能用来让普通 <code class="docutils literal notranslate"><span class="pre">sqrt</span></code> 等标准数学调用经隐藏 FFI 自动失去精确性。
+若需先控制近似计算，调用者可显式使用 <code class="docutils literal notranslate"><span class="pre">std.math.approximate</span></code> <a class="footnote-reference brackets" href="#id17" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。
+返回的 <code class="docutils literal notranslate"><span class="pre">double</span></code> 始终是保留完整 binary64 表示值的近似 <code class="docutils literal notranslate"><span class="pre">num</span></code>。ABI 的工作精度为
+53 个二进制有效位，参与语言传播时按 15 位十进制工作精度记录；精度单位转换不重新舍入该表示值，
+也不把工作位数作为认证准确位数。原生返回 NaN 或无穷时报告 <code class="docutils literal notranslate"><span class="pre">NumericalFailure</span></code>；
+数学无穷须使用明确支持它的 <code class="docutils literal notranslate"><span class="pre">num</span></code> 值接口。
+<code class="docutils literal notranslate"><span class="pre">LmInt</span></code> 返回值可无损导入为精确整数；句柄结果保留原有数学语义，并再次校验声明的值约束。</p>
 </section>
 <section id="id11">
-<h3>4. 引用<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h3>
+<h4>2.2 借用、修改和结果所有权<a class="headerlink" href="#id11" title="链接到此标题。">¶</a></h4>
+<ul class="simple">
+<li><p>实参默认只读借用，仅在调用期间有效。原生代码不得写入、释放或在返回后保存借用句柄。
+跨调用保存必须使用公共保留/复制操作取得独立所有权，并最终释放。</p></li>
+<li><p>容器具有值语义。原地修改只能通过显式可写接口取得独占访问，调用方根路径必须可写，
+且不能与其他输入/输出形成冲突别名；否则返回新值或拒绝调用。
+<code class="docutils literal notranslate"><span class="pre">let</span></code>、元组和只读闭包不因经过 FFI 而获得可写子路径。</p></li>
+<li><p>共享、复制和唯一所有权优化对调用者不可见。修改一份值不得改变仍可观察的其他旧值，
+不得用引用计数或地址比较建立数学容器身份。</p></li>
+<li><p>返回的新句柄把一次所有权交给调用方；返回借用值必须在绑定契约中指明保留者与有效期，
+运行时在其失效前取得所需所有权。失败时不得遗留由调用者猜测是否需要释放的半成品。</p></li>
+<li><p>可写缓冲区须声明容量和实际写入长度。失败后输出保持原值，或回到契约明确的空状态，
+不得暴露部分修改后仍标为有效的数学值。</p></li>
+</ul>
+</section>
+<section id="id12">
+<h4>2.3 错误与回调边界<a class="headerlink" href="#id12" title="链接到此标题。">¶</a></h4>
+<p>外部接口必须声明可观测的失败协议。可能失败的 C 函数使用状态返回和结果输出参数，
+或 <code class="docutils literal notranslate"><span class="pre">lmx.h</span></code> 提供的等效错误结果接口；绑定将非成功状态映射为带类别、操作和消息的
+<code class="docutils literal notranslate"><span class="pre">MathError</span></code>，沿 LSR-018 <a class="footnote-reference brackets" href="#id19" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> 传播。仅在已检查的输入范围内保证无失败的函数，
+才可直接以 C 返回值承载结果。<code class="docutils literal notranslate"><span class="pre">void</span></code> 内核不是无错误协议的豁免，
+调用适配层仍须报告分配失败、范围失败和原生运算错误。</p>
+<p>不得以零、空集合、NaN 或默认值伪装成功，也不得让 C++ 异常跨越 C ABI。
+取消、资源耗尽和内部故障继续向上传播，不能降为数学证明未决。
+回调失败必须通过回调错误结果返回原生调用者，完成回调临时值清理并恢复外层执行状态；
+原生调用者停止依赖该结果的运算，并传播该错误。不得展开越过不支持展开的 C 帧，
+也不得吞掉回调错误后继续返回成功。</p>
+</section>
+<section id="id14">
+<h4>3. 接口示例<a class="headerlink" href="#id14" title="链接到此标题。">¶</a></h4>
+<p>假设动态库 <code class="docutils literal notranslate"><span class="pre">libidentity.so</span></code> 导出在整个 <code class="docutils literal notranslate"><span class="pre">LmInt</span></code> 输入范围内无失败的
+<code class="docutils literal notranslate"><span class="pre">LmInt</span> <span class="pre">identity(LmInt</span> <span class="pre">value)</span></code>：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>static "identity"
+
+func so_identity(value int) -&gt; int = "identity"
+</pre></div>
+</div>
+<p>等号右侧是动态库导出符号。输入整数性和机器范围仍由调用边界检查。</p>
+</section>
+</section>
+<section id="id15">
+<h3>4. 引用<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id12" role="doc-footnote">
+<aside class="footnote brackets" id="id16" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id5">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
-<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 核心类型系统、值语义，复合引用语义</p>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 核心类型系统、值约束与容器值语义</p>
 </aside>
-<aside class="footnote brackets" id="id13" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">2</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id17" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id8">1</a>,<a role="doc-backlink" href="#id10">2</a>)</span>
 <p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 标准库定义，扩展可作为补充实现</p>
 </aside>
-<aside class="footnote brackets" id="id14" role="doc-footnote">
+<aside class="footnote brackets" id="id18" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">3</a><span class="fn-bracket">]</span></span>
 <p><a class="reference internal" href="LSR-008.html"><span class="doc">LSR-008 - 量纲剥离（Unit Stripping）规范</span></a> - 量纲剥离规则（扩展无量纲入参场景）</p>
+</aside>
+<aside class="footnote brackets" id="id19" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">4</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 错误传播、清理与回调边界</p>
 </aside>
 </aside>
 </section>
@@ -151,7 +246,7 @@ func so_add(a int, b int) -&gt; int = "add"
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -181,7 +276,7 @@ func so_add(a int, b int) -&gt; int = "add"
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

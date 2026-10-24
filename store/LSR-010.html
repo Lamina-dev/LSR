@@ -51,7 +51,7 @@
 </section>
 <section id="id2">
 <h2>摘要<a class="headerlink" href="#id2" title="链接到此标题。">¶</a></h2>
-<p>定义虚数单位 <code class="docutils literal notranslate"><span class="pre">I</span></code>、复数字面量、复数类型提升和 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 中复数的表示边界 <a class="footnote-reference brackets" href="#id17" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id18" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。</p>
+<p>定义虚数单位 <code class="docutils literal notranslate"><span class="pre">I</span></code>、复数字面量、<code class="docutils literal notranslate"><span class="pre">num</span></code> 上的 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 值约束，以及复数主值、顺序和符号运算边界 <a class="footnote-reference brackets" href="#id23" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id24" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>。复数与精确数、符号表达式和近似值共用数学基本静态类型 <code class="docutils literal notranslate"><span class="pre">num</span></code>。</p>
 </section>
 <section id="id5">
 <h2>技术规范<a class="headerlink" href="#id5" title="链接到此标题。">¶</a></h2>
@@ -60,23 +60,19 @@
 <ul class="simple">
 <li><p>明确 <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4I</span></code> 的语法含义</p></li>
 <li><p>避免虚数单位与普通变量或 <code class="docutils literal notranslate"><span class="pre">sym</span></code> 声明冲突</p></li>
-<li><p>保持 <code class="docutils literal notranslate"><span class="pre">Complex</span> <span class="pre">(C)</span> <span class="pre">⊂</span> <span class="pre">Expr</span></code> 的数值塔规则</p></li>
-<li><p>为 LMCAS 提供稳定的复数表达接口</p></li>
+<li><p>在统一的 <code class="docutils literal notranslate"><span class="pre">num</span></code> 数学值语义中保留实数与复数的数域区别</p></li>
+<li><p>为标准库及 CAS 提供复数构造、主值函数和集合多结果的确定语义</p></li>
 </ul>
 </section>
 <section id="id7">
 <h3>2. 虚数单位<a class="headerlink" href="#id7" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">I</span></code> 是预定义虚数单位，满足：</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>I^2 == -1
-</pre></div>
-</div>
-<p>规则：</p>
+<p><code class="docutils literal notranslate"><span class="pre">I</span></code> 是预定义虚数单位，满足数学关系 <code class="docutils literal notranslate"><span class="pre">I^2</span> <span class="pre">==</span> <span class="pre">-1</span></code>。</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">I</span></code> 是预定义常量，不是普通变量</p></li>
-<li><p>用户不得在同一作用域重新绑定 <code class="docutils literal notranslate"><span class="pre">I</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">I</span></code> 的基本静态类型是 <code class="docutils literal notranslate"><span class="pre">num</span></code>，其值满足 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 约束</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">I</span></code> 是预定义常量，不是普通变量；用户不得在同一作用域重新绑定它</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">sym</span> <span class="pre">I</span></code> 非法，必须报错 <code class="docutils literal notranslate"><span class="pre">ImaginaryUnitReserved</span></code></p></li>
 <li><p>小写 <code class="docutils literal notranslate"><span class="pre">i</span></code> 是普通标识符，可以作为变量名或通过 <code class="docutils literal notranslate"><span class="pre">sym</span> <span class="pre">i</span></code> 声明为符号</p></li>
-<li><p>标准库只导出 <code class="docutils literal notranslate"><span class="pre">std.math.I</span></code> 作为虚数单位</p></li>
+<li><p>标准库在 <code class="docutils literal notranslate"><span class="pre">std.math</span></code> 中以 <code class="docutils literal notranslate"><span class="pre">I</span></code> 导出同一常量；该导出不创建另一个虚数单位</p></li>
 </ul>
 </section>
 <section id="id8">
@@ -88,81 +84,106 @@ let c = -2.5I
 let d = 1/2 + 3/4I
 </pre></div>
 </div>
-<p>规则：</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">4I</span></code> 等价于 <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">I</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4I</span></code> 等价于复数 <code class="docutils literal notranslate"><span class="pre">complex(3,</span> <span class="pre">4)</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">I</span></code> 同样合法，但按普通乘法解析</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4I</span></code> 等价于 <code class="docutils literal notranslate"><span class="pre">std.math.complex(3,</span> <span class="pre">4)</span></code> 所构造的数学值</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">I</span></code> 同样合法，按普通乘法解析</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">I</span></code> 非法，必须报错 <code class="docutils literal notranslate"><span class="pre">ComplexLiteralSpacing</span></code></p></li>
+<li><p>虚数字面量及其组合的基本静态类型均为 <code class="docutils literal notranslate"><span class="pre">num</span></code>；有限小数字面量默认精确，不因虚数后缀进入近似计算</p></li>
 </ul>
 </section>
 <section id="id9">
-<h3>4. 复数类型<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">complex</span></code> 表示复数值，逻辑结构为实部与虚部：</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>complex = real_part + imaginary_part * I
+<h3>4. 复数值约束<a class="headerlink" href="#id9" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">complex</span></code> 表示 <code class="docutils literal notranslate"><span class="pre">num</span></code> 上的复标量值约束，不是独立基本数学类型。<code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">frac</span></code> 同样是数学值约束；在数域意义上实数属于复数，但不存在从一种基本静态数学类型到另一种类型的自动提升。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.math.{conj}
+
+func conjugate(z complex) -&gt; complex {
+    return conj(z)
+}
+
+let a complex = 3 + 4I
+let b num = a + 2
 </pre></div>
 </div>
-<p>规则：</p>
-<ul class="simple">
-<li><p>实部和虚部均为数值类型</p></li>
-<li><p>数值塔中 <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">⊂</span> <span class="pre">C</span></code></p></li>
-<li><p>实数与复数二元运算时，实数自动提升为复数</p></li>
-<li><p>复数参与 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 运算时整体提升为 <code class="docutils literal notranslate"><span class="pre">Expr</span></code></p></li>
-</ul>
-</section>
-<section id="expr">
-<h3>5. 与 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 的关系<a class="headerlink" href="#expr" title="链接到此标题。">¶</a></h3>
-<p>当复数进入 <code class="docutils literal notranslate"><span class="pre">Expr</span></code>，它必须作为明确的复数表达式保留，不得拆成普通变量 <code class="docutils literal notranslate"><span class="pre">I</span></code>。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sym x
-let z = x + 2I       # Expr
-</pre></div>
-</div>
-<p>规则：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">I</span></code> 在 <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 中仍表示虚数单位</p></li>
-<li><p>CAS 后端应提供虚数单位节点或复数节点</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">I</span></code> 不参与普通符号变量绑定</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 降级为 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 必须显式求值，且表达式中不得有未绑定符号</p></li>
-</ul>
+<p><code class="docutils literal notranslate"><span class="pre">a</span></code>、<code class="docutils literal notranslate"><span class="pre">b</span></code> 及函数参数、返回值的基本类型均为 <code class="docutils literal notranslate"><span class="pre">num</span></code>。<code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">complex</span></code> 与 <code class="docutils literal notranslate"><span class="pre">-&gt;</span> <span class="pre">complex</span></code> 分别要求参数及返回值为复标量。<code class="docutils literal notranslate"><span class="pre">vector&lt;complex&gt;</span></code> 表示元素满足该约束的 <code class="docutils literal notranslate"><span class="pre">vector&lt;num&gt;</span></code>，不创建独立复数容器基本类型。</p>
+<p>约束参与调用及返回校验：静态可证时提前检查，其余在运行期验证。确定违反约束报 <code class="docutils literal notranslate"><span class="pre">DomainError</span></code> 或 <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>，仍未决报 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>。具有相同基本签名及参数个数的函数不能仅凭 <code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 等值约束静态分派，也不提供自动按值重载。</p>
+<p>函数类型兼容还须保留参数值约束及量纲契约，不能仅因基本类型同为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 就把受约束参数放宽。</p>
+<p>复数可写为实部与虚部的数学组合 <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b*I</span></code>，其中两部分满足 <code class="docutils literal notranslate"><span class="pre">real</span></code> 约束。实现可使用复数数值表示或符号节点，不强制固定存储布局；涉及 FFI 时由其显式 ABI 声明另行规定表示和范围检查。</p>
 </section>
 <section id="id10">
-<h3>6. 相等性<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
-<p>结构相等 <code class="docutils literal notranslate"><span class="pre">==</span></code> 与数学等价 <code class="docutils literal notranslate"><span class="pre">===</span></code> 分别遵循 LSR-000 <a class="footnote-reference brackets" href="#id17" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> 和 LSR-007 <a class="footnote-reference brackets" href="#id19" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(I * I) === -1       # true，若当前等价 profile 支持复数基础规则
+<h3>5. 符号、精确值与近似值<a class="headerlink" href="#id10" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">sym</span></code> 默认声明复数标量符号；实性、正性和整数性通过显式假设或约束提供 <a class="footnote-reference brackets" href="#id25" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>use std.math.{conj}
+
+sym x
+let z num = x + 2I
+let c num = conj(z)
 </pre></div>
 </div>
-<p>规则：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">I^2</span> <span class="pre">-&gt;</span> <span class="pre">-1</span></code> 属于复数基础规则</p></li>
-<li><p>复数结构相等比较实部与虚部</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Expr</span></code> 中复数等价判定仍受预算限制</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">I</span></code> 始终表示虚数单位，不参与普通符号变量绑定</p></li>
+<li><p>精确实数与精确复数运算默认精确、保域；支持域内不能完成的数学调用可保留未求值式</p></li>
+<li><p>带未绑定数学符号的表达式仍是合法 <code class="docutils literal notranslate"><span class="pre">num</span></code>，不需要转换到另一种符号基本类型</p></li>
+<li><p>具体数值提取接口可要求所有必要符号已绑定；未满足时按该接口的错误契约诊断，不进行所谓类型降级</p></li>
+<li><p>只有显式 <code class="docutils literal notranslate"><span class="pre">std.math.approximate(value,</span> <span class="pre">precision=100)</span></code> 进入近似，精度为目标十进制有效位数 <a class="footnote-reference brackets" href="#id24" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></li>
+<li><p>有近似操作数时发生局部近似传播，采用参与近似值的最高工作精度，未知符号部分继续保留；提高工作精度不恢复输入已经丢失的精度</p></li>
 </ul>
 </section>
 <section id="id13">
-<h3>7. 标准库要求<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">std.math</span></code> 必须暴露；复数多结果场景按集合返回约定处理 <a class="footnote-reference brackets" href="#id20" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>：</p>
+<h3>6. 主值与顺序<a class="headerlink" href="#id13" title="链接到此标题。">¶</a></h3>
+<p>复平方根、复对数及复非整数幂是单值主值函数：</p>
+<ul class="simple">
+<li><p>对非零复数采用主辐角 <code class="docutils literal notranslate"><span class="pre">Arg(z)</span> <span class="pre">∈</span> <span class="pre">(-π,</span> <span class="pre">π]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log(z)</span> <span class="pre">=</span> <span class="pre">ln(|z|)</span> <span class="pre">+</span> <span class="pre">I*Arg(z)</span></code>；<code class="docutils literal notranslate"><span class="pre">log(0)</span></code> 无定义</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sqrt(z)</span></code> 取实部非负的平方根；实部为零时取虚部非负者，且 <code class="docutils literal notranslate"><span class="pre">sqrt(0)</span> <span class="pre">=</span> <span class="pre">0</span></code></p></li>
+<li><p>非零底数的复非整数幂按 <code class="docutils literal notranslate"><span class="pre">z^w</span> <span class="pre">=</span> <span class="pre">exp(w*log(z))</span></code> 的主值解释；整数幂遵循整数幂定义，零底数的有效指数域按核心数学规则处理</p></li>
+</ul>
+<p>不得把单值主值函数的结果解释为全部根或全部分支。所有根或解由显式集合求解接口返回，元素基本类型为 <code class="docutils literal notranslate"><span class="pre">num</span></code> <a class="footnote-reference brackets" href="#id26" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>。</p>
+<p>复数不提供与实数顺序兼容的无条件 <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>。顺序关系及排序必须满足实数等已声明有序数域的条件：已知非实复数参与实序比较时报告 <code class="docutils literal notranslate"><span class="pre">DomainError</span></code>；数域尚未确定时可保留符号关系，不能任意选取按实部、模长或存储布局的次序。若普通控制流必须判真而仍未决，报告 <code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code> <a class="footnote-reference brackets" href="#id23" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>。</p>
+</section>
+<section id="id16">
+<h3>7. 关系、结构与等价<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<p>复数作为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 遵循同一比较规则 <a class="footnote-reference brackets" href="#id25" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id27" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">==</span></code>、<code class="docutils literal notranslate"><span class="pre">!=</span></code> 构造 <code class="docutils literal notranslate"><span class="pre">num</span></code> 数学关系</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">std.cas.same_structure</span></code> 返回结构查询的 <code class="docutils literal notranslate"><span class="pre">bool</span></code>；精确数字叶按数学数值比较，不依赖内部复数布局</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">===</span></code> 与 <code class="docutils literal notranslate"><span class="pre">std.cas.equivalent</span></code> 返回固定三态 <code class="docutils literal notranslate"><span class="pre">std.cas.Equivalence</span></code>，证明未决是 <code class="docutils literal notranslate"><span class="pre">cas.Unknown</span></code></p></li>
+<li><p>精确值与近似值无损比较各自现有存储数值，不预先舍入或加入容差；结论不追溯至近似前原式</p></li>
+</ul>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>import std.cas
+
+let relation num = I * I == -1
+let proof = (I * I) === -1
+let proved bool = proof == cas.Equivalent
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">I^2</span> <span class="pre">-&gt;</span> <span class="pre">-1</span></code> 属于 <code class="docutils literal notranslate"><span class="pre">Core</span></code> 基础规则，因此该例的 <code class="docutils literal notranslate"><span class="pre">proof</span></code> 为 <code class="docutils literal notranslate"><span class="pre">cas.Equivalent</span></code>。近似节点的结构比较还区分近似类别和工作精度，并与精确叶区别。</p>
+</section>
+<section id="id19">
+<h3>8. 标准库要求<a class="headerlink" href="#id19" title="链接到此标题。">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">std.math</span></code> 必须暴露以下接口。签名中的 <code class="docutils literal notranslate"><span class="pre">real</span></code>、<code class="docutils literal notranslate"><span class="pre">complex</span></code> 均为 <code class="docutils literal notranslate"><span class="pre">num</span></code> 值约束，不是基本类型：</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>名称</p></th>
-<th class="head"><p>类型</p></th>
+<th class="head"><p>声明</p></th>
 <th class="head"><p>说明</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">I</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">complex</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">num</span></code>，满足 <code class="docutils literal notranslate"><span class="pre">complex</span></code></p></td>
 <td><p>虚数单位</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">complex</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">complex(re</span> <span class="pre">num,</span> <span class="pre">im</span> <span class="pre">num)</span> <span class="pre">-&gt;</span> <span class="pre">complex</span></code></p></td>
-<td><p>构造复数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">complex(re</span> <span class="pre">real,</span> <span class="pre">im</span> <span class="pre">real)</span> <span class="pre">-&gt;</span> <span class="pre">complex</span></code></p></td>
+<td><p>以实部与虚部构造复标量</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">real</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">real(z</span> <span class="pre">complex)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">real(z</span> <span class="pre">complex)</span> <span class="pre">-&gt;</span> <span class="pre">real</span></code></p></td>
 <td><p>实部</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">imag</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">imag(z</span> <span class="pre">complex)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">imag(z</span> <span class="pre">complex)</span> <span class="pre">-&gt;</span> <span class="pre">real</span></code></p></td>
 <td><p>虚部</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">conj</span></code></p></td>
@@ -170,40 +191,53 @@ let z = x + 2I       # Expr
 <td><p>共轭</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">abs</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">abs(z</span> <span class="pre">complex)</span> <span class="pre">-&gt;</span> <span class="pre">num</span></code></p></td>
-<td><p>模长</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">func</span> <span class="pre">abs(z</span> <span class="pre">complex)</span> <span class="pre">-&gt;</span> <span class="pre">real</span></code></p></td>
+<td><p>非负模长</p></td>
 </tr>
 </tbody>
 </table>
+<p>函数名 <code class="docutils literal notranslate"><span class="pre">complex</span></code>、<code class="docutils literal notranslate"><span class="pre">real</span></code> 在调用位置分别表示构造或查询函数，在标注位置表示值约束。已声明数学函数可按其支持域返回未求值的 <code class="docutils literal notranslate"><span class="pre">num</span></code> 调用；不能因期望数学值而吞掉未绑定函数名。</p>
 </section>
-<section id="id15">
-<h3>8. 错误模型<a class="headerlink" href="#id15" title="链接到此标题。">¶</a></h3>
+<section id="id20">
+<h3>9. 错误模型<a class="headerlink" href="#id20" title="链接到此标题。">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ImaginaryUnitReserved</span></code>: 尝试绑定或声明 <code class="docutils literal notranslate"><span class="pre">I</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ComplexLiteralSpacing</span></code>: 虚数字面量后缀前存在非法空白</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ComplexTypeMismatch</span></code>: 复数操作收到不兼容类型</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ComplexEvalUnboundSymbol</span></code>: <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 降级为 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 时存在未绑定符号</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ImaginaryUnitReserved</span></code>：尝试绑定或声明 <code class="docutils literal notranslate"><span class="pre">I</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ComplexLiteralSpacing</span></code>：虚数字面量后缀前存在非法空白</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ComplexTypeMismatch</span></code>：复数接口收到不兼容的基本类型</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DomainError</span></code> / <code class="docutils literal notranslate"><span class="pre">InvalidArgument</span></code>：确定违反复标量、实部或有序数域等要求</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Inconclusive</span></code>：必须验证的值约束或控制流条件仍未决</p></li>
 </ul>
+<p>具体数值提取遇到未绑定符号时可报告 <code class="docutils literal notranslate"><span class="pre">ComplexEvalUnboundSymbol</span></code>，但普通符号数学运算不得因此报错。数学错误及运行时故障按 LSR-018 传播 <a class="footnote-reference brackets" href="#id28" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>。</p>
 </section>
-<section id="id16">
-<h3>9. 引用<a class="headerlink" href="#id16" title="链接到此标题。">¶</a></h3>
+<section id="id22">
+<h3>10. 引用<a class="headerlink" href="#id22" title="链接到此标题。">¶</a></h3>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id17" role="doc-footnote">
+<aside class="footnote brackets" id="id23" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id11">2</a>)</span>
-<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 声明 <code class="docutils literal notranslate"><span class="pre">complex</span></code> 类型、数值塔和 <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4I</span></code> 示例</p>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id15">2</a>)</span>
+<p><a class="reference internal" href="LSR-000.html"><span class="doc">LSR-000 - Lamina 核心语言规范（草案）</span></a> - 定义 num、值约束、控制流和复数字面量</p>
 </aside>
-<aside class="footnote brackets" id="id18" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - <code class="docutils literal notranslate"><span class="pre">std.math</span></code> 应暴露复数相关常量与函数</p>
+<aside class="footnote brackets" id="id24" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id12">2</a>)</span>
+<p><a class="reference internal" href="LSR-004.html"><span class="doc">LSR-004 - 标准库</span></a> - 定义 std.math 的复数及显式近似接口</p>
 </aside>
-<aside class="footnote brackets" id="id19" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">3</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-007.html"><span class="doc">LSR-007 - 数学等价判定规范</span></a> - <code class="docutils literal notranslate"><span class="pre">Expr</span></code> 上复数等价判定由有限规则和预算约束</p>
+<aside class="footnote brackets" id="id25" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id11">1</a>,<a role="doc-backlink" href="#id17">2</a>)</span>
+<p><a class="reference internal" href="LSR-016.html"><span class="doc">LSR-016 - 数学值与符号操作规范</span></a> - 定义符号构造、数学调用和结构查询</p>
 </aside>
-<aside class="footnote brackets" id="id20" role="doc-footnote">
+<aside class="footnote brackets" id="id26" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">4</a><span class="fn-bracket">]</span></span>
-<p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 复数结果可出现在 <code class="docutils literal notranslate"><span class="pre">set&lt;complex&gt;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">set&lt;Expr&gt;</span></code> 中</p>
+<p><a class="reference internal" href="LSR-013.html"><span class="doc">LSR-013 - 集合类型规范</span></a> - 定义数学解集及 set&lt;num&gt;</p>
+</aside>
+<aside class="footnote brackets" id="id27" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id18">5</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-007.html"><span class="doc">LSR-007 - 数学等价判定规范</span></a> - 定义三态等价及保域证明</p>
+</aside>
+<aside class="footnote brackets" id="id28" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id21">6</a><span class="fn-bracket">]</span></span>
+<p><a class="reference internal" href="LSR-018.html"><span class="doc">LSR-018 - Never 底类型与 raise 终止效应规范</span></a> - 定义错误传播</p>
 </aside>
 </aside>
 </section>
@@ -254,7 +288,7 @@ let z = x + 2I       # Expr
 <li class="toctree-l1"><a class="reference internal" href="LSR-013.html">LSR 013 - 集合类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-014.html">LSR 014 - 运算符规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-015.html">LSR 015 - LMMP 接口规范</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - Expr 构造与提升规范</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LSR-016.html">LSR 016 - 数学值与符号操作规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-017.html">LSR 017 - 区间类型规范</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LSR-018.html">LSR 018 - Never 底类型与 raise 终止效应规范</a></li>
 </ul>
@@ -284,7 +318,7 @@ let z = x + 2I       # Expr
       &#169;.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.2.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
